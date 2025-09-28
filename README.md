@@ -61,8 +61,8 @@ Modern ve kullanıcı dostu ASP.NET Core MVC tabanlı yoklama yönetim sistemi.
 
 1. **Repository'yi klonlayın**
 ```bash
-git clone https://github.com/kullaniciadi/yoklama-projesi.git
-cd yoklama-projesi
+git clone https://github.com/atakdmr/StudentAttendance.git
+cd StudentAttendance
 ```
 
 2. **Paketleri yükleyin**
