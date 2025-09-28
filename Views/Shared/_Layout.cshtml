@@ -1,0 +1,307 @@
+﻿﻿@using Microsoft.AspNetCore.Http
+@using Yoklama.Data
+@inject IHttpContextAccessor HttpContextAccessor
+@inject AppDbContext Db
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modern.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+
+    @if (User.Identity!.IsAuthenticated)
+    {
+        <!-- Modern Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <a asp-controller="Home" asp-action="Index" class="sidebar-header text-light text-decoration-none">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="title">Yoklama Sistemi</div>
+            </a>
+
+            <div class="sidebar-nav">
+                <!-- Ana Sayfa -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Genel</div>
+                    <div class="nav-item">
+                        <a href="@Url.Action("Index", "Home")" class="nav-link" data-page="home">
+                            <div class="icon"><i class="fas fa-home"></i></div>
+                            <div class="text">Ana Sayfa</div>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="@Url.Action("Index", "Schedule")" class="nav-link" data-page="schedule">
+                            <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="text">Ders Programı</div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Öğretmen Menüsü -->
+                @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+                {
+                    <div class="nav-section">
+                        <div class="nav-section-title">Öğretmen</div>
+                        <div class="nav-item">
+                            <a href="@Url.Action("Index", "Lessons")" class="nav-link" data-page="lessons">
+                                <div class="icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                                <div class="text">Derslerim</div>
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="@Url.Action("Index", "Attendance")" class="nav-link" data-page="attendance">
+                                <div class="icon"><i class="fas fa-clipboard-check"></i></div>
+                                <div class="text">Yoklama</div>
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="@Url.Action("Index", "Reports")" class="nav-link" data-page="reports">
+                                <div class="icon"><i class="fas fa-chart-bar"></i></div>
+                                <div class="text">Raporlar</div>
+                            </a>
+                        </div>
+                    </div>
+                }
+
+
+                <!-- Admin Menüsü -->
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="nav-section">
+                        <div class="nav-section-title">Yönetim</div>
+                        <div class="nav-item">
+                            <a href="@Url.Action("Index", "Admin")" class="nav-link" data-page="admin">
+                                <div class="icon"><i class="fas fa-tachometer-alt"></i></div>
+                                <div class="text">Dashboard</div>
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="@Url.Action("Index", "Groups")" class="nav-link" data-page="groups">
+                                <div class="icon"><i class="fas fa-layer-group"></i></div>
+                                <div class="text">Gruplar</div>
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="@Url.Action("Users", "Admin")" class="nav-link" data-page="admin-users">
+                                <div class="icon"><i class="fas fa-users"></i></div>
+                                <div class="text">Kullanıcılar</div>
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="@Url.Action("Students", "Admin")" class="nav-link" data-page="admin-students">
+                                <div class="icon"><i class="fas fa-graduation-cap"></i></div>
+                                <div class="text">Öğrenciler</div>
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="@Url.Action("Index", "Absences")" class="nav-link" data-page="absences">
+                                <div class="icon"><i class="fas fa-user-times"></i></div>
+                                <div class="text">Devamsızlar</div>
+                            </a>
+                        </div>
+                    </div>
+                }
+
+
+
+                <!-- Hesap -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Hesap</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link"
+                            onclick="document.getElementById('logoutForm').submit(); return false;">
+                            <div class="icon"><i class="fas fa-sign-out-alt"></i></div>
+                            <div class="text">Çıkış Yap</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div class="d-flex flex-column justify-content-center">
+                        <h1 class="h3 mb-0"><a asp-controller="Home" asp-action="Index" style="text-decoration: none; color: var(--primary-dark)">@ViewData["Title"]</a></h1>
+                        @if (ViewBag.Breadcrumb != null)
+                        {
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0">
+                                    @ViewBag.Breadcrumb
+                                </ol>
+                            </nav>
+                        }
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        @{ 
+                            var latestLogs = Db.AuditLogs
+                                .OrderByDescending(x => x.Timestamp)
+                                .Take(5)
+                                .ToList();
+                        }
+                        <div class="dropdown me-1">
+                            <button class="btn btn-icon btn-soft position-relative rounded-circle notif-bell" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Bildirimler">
+                                <i class="fa-solid fa-bell"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow notification-dropdown" aria-labelledby="notifDropdown">
+                                <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                    <span>Son Bildirimler</span>
+                                    <a class="small" asp-controller="Notifications" asp-action="Index">Tümünü Gör</a>
+                                </li>
+                                @if (latestLogs.Count == 0)
+                                {
+                                    <li><span class="dropdown-item-text text-muted">Bildirim bulunmuyor.</span></li>
+                                }
+                                else
+                                {
+                                    foreach (var log in latestLogs)
+                                    {
+                                        var actionText = log.Action == "Create" ? "Oluşturuldu" : log.Action == "Update" ? "Güncellendi" : log.Action == "Delete" ? "Silindi" : "Bilgi";
+                                        var entityText = log.Entity == "Lesson" ? "Ders" : log.Entity == "Student" ? "Öğrenci" : log.Entity == "Group" ? "Grup" : log.Entity == "User" ? "Kullanıcı" : log.Entity;
+                                        var icon = log.Action == "Create" ? "fa-circle-plus" : log.Action == "Update" ? "fa-pen-to-square" : log.Action == "Delete" ? "fa-trash" : "fa-info-circle";
+                                        var color = log.Action == "Create" ? "text-success" : log.Action == "Update" ? "text-warning" : log.Action == "Delete" ? "text-danger" : "text-secondary";
+                                        var border = log.Action == "Create" ? "border-success" : log.Action == "Update" ? "border-warning" : log.Action == "Delete" ? "border-danger" : "border-secondary";
+                                        <li>
+                                            <div class="dropdown-item">
+                                                <div class="d-flex align-items-start gap-2 border-start border-2 @border ps-2">
+                                                    <div class="@color mt-1"><i class="fa-solid @icon"></i></div>
+                                                    <div class="flex-fill">
+                                                        <div class="small"><span class="@color fw-semibold">@actionText</span> · <strong>@entityText</strong> <span class="text-muted">#@log.EntityId</span></div>
+                                                        <small class="text-muted">@log.Timestamp.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                }
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item text-primary" asp-controller="Notifications" asp-action="Index">Bildirimlerim - Tümünü Gör</a></li>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-icon rounded-circle btn-soft btn-user" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Hesabım">
+                                <i class="fa-solid fa-user"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow dropdown-menu-user" aria-labelledby="userDropdown" style="min-width: 280px;">
+                                <li class="dropdown-user-header px-3 py-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:36px;height:36px;"><i class="fa-solid fa-user"></i></div>
+                                        <div class="d-flex flex-column">
+                                            <strong>@(User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "")</strong>
+                                            <span class="small text-muted">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="fa-solid fa-id-badge me-2"></i>Hesabım</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit(); return false;"><i class="fa-solid fa-right-from-bracket me-2"></i>Çıkış Yap</a></li>
+                            </ul>
+                        </div>
+                        <button class="sidebar-toggle btn btn-icon btn-sidebar rounded-circle" type="button" aria-label="Menüyü Aç/Kapat">
+                            <i class="fas fa-bars-staggered"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                @{
+                    string? modalMsg = null;
+                    string modalType = "info";
+                    if (TempData["Success"] is string s) { modalMsg = s; modalType = "success"; }
+                    else if (TempData["Error"] is string e) { modalMsg = e; modalType = "danger"; }
+                    else if (TempData["Warning"] is string w) { modalMsg = w; modalType = "warning"; }
+                    else if (TempData["Info"] is string i) { modalMsg = i; modalType = "info"; }
+                }
+
+                @if (!string.IsNullOrWhiteSpace(modalMsg))
+                {
+                    <div class="modal fade" id="globalMsgModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header text-white"
+                                    style="background: linear-gradient(90deg, #1f6feb, #7aa2f7);">
+                                    <h5 class="modal-title">
+                                        <i
+                                            class="@(modalType == "success" ? "fas fa-check-circle" : modalType == "danger" ? "fas fa-exclamation-circle" : modalType == "warning" ? "fas fa-exclamation-triangle" : "fas fa-info-circle") me-2"></i>
+                                        Bildirim
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body py-4">
+                                    <div class="d-flex align-items-start">
+                                        <div class="me-3">
+                                            <span class="badge bg-@modalType text-uppercase">@modalType</span>
+                                        </div>
+                                        <div class="flex-fill">@modalMsg</div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer bg-light-subtle">
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tamam</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            var el = document.getElementById('globalMsgModal');
+                            if (el) new bootstrap.Modal(el).show();
+                        });
+                    </script>
+                }
+
+                <div class="container-fluid px-2 px-sm-3 px-md-4">
+                    @RenderBody()
+                </div>
+            </div>
+        </main>
+
+        <!-- Logout Form -->
+        <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display: none;">
+            @Html.AntiForgeryToken()
+        </form>
+    }
+    else
+    {
+        <!-- Login Layout - Minimalist -->
+        @RenderBody()
+    }
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/modern.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

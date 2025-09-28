@@ -1,0 +1,46 @@
+@model IEnumerable<Yoklama.Models.Entities.Group>
+@{
+    ViewData["Title"] = "Gruplar";
+}
+<div class="container-fluid">
+    <h2 class="mb-3">Gruplar</h2>
+    <a class="btn btn-primary mb-3" asp-action="Create"><i class="fas fa-plus me-1"></i>Yeni Grup Ekle</a>
+    <div class="table-responsive">
+    <table class="table table-sm table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Kod</th>
+                <th>Ad</th>
+                <th>Açıklama</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var g in Model)
+        {
+            <tr>
+                <td>
+                    <span class="text-truncate-sm" data-tooltip="@g.Code">@g.Code</span>
+                </td>
+                <td>
+                    <span class="text-truncate-md" data-tooltip="@g.Name">@g.Name</span>
+                </td>
+                <td>
+                    <span class="text-truncate-lg" data-tooltip="@g.Description">@g.Description</span>
+                </td>
+                <td class="text-end text-nowrap">
+                    <div class="btn-group btn-group-sm flex-nowrap" role="group">
+                        <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@g.Id"><i class="fas fa-eye me-1"></i>Detay</a>
+                        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@g.Id"><i class="fas fa-edit me-1"></i>Düzenle</a>
+                        @if (!g.Students.Any() && !g.Lessons.Any())
+                        {
+                            <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@g.Id"><i class="fas fa-trash me-1"></i>Sil</a>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+</div>

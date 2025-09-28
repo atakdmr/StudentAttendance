@@ -1,0 +1,290 @@
+@model Yoklama.Models.ViewModels.StudentListVm
+@{
+    ViewData["Title"] = "Öğrenci Yönetimi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Öğrenci Yönetimi</h2>
+                <a href="@Url.Action("CreateStudent", "Admin")" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    Yeni Öğrenci
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Filters & Search -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4 col-lg-3">
+                            <label for="groupFilter" class="form-label fw-semibold">
+                                <i class="fas fa-filter me-2 text-primary"></i>Grup Filtresi
+                            </label>
+                            <form method="get" id="groupForm">
+                                <select name="groupId" id="groupFilter" class="form-select" onchange="this.form.submit()">
+                                    <option value="">Tüm Gruplar</option>
+                                    @foreach (var group in Model.Groups)
+                                    {
+                                        if (Model.SelectedGroupId == group.Id)
+                                        {
+                                            <option value="@group.Id" selected>@group.Name (@group.Code)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@group.Id">@group.Name (@group.Code)</option>
+                                        }
+                                    }
+                                </select>
+                                <input type="hidden" name="search" value="@Model.Search" />
+                                <input type="hidden" name="page" value="1" />
+                            </form>
+                        </div>
+                        <div class="col-md-6 col-lg-5">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-search me-2 text-primary"></i>Arama
+                            </label>
+                            <form method="get" class="d-flex" role="search" id="searchForm">
+                                <input type="hidden" name="groupId" value="@Model.SelectedGroupId" />
+                                <input type="search" name="search" value="@Model.Search" 
+                                       class="form-control me-2" 
+                                       placeholder="İsim veya numara ara..." 
+                                       id="searchInput" />
+                                <button class="btn btn-primary" type="submit" id="searchBtn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-2 col-lg-4">
+                            <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                                <i class="fas fa-times me-2"></i>Temizle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-graduation-cap fa-2x mb-2"></i>
+                    <h3 class="mb-1">@Model.Students.Count</h3>
+                    <small>Toplam Öğrenci</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                    <h3 class="mb-1">@Model.Students.Count(s => s.IsActive)</h3>
+                    <small>Aktif Öğrenci</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-pause-circle fa-2x mb-2"></i>
+                    <h3 class="mb-1">@Model.Students.Count(s => !s.IsActive)</h3>
+                    <small>Pasif Öğrenci</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    @{ var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize); }
+                    @if (Model.Students.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="fw-semibold">
+                                            <i class="fas fa-id-card me-2"></i>Öğrenci No
+                                        </th>
+                                        <th class="fw-semibold">
+                                            <i class="fas fa-user me-2"></i>Ad Soyad
+                                        </th>
+                                        <th class="fw-semibold">
+                                            <i class="fas fa-layer-group me-2"></i>Grup
+                                        </th>
+                                        <th class="fw-semibold">
+                                            <i class="fas fa-toggle-on me-2"></i>Durum
+                                        </th>
+                                        <th class="text-center fw-semibold">
+                                            <i class="fas fa-cogs me-2"></i>İşlemler
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var student in Model.Students)
+                                    {
+                                        <tr class="@(!student.IsActive ? "table-secondary" : "")" style="height: 60px;">
+                                            <td class="py-3">
+                                                <span class="text-truncate-sm" data-tooltip="@student.StudentNumber">@student.StudentNumber</span>
+                                            </td>
+                                            <td class="py-3">
+                                                <span class="text-truncate-md" data-tooltip="@student.FullName">@student.FullName</span>
+                                            </td>
+                                            <td class="py-3">
+                                                @{
+                                                    var group = Model.Groups.FirstOrDefault(g => g.Id == student.GroupId);
+                                                    if (group != null)
+                                                    {
+                                                        <span class="badge bg-info">@group.Name</span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="py-3">
+                                                @if (student.IsActive)
+                                                {
+                                                    <span class="badge bg-success">Aktif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Pasif</span>
+                                                }
+                                            </td>
+                                            <td class="text-center py-3">
+                                                <div class="btn-group" role="group">
+                                                    <a href="@Url.Action("EditStudent", "Admin", new { id = student.StudentId })"
+                                                       class="btn btn-sm btn-outline-primary" title="Düzenle">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="@Url.Action("Student", "Reports", new { studentId = student.StudentId })"
+                                                       class="btn btn-sm btn-outline-info" title="Rapor">
+                                                        <i class="fas fa-chart-line"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                                            onclick="confirmDelete('@student.StudentId', '@student.FullName')" title="Sil">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (totalPages > 1)
+                        {
+                            <nav aria-label="Sayfalama">
+                                <ul class="pagination justify-content-end">
+                                    <li class="page-item @(Model.Page == 1 ? "disabled" : null)">
+                                        <a class="page-link" href="@Url.Action("Students", "Admin", new { groupId = Model.SelectedGroupId, search = Model.Search, page = Model.Page - 1, pageSize = Model.PageSize })">Önceki</a>
+                                    </li>
+                                    @for (int i = 1; i <= totalPages; i++)
+                                    {
+                                        <li class="page-item @(i == Model.Page ? "active" : null)">
+                                            <a class="page-link" href="@Url.Action("Students", "Admin", new { groupId = Model.SelectedGroupId, search = Model.Search, page = i, pageSize = Model.PageSize })">@i</a>
+                                        </li>
+                                    }
+                                    <li class="page-item @(Model.Page == totalPages ? "disabled" : null)">
+                                        <a class="page-link" href="@Url.Action("Students", "Admin", new { groupId = Model.SelectedGroupId, search = Model.Search, page = Model.Page + 1, pageSize = Model.PageSize })">Sonraki</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">
+                                @if (Model.SelectedGroupId.HasValue)
+                                {
+                                    <text>Bu grupta öğrenci bulunmuyor</text>
+                                }
+                                else
+                                {
+                                    <text>Henüz öğrenci bulunmuyor</text>
+                                }
+                            </h5>
+                            <p class="text-muted">İlk öğrenciyi oluşturmak için yukarıdaki "Yeni Öğrenci" butonunu kullanın.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal (Modern) -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header text-white" style="background: linear-gradient(90deg, #e03131, #ff8787);">
+                <h5 class="modal-title"><i class="fas fa-trash me-2"></i>Öğrenci Silinsin mi?</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <div class="d-flex align-items-start">
+                    <div class="me-3"><span class="badge bg-danger text-uppercase">Uyarı</span></div>
+                    <div class="flex-fill">“<strong id="deleteStudentName"></strong>” öğrencisini silmek üzeresiniz. Bu işlem geri alınamaz.</div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light-subtle">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form id="deleteForm" method="post" action="@Url.Action("DeleteStudent", "Admin")" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="deleteStudentId" />
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(studentId, studentName) {
+            document.getElementById('deleteStudentName').textContent = studentName;
+            document.getElementById('deleteStudentId').value = studentId;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        function clearFilters() {
+            document.getElementById('groupFilter').value = '';
+            document.getElementById('searchInput').value = '';
+            window.location.href = '@Url.Action("Students", "Admin")';
+        }
+
+        // Empty search validation
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput.value.trim() === '') {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.classList.add('is-invalid');
+                setTimeout(() => {
+                    searchInput.classList.remove('is-invalid');
+                }, 3000);
+                return false;
+            }
+        });
+
+        // Clear validation on input
+        document.getElementById('searchInput').addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+        });
+
+        // Auto-submit group filter
+        document.getElementById('groupFilter').addEventListener('change', function() {
+            document.getElementById('groupForm').submit();
+        });
+    </script>
+}

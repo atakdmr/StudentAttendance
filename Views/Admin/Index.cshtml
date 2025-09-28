@@ -1,0 +1,210 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2>Admin Dashboard</h2>
+            <p class="text-muted">Sistem yönetimi ve istatistikler</p>
+        </div>
+    </div>
+
+    <div class="row g-3 my-3">
+        <div class="col-12 col-lg-6 col-xl-3">
+            <div class="stat-card d-flex justify-content-between align-items-center">
+                <div>
+                    <div>
+                        <h3 class="stat-number">@ViewBag.Stats.TotalUsers</h3>
+                        <p class="stat-label mb-0">Toplam Kullanıcı</p>
+                    </div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-3">
+            <div class="stat-card d-flex justify-content-between align-items-center">
+                <div>
+                    <div>
+                        <h3 class="stat-number">@ViewBag.Stats.ActiveUsers</h3>
+                        <p class="stat-label mb-0">Aktif Kullanıcı</p>
+                    </div>
+
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-3">
+            <div class="stat-card d-flex justify-content-between align-items-center">
+                <div>
+                    <div>
+                        <h3 class="stat-number">@ViewBag.Stats.TotalStudents</h3>
+                        <p class="stat-label mb-0">Toplam Öğrenci</p>
+                    </div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-3">
+            <div class="stat-card d-flex justify-content-between align-items-center">
+                <div>
+                    <div>
+                        <h3 class="stat-number">@ViewBag.Stats.TotalGroups</h3>
+                        <p class="stat-label mb-0">Toplam Sınıflar</p>
+                    </div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Cards -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Hızlı İşlemler</h5>
+            </div>
+            <div class="card-body">
+                <div class="row action-row g-3 g-md-4">
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <a href="@Url.Action("Users", "Admin")" class="action-card-link">
+                            <div class="action-card h-100">
+                                <div class="action-card-icon text-primary"><i class="fas fa-users fa-2x"></i></div>
+                                <div class="action-card-title">Kullanıcı Yönetimi</div>
+                                <div class="action-card-text">Kullanıcıları ekle, düzenle, sil</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <a href="@Url.Action("Students", "Admin")" class="action-card-link">
+                            <div class="action-card h-100">
+                                <div class="action-card-icon text-success"><i class="fas fa-graduation-cap fa-2x"></i>
+                                </div>
+                                <div class="action-card-title">Öğrenci Yönetimi</div>
+                                <div class="action-card-text">Öğrencileri yönet</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <a href="@Url.Action("Index", "Groups")" class="action-card-link">
+                            <div class="action-card h-100">
+                                <div class="action-card-icon text-info"><i class="fas fa-layer-group fa-2x"></i>
+                                </div>
+                                <div class="action-card-title">Grup Yönetimi</div>
+                                <div class="action-card-text">Grupları ve dersleri yönet</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Info -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Sistem Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6 col-md-3">
+                        <div class="p-3">
+                            <h4 class="text-primary mb-1">@ViewBag.Stats.ActiveStudents</h4>
+                            <small class="text-muted">Aktif Öğrenci</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3">
+                            <h4 class="text-success mb-1">@ViewBag.Stats.TotalLessons</h4>
+                            <small class="text-muted">Toplam Ders</small>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
+                        <div class="text-center">
+                            <span class="badge bg-success fs-6 px-3 py-2">
+                                <i class="fas fa-circle me-1"></i>
+                                Sistem Çalışıyor
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+@section Styles {
+    <style>
+        .stat-card {
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
+            height: 120px;
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.3;
+        }
+
+        .stat-number {
+            font-weight: 700;
+        }
+
+        .stat-label {
+            color: #6c757d;
+        }
+
+        .action-card-link {
+            text-decoration: none;
+        }
+
+        .action-card {
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+        }
+
+        .action-card-icon {
+            margin-bottom: 1rem;
+        }
+
+        .action-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #343a40;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-card-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+    </style>
+}

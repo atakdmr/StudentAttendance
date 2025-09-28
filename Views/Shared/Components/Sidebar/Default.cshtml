@@ -1,0 +1,65 @@
+@model Yoklama.Models.ViewModels.SidebarVm
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="nav-section">
+        <div class="nav-section-title">Gruplar ve Dersler</div>
+        @foreach (var group in Model.Groups)
+        {
+            <div class="nav-item">
+                <a href="@Url.Action("Details", "Groups", new { id = group.GroupId })" class="nav-link group-link">
+                    <div class="icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="text">@group.Name</div>
+                </a>
+            </div>
+
+            @if (group.Lessons != null && group.Lessons.Count > 0)
+            {
+                <div class="nav-subitems">
+                    @foreach (var lesson in group.Lessons)
+                    {
+                        <div class="nav-item">
+                            <a href="@Url.Action("Details", "Groups", new { id = group.GroupId })" class="nav-link lesson-link">
+                                <div class="icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                                <div class="text">@lesson.Title <span class="lesson-time">(@lesson.StartTime.ToString(@"hh\:mm"))</span></div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+}
+else
+{
+    <div class="nav-section">
+        <div class="nav-section-title">Derslerim</div>
+        @foreach (var group in Model.Groups)
+        {
+            @if (group.Lessons != null && group.Lessons.Count > 0)
+            {
+                <div class="nav-subitems">
+                    @foreach (var lesson in group.Lessons)
+                    {
+                        <div class="nav-item">
+                            <a href="@Url.Action("OpenSession", "Lessons", new { lessonId = lesson.LessonId })" class="nav-link lesson-link">
+                                <div class="icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                                <div class="text">@lesson.Title <span class="lesson-time">(@lesson.StartTime.ToString(@"hh\:mm"))</span></div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+}
+
+<div class="nav-section">
+    <div class="nav-section-title">Yoklama</div>
+    <div class="nav-item">
+        <a href="@Url.Action("Index", "Attendance")" class="nav-link">
+            <div class="icon"><i class="fas fa-clipboard-list"></i></div>
+            <div class="text">Yoklamalarım</div>
+        </a>
+    </div>
+</div>

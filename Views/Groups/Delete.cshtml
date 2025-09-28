@@ -1,0 +1,23 @@
+@model Yoklama.Models.Entities.Group
+@{
+    ViewData["Title"] = "Grup Sil";
+}
+
+<div class="container-fluid">
+    <h2>Grup Sil</h2>
+    <p>Bu grubu silmek istediğinizden emin misiniz?</p>
+    <dl class="row">
+        <dt class="col-sm-2">Kod</dt>
+        <dd class="col-sm-10">@Model.Code</dd>
+        <dt class="col-sm-2">Ad</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+        <dt class="col-sm-2">Açıklama</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+    </dl>
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Sil</button>
+        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+    </form>
+</div>

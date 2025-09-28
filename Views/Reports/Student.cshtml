@@ -1,0 +1,337 @@
+@model Yoklama.Models.ViewModels.StudentReportVm
+@{
+    ViewData["Title"] = $"{Model.Student.FullName} - Devam Raporu";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Öğrenci Devam Raporu</h2>
+                <div class="btn-group">
+                    <a href="@Url.Action("ExportStudentCsv", "Reports", new { studentId = Model.Student.Id, from = Model.FromDate, to = Model.ToDate })" 
+                       class="btn btn-success">
+                        <i class="fas fa-download me-1"></i>
+                        CSV İndir
+                    </a>
+                    <button onclick="window.print()" class="btn btn-secondary">
+                        <i class="fas fa-print me-1"></i>
+                        Yazdır
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Info Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="card-title">@Model.Student.FullName</h5>
+                            <p class="card-text">
+                                <strong>Öğrenci No:</strong> @Model.Student.StudentNumber<br>
+                                <strong>Grup:</strong> @(Model.Student.Group != null ? $"{Model.Student.Group.Name} ({Model.Student.Group.Code})" : "Grup bilgisi yok")<br>
+                                <strong>Rapor Dönemi:</strong> @Model.FromDate?.ToString("dd.MM.yyyy") - @Model.ToDate?.ToString("dd.MM.yyyy")
+                            </p>
+                        </div>
+                        <div class="col-md-6 mt-sm-3">
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <h4 class="text-success">@Model.Summary.PresentCount</h4>
+                                    <small class="text-muted">Mevcut</small>
+                                </div>
+                                <div class="col-3">
+                                    <h4 class="text-danger">@Model.Summary.AbsentCount</h4>
+                                    <small class="text-muted">Yok</small>
+                                </div>
+                                <div class="col-3">
+                                    <h4 class="text-warning">@Model.Summary.LateCount</h4>
+                                    <small class="text-muted">Geç</small>
+                                </div>
+                                <div class="col-3">
+                                    <h4 class="text-info">@Model.Summary.ExcusedCount</h4>
+                                    <small class="text-muted">Mazur</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-12 col-lg-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3>@Model.Summary.TotalSessions</h3>
+                    <p class="mb-0">Toplam Ders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-4">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3>%@Model.Summary.AttendanceRate.ToString("F1")</h3>
+                    <p class="mb-0">Devam Oranı</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-4">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h3>@Model.AttendanceRecords.Count(r => r.LateMinutes.HasValue && r.LateMinutes > 0)</h3>
+                    <p class="mb-0">Geç Kalma</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Filter -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <input type="hidden" name="studentId" value="@Model.Student.Id" />
+                        <div class="col-md-4">
+                            <label for="from" class="form-label">Başlangıç Tarihi</label>
+                            <input type="date" class="form-control" id="from" name="from" 
+                                   value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="to" class="form-label">Bitiş Tarihi</label>
+                            <input type="date" class="form-control" id="to" name="to" 
+                                   value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-filter me-1"></i>
+                                    Filtrele
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Records -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Devam Kayıtları</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.AttendanceRecords.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Tarih</th>
+                                        <th>Ders</th>
+                                        <th>Durum</th>
+                                        <th class="text-center">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var record in Model.AttendanceRecords)
+                                    {
+                                        <tr>
+                                            <td>@record.ScheduledAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                            <td><span class="text-truncate d-inline-block" style="max-width: 200px;" title="@record.LessonTitle">@record.LessonTitle</span></td>
+                                            <td>
+                                                @switch (record.Status)
+                                                {
+                                                    case Yoklama.Models.Entities.AttendanceStatus.Present:
+                                                        <span class="badge bg-success">Mevcut</span>
+                                                        break;
+                                                    case Yoklama.Models.Entities.AttendanceStatus.Absent:
+                                                        <span class="badge bg-danger">Yok</span>
+                                                        break;
+                                                    case Yoklama.Models.Entities.AttendanceStatus.Late:
+                                                        <span class="badge bg-warning">Geç</span>
+                                                        break;
+                                                    case Yoklama.Models.Entities.AttendanceStatus.Excused:
+                                                        <span class="badge bg-info">Mazur</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn btn-sm btn-outline-info" 
+                                                        onclick="showLessonDetails('@record.LessonTitle', '@record.ScheduledAt.ToString("dd.MM.yyyy HH:mm")', '@record.Status')"
+                                                        title="Ders Detayı">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Bu dönemde devam kaydı bulunmuyor</h5>
+                            <p class="text-muted">Seçilen tarih aralığında herhangi bir ders kaydı bulunamadı.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lesson Details Modal -->
+<div class="modal fade" id="lessonDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header text-white" style="background: linear-gradient(90deg, #0d6efd, #6ea8fe);">
+                <h5 class="modal-title">
+                    <i class="fas fa-info-circle me-2"></i>Ders Detayları
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title text-primary">
+                                    <i class="fas fa-book me-2"></i>Ders Bilgileri
+                                </h6>
+                                <p class="mb-2"><strong>Ders Adı:</strong> <span id="modalLessonTitle">-</span></p>
+                                <p class="mb-2"><strong>Tarih:</strong> <span id="modalLessonDate">-</span></p>
+                                <p class="mb-0"><strong>Durum:</strong> <span id="modalLessonStatus">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title text-success">
+                                    <i class="fas fa-user-graduate me-2"></i>Öğrenci Bilgileri
+                                </h6>
+                                <p class="mb-2"><strong>Ad Soyad:</strong> @Model.Student.FullName</p>
+                                <p class="mb-2"><strong>Öğrenci No:</strong> @Model.Student.StudentNumber</p>
+                                <p class="mb-0"><strong>Grup:</strong> @(Model.Student.Group?.Name ?? "Grup bilgisi yok")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title text-info">
+                                    <i class="fas fa-chart-bar me-2"></i>Devam Durumu Detayı
+                                </h6>
+                                <div id="modalAttendanceDetails">
+                                    <!-- Bu alan JavaScript ile doldurulacak -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light-subtle">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        @@media print {
+            .btn-group, .card:first-child .card-body form {
+                display: none !important;
+            }
+            
+            .container-fluid {
+                max-width: none !important;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function showLessonDetails(lessonTitle, lessonDate, attendanceStatus) {
+            // Modal içeriğini doldur
+            document.getElementById('modalLessonTitle').textContent = lessonTitle;
+            document.getElementById('modalLessonDate').textContent = lessonDate;
+            
+            // Durum badge'ini oluştur
+            let statusBadge = '';
+            switch(attendanceStatus) {
+                case 'Present':
+                    statusBadge = '<span class="badge bg-success">Mevcut</span>';
+                    break;
+                case 'Absent':
+                    statusBadge = '<span class="badge bg-danger">Yok</span>';
+                    break;
+                case 'Late':
+                    statusBadge = '<span class="badge bg-warning">Geç</span>';
+                    break;
+                case 'Excused':
+                    statusBadge = '<span class="badge bg-info">Mazur</span>';
+                    break;
+                default:
+                    statusBadge = '<span class="badge bg-secondary">Bilinmiyor</span>';
+            }
+            document.getElementById('modalLessonStatus').innerHTML = statusBadge;
+            
+            // Devam durumu detaylarını oluştur
+            let attendanceDetails = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-calendar-alt text-primary me-2"></i>
+                            <span><strong>Ders Tarihi:</strong> ${lessonDate}</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-book text-info me-2"></i>
+                            <span><strong>Ders Adı:</strong> ${lessonTitle}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-user-check text-success me-2"></i>
+                            <span><strong>Devam Durumu:</strong> ${statusBadge}</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-clock text-warning me-2"></i>
+                            <span><strong>Kayıt Zamanı:</strong> ${lessonDate}</span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Bilgi:</strong> Bu ders için öğrencinin devam durumu yukarıda gösterilmektedir. 
+                    Detaylı bilgi için sistem yöneticisi ile iletişime geçebilirsiniz.
+                </div>
+            `;
+            
+            document.getElementById('modalAttendanceDetails').innerHTML = attendanceDetails;
+            
+            // Modal'ı göster
+            new bootstrap.Modal(document.getElementById('lessonDetailsModal')).show();
+        }
+    </script>
+}

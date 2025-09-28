@@ -1,0 +1,134 @@
+@model Yoklama.Models.ViewModels.CreateEditVm
+@{
+    ViewData["Title"] = "Yeni Ders Ekle";
+}
+
+<div class="container-fluid">
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <strong>Hata:</strong> Lütfen aşağıdaki hataları düzeltin.
+                            <ul>
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <form asp-action="CreateLesson" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Ders Başlığı</label>
+                            <input asp-for="Title" class="form-control" required maxlength="100" placeholder="Maksimum 100 karakter" />
+                            <div class="form-text">Maksimum 100 karakter girebilirsiniz</div>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        @if (ViewBag.Groups == null || ((System.Collections.ICollection)ViewBag.Groups).Count == 0)
+                        {
+                            <div class="alert alert-warning">
+                                <strong>Uyarı:</strong> Grup bulunamadı. Önce <a asp-controller="Groups" asp-action="Index">grup oluşturun</a>.
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="GroupId" class="form-label">Grup</label>
+                                <select asp-for="GroupId" class="form-select" disabled>
+                                    <option value="">Grup Seçin</option>
+                                </select>
+                            </div>
+                        }
+                        else
+                        {
+                        <div class="mb-3">
+                            <label asp-for="GroupId" class="form-label">Grup</label>
+                            <select asp-for="GroupId" class="form-select">
+                                <option value="">Grup Seçin</option>
+                                @foreach (var g in ViewBag.Groups)
+                                {
+                                    <option value="@g.Id">@g.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="GroupId" class="text-danger"></span>
+                        </div>
+
+                        @if (ViewBag.Teachers != null)
+                        {
+                            <div class="mb-3">
+                                <label asp-for="TeacherId" class="form-label">Öğretmen</label>
+                                <select asp-for="TeacherId" class="form-select">
+                                    <option value="">Öğretmen Seçin</option>
+                                    @foreach (var t in ViewBag.Teachers)
+                                    {
+                                        <option value="@t.Id">@t.FullName</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="TeacherId" class="text-danger"></span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">Öğretmen</label>
+                                <input type="text" class="form-control" value="@ViewBag.Teachers?[0]?.FullName" readonly />
+                                <input type="hidden" asp-for="TeacherId" />
+                            </div>
+                        }
+                        }
+
+                        <div class="mb-3">
+                            <label asp-for="DayOfWeek" class="form-label">Gün</label>
+                            <select asp-for="DayOfWeek" class="form-select" required>
+                                <option value="1">Pazartesi</option>
+                                <option value="2">Salı</option>
+                                <option value="3">Çarşamba</option>
+                                <option value="4">Perşembe</option>
+                                <option value="5">Cuma</option>
+                                <option value="6">Cumartesi</option>
+                                <option value="7">Pazar</option>
+                            </select>
+                            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StartTime" class="form-label">Başlangıç Saati</label>
+                                <input asp-for="StartTime" type="time" class="form-control" required />
+                                <span asp-validation-for="StartTime" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EndTime" class="form-label">Bitiş Saati</label>
+                                <input asp-for="EndTime" type="time" class="form-control" required />
+                                <span asp-validation-for="EndTime" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input asp-for="IsActive" class="form-check-input" />
+                            <label asp-for="IsActive" class="form-check-label">Aktif</label>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Kaydet
+                            </button>
+                            <a asp-action="Index" asp-controller="Lessons" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

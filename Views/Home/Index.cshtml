@@ -1,0 +1,428 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+@if (User.Identity!.IsAuthenticated)
+{
+    <div class="container-fluid">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="text-center">Yoklama Sistemi</h1>
+                <p class="text-center text-muted">Eğitim süreçlerinizi yönetin ve öğrenci devamını takip edin</p>
+            </div>
+        </div>
+
+        @if (ViewBag.IsAdmin == true)
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h3>Sistem İstatistikleri</h3>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                            <h4>@ViewBag.Stats.GroupCount</h4>
+                            <p class="card-text">Grup</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-user-graduate fa-2x text-success mb-2"></i>
+                            <h4>@ViewBag.Stats.StudentCount</h4>
+                            <p class="card-text">Öğrenci</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-book fa-2x text-warning mb-2"></i>
+                            <h4>@ViewBag.Stats.LessonCount</h4>
+                            <p class="card-text">Ders</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-user-shield fa-2x text-info mb-2"></i>
+                            <h4>@ViewBag.Stats.UserCount</h4>
+                            <p class="card-text">Kullanıcı</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h4>Hızlı İşlemler</h4>
+                </div>
+            </div>
+            <div class="row mb-4 g-3">
+                <div class="col-12 col-md-4 mb-3">
+                    <a asp-controller="Schedule" asp-action="Index" class="btn btn-primary btn-lg w-100 py-3 py-md-2">
+                        <i class="fas fa-plus me-2 fs-5"></i>
+                        <span class="fs-5 fs-md-6">Yeni Yoklama Başlat</span>
+                    </a>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <a asp-controller="Admin" asp-action="Students" class="btn btn-success btn-lg w-100 py-3 py-md-2">
+                        <i class="fas fa-user-plus me-2 fs-5"></i>
+                        <span class="fs-5 fs-md-6">Öğrenci Ekle</span>
+                    </a>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <a asp-controller="Reports" asp-action="Index" class="btn btn-info btn-lg w-100 py-3 py-md-2">
+                        <i class="fas fa-chart-bar me-2 fs-5"></i>
+                        <span class="fs-5 fs-md-6">Rapor Al</span>
+                    </a>
+                </div>
+            </div>
+        }
+        else if (ViewBag.IsTeacher == true)
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h3>Öğretmen Paneli</h3>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-chalkboard-teacher fa-2x text-primary mb-2"></i>
+                            <h4>@ViewBag.LessonCount</h4>
+                            <p class="card-text">Aktif Ders</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-clipboard-list fa-2x text-success mb-2"></i>
+                            <h4>@ViewBag.SessionCount</h4>
+                            <p class="card-text">Yoklama Oturumu</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h4>Hızlı İşlemler</h4>
+                </div>
+            </div>
+            <div class="row mb-4 g-3">
+                <div class="col-12 col-md-4 mb-3">
+                    <a asp-controller="Schedule" asp-action="Index" class="btn btn-primary btn-lg w-100 py-3 py-md-2">
+                        <i class="fas fa-calendar-alt me-2 fs-5"></i>
+                        <span class="fs-5 fs-md-6">Ders Programı</span>
+                    </a>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <a asp-controller="Attendance" asp-action="Index" class="btn btn-success btn-lg w-100 py-3 py-md-2">
+                        <i class="fas fa-clipboard-check me-2 fs-5"></i>
+                        <span class="fs-5 fs-md-6">Yoklama Al</span>
+                    </a>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <a asp-controller="Reports" asp-action="Index" class="btn btn-info btn-lg w-100 py-3 py-md-2">
+                        <i class="fas fa-chart-bar me-2 fs-5"></i>
+                        <span class="fs-5 fs-md-6">Rapor Al</span>
+                    </a>
+                </div>
+            </div>
+        }
+
+        @if (ViewBag.SessionsToday != null && ViewBag.SessionsToday.Count > 0)
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-calendar-day text-primary fs-3"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="mb-1">Bugünün Dersleri</h4>
+                            <p class="text-muted mb-0">Hızlı yoklama için derslerinize tıklayın</p>
+                        </div>
+                        <div class="text-end d-none d-md-block">
+                            <span class="text-warning fw-semibold me-3">
+                                <i class="fas fa-clock me-1"></i>Beklemede
+                            </span>
+                            <span class="text-success fw-semibold me-3">
+                                <i class="fas fa-check me-1"></i>Kapatıldı
+                            </span>
+                            <span class="text-info fw-semibold">
+                                <i class="fas fa-eye me-1"></i>Tamamlandı
+                            </span>
+                        </div>
+                        <div class="d-block d-md-none mt-2">
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="text-warning fw-semibold small">
+                                    <i class="fas fa-clock me-1"></i>Beklemede
+                                </span>
+                                <span class="text-success fw-semibold small">
+                                    <i class="fas fa-check me-1"></i>Kapatıldı
+                                </span>
+                                <span class="text-info fw-semibold small">
+                                    <i class="fas fa-eye me-1"></i>Tamamlandı
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3">
+                @foreach (dynamic session in ViewBag.SessionsToday)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm h-100 @(session.Status == Yoklama.Models.Entities.SessionStatus.Open ? "gradient-border-warning" : session.Status == Yoklama.Models.Entities.SessionStatus.Closed ? "gradient-border-success" : "gradient-border-info")">
+                            <div class="card-body d-flex flex-column p-4">
+                                <!-- Header -->
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="flex-grow-1">
+                                        <h6 class="card-title mb-1 fw-bold text-dark text-truncate" style="max-width: 200px;" title="@session.Lesson.Title">@session.Lesson.Title</h6>
+                                        <small class="text-muted text-truncate d-block" style="max-width: 150px;" title="@session.Group.Name">@session.Group.Name</small>
+                                    </div>
+                                    @if (session.Status == Yoklama.Models.Entities.SessionStatus.Open)
+                                    {
+                                        <span class="text-warning fw-semibold d-flex align-items-center">
+                                            <i class="fas fa-clock me-2"></i>Beklemede
+                                        </span>
+                                    }
+                                    else if (session.Status == Yoklama.Models.Entities.SessionStatus.Closed)
+                                    {
+                                        <span class="text-success fw-semibold d-flex align-items-center">
+                                            <i class="fas fa-check me-2"></i>Kapatıldı
+                                        </span>
+                                    }
+                                    else if (session.Status == Yoklama.Models.Entities.SessionStatus.Finalized)
+                                    {
+                                        <span class="text-info fw-semibold d-flex align-items-center">
+                                            <i class="fas fa-eye me-2"></i>Tamamlandı
+                                        </span>
+                                    }
+                                </div>
+
+                                <!-- Details -->
+                                <div class="mb-3">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-light rounded-circle p-2 me-2">
+                                                    <i class="fas fa-users text-primary fs-3"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-semibold small">Grup</div>
+                                                    <div class="text-muted small text-truncate" style="max-width: 120px;" title="@session.Group.Name">@session.Group.Name</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-light rounded-circle p-2 me-2">
+                                                    <i class="fas fa-clock text-warning fs-3"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold small">Saat</div>
+                                                    <div class="text-muted small">@session.ScheduledAt.ToString("HH:mm")</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Button -->
+                                <div class="mt-auto">
+                                    @if (session.Status == Yoklama.Models.Entities.SessionStatus.Open)
+                                    {
+                                        @if (User.IsInRole("Teacher"))
+                                        {
+                                            <form method="post" action="@Url.Action("OpenSession", "Lessons")" class="d-inline w-100">
+                                                <input type="hidden" name="lessonId" value="@session.Lesson.Id" />
+                                                <button type="submit" class="btn btn-warning btn-lg w-100 fw-semibold py-2">
+                                                    <i class="fas fa-play me-2 fs-5"></i>
+                                                    <span class="fs-5">Yoklama Başlat</span>
+                                                </button>
+                                            </form>
+                                        }
+                                    }
+                                    else if (session.Status == Yoklama.Models.Entities.SessionStatus.Closed)
+                                    {
+                                        <a href="@Url.Action("Session", "Attendance", new { id = session.Id })"
+                                            class="btn btn-success btn-lg w-100 fw-semibold py-2">
+                                            <i class="fas fa-clipboard-check me-2 fs-5"></i>
+                                            <span class="fs-5">Yoklama Al</span>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Session", "Attendance", new { id = session.Id })"
+                                            class="btn btn-info btn-lg w-100 fw-semibold py-2">
+                                            <i class="fas fa-eye me-2 fs-5"></i>
+                                            <span class="fs-5">Sonuçları Gör</span>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Bugün için ders bulunmuyor.</strong> Ders programınızı kontrol etmek için 
+                        <a asp-controller="Schedule" asp-action="Index" class="alert-link">Ders Programı</a> sayfasını ziyaret edin.
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Duyurular</h5>
+                        <p>Yoklama sistemi aktif. Derslerinizi düzenli olarak takip edin ve öğrenci devamını zamanında
+                            kaydedin.</p>
+                        <small class="text-muted">Son güncelleme: @DateTime.Now.ToString("dd.MM.yyyy")</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Dershane Yoklama Sistemi</p>
+        </div>
+    </footer>
+}
+else
+{
+    <div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
+        <div class="row w-100">
+            <div class="col-lg-6 mx-auto text-center">
+
+                <!-- Başlık -->
+                <h1 class="display-4 fw-bold mb-3 text-primary">📋 Yoklama Sistemi</h1>
+
+                <!-- Alt başlık -->
+                <p class="lead text-muted mb-4">
+                    Eğitimde modern takip çözümleriyle öğrencilerinizin devamını kolayca yönetin.
+                </p>
+
+                <!-- Özellikler -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body">
+                                <i class="fas fa-user-check fa-2x text-success mb-3"></i>
+                                <h5 class="card-title">Kolay Yoklama</h5>
+                                <p class="text-muted small">Öğrenci devam durumlarını saniyeler içinde kaydedin.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body">
+                                <i class="fas fa-chart-line fa-2x text-info mb-3"></i>
+                                <h5 class="card-title">Raporlama</h5>
+                                <p class="text-muted small">Anlık raporlar ile yönetim sürecinizi güçlendirin.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body">
+                                <i class="fas fa-cogs fa-2x text-warning mb-3"></i>
+                                <h5 class="card-title">Kolay Yönetim</h5>
+                                <p class="text-muted small">Tüm işlemleri basit ve hızlı bir şekilde gerçekleştirin.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Butonu -->
+                <a href="@Url.Action("Login", "Account")" class="btn btn-primary btn-lg px-5 shadow">
+                    <i class="fas fa-sign-in-alt me-2"></i> Giriş Yap
+                </a>
+
+            </div>
+        </div>
+    </div>
+}
+
+@section Styles {
+    <style>
+        .gradient-border-warning {
+            position: relative;
+            background: white;
+        }
+        .gradient-border-warning::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(45deg, #ffc107, #ff8c00, #fd7e14);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+        }
+
+        .gradient-border-success {
+            position: relative;
+            background: white;
+        }
+        .gradient-border-success::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(45deg, #28a745, #20c997, #17a2b8);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+        }
+
+        .gradient-border-info {
+            position: relative;
+            background: white;
+        }
+        .gradient-border-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(45deg, #17a2b8, #6f42c1, #e83e8c);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+        }
+    </style>
+}

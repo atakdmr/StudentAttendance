@@ -1,0 +1,188 @@
+@model Yoklama.Models.ViewModels.UserListVm
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Kullanıcı Yönetimi</h2>
+                <a href="@Url.Action("CreateUser", "Admin")" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    Yeni Kullanıcı
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    @if (Model.Users.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Kullanıcı Adı</th>
+                                        <th>Ad Soyad</th>
+                                        <th>Rol</th>
+                                        <th>Durum</th>
+                                        <th class="text-center">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.Users)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="text-truncate-md" data-tooltip="@user.UserName">@user.UserName</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-truncate-md" data-tooltip="@user.FullName">@user.FullName</span>
+                                            </td>
+                                            <td>
+                                                @if (user.Role == Yoklama.Models.Entities.UserRole.Admin)
+                                                {
+                                                    <span class="badge bg-danger">Admin</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-info">Öğretmen</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (user.IsActive)
+                                                {
+                                                    <span class="badge bg-success">Aktif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Pasif</span>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a href="@Url.Action("EditUser", "Admin", new { id = user.Id })"
+                                                        class="btn btn-sm btn-outline-primary" title="Düzenle">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    @{
+                                                        bool canShowDelete = true;
+                                                        if (user.Role == Yoklama.Models.Entities.UserRole.Admin)
+                                                        {
+                                                            canShowDelete = Model.AdminCount >= 2;
+                                                        }
+                                                    }
+                                                    @if (canShowDelete)
+                                                    {
+                                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                            onclick="confirmDelete('@user.Id', '@user.FullName', '@user.Role')"
+                                                            title="Sil">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Henüz kullanıcı bulunmuyor</h5>
+                            <p class="text-muted">İlk kullanıcıyı oluşturmak için yukarıdaki "Yeni Kullanıcı" butonunu
+                                kullanın.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal (Modern) -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header text-white" style="background: linear-gradient(90deg, #e03131, #ff8787);">
+                <h5 class="modal-title"><i class="fas fa-trash me-2"></i>Kullanıcı Silinsin mi?</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <div class="d-flex align-items-start">
+                    <div class="me-3"><span class="badge bg-danger text-uppercase">Uyarı</span></div>
+                    <div class="flex-fill">“<strong id="deleteUserName"></strong>” kullanıcısını silmek üzeresiniz. Bu
+                        işlem geri alınamaz.</div>
+                </div>
+                <div id="reassignContainer" class="mb-2" style="display:none;">
+                    <label class="form-label mt-3">Dersleri devredilecek öğretmen</label>
+                    <select class="form-select" id="reassignTo" name="reassignTo">
+                        <option value="">Seçiniz</option>
+                        @foreach (var t in Model.Users.Where(u => u.Role == Yoklama.Models.Entities.UserRole.Teacher &&
+                                                u.IsActive || u.Role == Yoklama.Models.Entities.UserRole.Admin))
+                        {
+                            <option value="@t.Id">@t.FullName (@t.UserName)</option>
+                        }
+                    </select>
+                    <small class="text-muted">Silinecek kullanıcı öğretmense, derslerini devredeceğiniz öğretmeni
+                        seçin.</small>
+                </div>
+            </div>
+            <div class="modal-footer bg-light-subtle">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form id="deleteForm" method="post" style="display: inline;" onsubmit="return beforeDeleteSubmit();">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="hiddenReassign" name="reassignTo" value="" />
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(userId, userName, userRole) {
+            document.getElementById('deleteUserName').textContent = userName;
+            document.getElementById('deleteForm').action = '@Url.Action("DeleteUser", "Admin")/' + userId;
+            // Show reassignment dropdown only when deleting a teacher
+            var reassign = document.getElementById('reassignContainer');
+            if (userRole === 'Teacher' || userRole == "Admin") {
+                reassign.style.display = 'block';
+                // Exclude the teacher being deleted from the dropdown
+                var sel = document.getElementById('reassignTo');
+                for (var i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].value === userId) {
+                        sel.options[i].disabled = true;
+                        if (sel.value === userId) sel.value = '';
+                    }
+                }
+            } else {
+                reassign.style.display = 'none';
+                document.getElementById('hiddenReassign').value = '';
+            }
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        function beforeDeleteSubmit() {
+            var container = document.getElementById('reassignContainer');
+            var hidden = document.getElementById('hiddenReassign');
+            if (container.style.display !== 'none') {
+                hidden.value = document.getElementById('reassignTo').value || '';
+            } else {
+                hidden.value = '';
+            }
+            return true;
+        }
+    </script>
+}

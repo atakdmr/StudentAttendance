@@ -1,0 +1,229 @@
+@model IEnumerable<Yoklama.Models.Entities.AttendanceSession>
+@{
+    ViewData["Title"] = "Yoklama Oturumları";
+    var groups = ViewBag.Groups as List<Yoklama.Models.Entities.Group>;
+    var selectedGroupId = ViewBag.SelectedGroupId as Guid?;
+    var isAdmin = ViewBag.IsAdmin as bool? ?? false;
+}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Yoklama Oturumları</h2>
+            <p class="text-muted mb-0">Açık yoklama oturumlarınızı yönetin ve öğrenci devamını takip edin</p>
+        </div>
+        <div>
+            <a asp-controller="Schedule" asp-action="Index" class="btn btn-outline-primary">
+                <i class="fas fa-calendar-alt me-1"></i>Ders Programı
+            </a>
+        </div>
+    </div>
+
+    @if (isAdmin && groups?.Any() == true)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4 col-lg-3">
+                                <label for="groupFilter" class="form-label fw-semibold">
+                                    <i class="fas fa-filter me-2 text-primary"></i>Grup Filtresi
+                                </label>
+                                <form method="get" id="groupForm">
+                                    <select name="groupId" id="groupFilter" class="form-select" onchange="this.form.submit()">
+                                        <option value="">Tüm Gruplar</option>
+                                        @foreach (var group in groups)
+                                        {
+                                            if (selectedGroupId == group.Id)
+                                            {
+                                                <option value="@group.Id" selected>@group.Name (@group.Code)</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@group.Id">@group.Name (@group.Code)</option>
+                                            }
+                                        }
+                                    </select>
+                                </form>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-outline-secondary w-100" onclick="clearGroupFilter()">
+                                    <i class="fas fa-times me-2"></i>Temizle
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @if (!Model.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted mb-3">Henüz Yoklama Oturumu Yok</h4>
+                        <p class="text-muted mb-4">
+                            Açık yoklama oturumunuz bulunmuyor. Yeni yoklama başlatmak için ders programınızı kontrol edin.
+                        </p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a asp-controller="Schedule" asp-action="Index" class="btn btn-primary">
+                                <i class="fas fa-calendar-alt me-1"></i>Ders Programına Git
+                            </a>
+                            <a asp-controller="Lessons" asp-action="Index" class="btn btn-outline-primary">
+                                <i class="fas fa-book me-1"></i>Derslerim
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 py-3 px-4">
+                                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Tarih & Saat
+                                        </th>
+                                        <th class="border-0 py-3 px-4">
+                                            <i class="fas fa-book me-2 text-primary"></i>Ders
+                                        </th>
+                                        <th class="border-0 py-3 px-4">
+                                            <i class="fas fa-users me-2 text-primary"></i>Grup
+                                        </th>
+                                        <th class="border-0 py-3 px-4">
+                                            <i class="fas fa-info-circle me-2 text-primary"></i>Durum
+                                        </th>
+                                        <th class="border-0 py-3 px-4 text-end">
+                                            <i class="fas fa-cogs me-2 text-primary"></i>İşlemler
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var s in Model)
+                                    {
+                                        <tr class="border-bottom">
+                                            <td class="py-3 px-4">
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-semibold">@s.ScheduledAt.ToString("dd.MM.yyyy")</span>
+                                                    <span class="text-muted small">@s.ScheduledAt.ToString("HH:mm")</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-book text-primary"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-semibold text-truncate" style="max-width: 200px;" title="@(s.Lesson?.Title ?? "N/A")">@(s.Lesson?.Title ?? "N/A")</div>
+                                                        @if (s.Teacher != null)
+                                                        {
+                                                            <small class="text-muted">@s.Teacher.FullName</small>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-users text-success"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-semibold text-truncate" style="max-width: 150px;" title="@(s.Group?.Name ?? "N/A")">@(s.Group?.Name ?? "N/A")</div>
+                                                        @if (s.Group != null)
+                                                        {
+                                                            <small class="text-muted">@s.Group.Code</small>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                @if (s.Status == SessionStatus.Open)
+                                                {
+                                                    <span class="badge bg-warning bg-opacity-20 text-white border border-warning">
+                                                        <i class="fas fa-clock me-1"></i>Beklemede
+                                                    </span>
+                                                }
+                                                else if (s.Status == SessionStatus.Closed)
+                                                {
+                                                    <span class="badge bg-primary bg-opacity-20 text-white border border-primary">
+                                                        <i class="fas fa-play me-1"></i>Açık
+                                                    </span>
+                                                }
+                                                else if (s.Status == SessionStatus.Finalized)
+                                                {
+                                                    <span class="badge bg-success bg-opacity-20 text-white border border-success">
+                                                        <i class="fas fa-check me-1"></i>Tamamlandı
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="py-3 px-4 text-end">
+                                                @if (isAdmin)
+                                                {
+                                                    <a class="btn btn-outline-secondary btn-sm" asp-action="Session" asp-route-sessionId="@s.Id">
+                                                        <i class="fas fa-eye me-1"></i>Gözlemle
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    @if (s.Status == SessionStatus.Open)
+                                                    {
+                                                        <a class="btn btn-warning btn-sm" asp-action="Session" asp-route-sessionId="@s.Id">
+                                                            <i class="fas fa-play me-1"></i>Başlat
+                                                        </a>
+                                                    }
+                                                    else if (s.Status == SessionStatus.Closed)
+                                                    {
+                                                        <a class="btn btn-primary btn-sm" asp-action="Session" asp-route-sessionId="@s.Id">
+                                                            <i class="fas fa-clipboard-check me-1"></i>Yoklama Al
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="btn btn-success btn-sm" asp-action="Session" asp-route-sessionId="@s.Id">
+                                                            <i class="fas fa-eye me-1"></i>Sonuçları Gör
+                                                        </a>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@functions {
+    string GetStatusName(SessionStatus status)
+    {
+        return status switch
+        {
+            SessionStatus.Open => "Açık",
+            SessionStatus.Closed => "Kapalı",
+            SessionStatus.Finalized => "Sonlandırılmış",
+            _ => "Bilinmiyor"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        function clearGroupFilter() {
+            window.location.href = '@Url.Action("Index", "Attendance")';
+        }
+    </script>
+}

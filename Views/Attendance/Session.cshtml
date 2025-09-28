@@ -1,0 +1,422 @@
+@model Yoklama.Models.ViewModels.AttendanceSessionVm
+@{
+    ViewData["Title"] = "Yoklama Oturumu";
+    
+    // Calculate statistics
+    var totalStudents = Model.Students.Count;
+    var presentCount = Model.Students.Count(s => s.Status == Yoklama.Models.Entities.AttendanceStatus.Present);
+    var absentCount = Model.Students.Count(s => s.Status == Yoklama.Models.Entities.AttendanceStatus.Absent);
+    var lateCount = Model.Students.Count(s => s.Status == Yoklama.Models.Entities.AttendanceStatus.Late);
+    var excusedCount = Model.Students.Count(s => s.Status == Yoklama.Models.Entities.AttendanceStatus.Excused);
+    var attendanceRate = totalStudents > 0 ? (double)presentCount / totalStudents * 100 : 0;
+    
+    // Check if user is admin
+    var isAdmin = User.IsInRole("Admin");
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-direction">
+        <div>
+            <h2 class="mb-2">
+                @if (isAdmin)
+                {
+                    <i class="fas fa-eye me-2 text-info"></i>
+                }
+                @Model.Session.LessonTitle
+            </h2>
+            <div class="text-muted mb-2">
+                <p class="mb-0 fs-sm-6"><i class="fas fa-layer-group me-1"></i>Grup: @Model.Session.GroupName</p>
+                <p class="mb-0"><i class="fas fa-calendar me-1"></i>@Model.Session.ScheduledAt.LocalDateTime.ToString("dd.MM.yyyy HH:mm")</p>
+                <p class="mb-0"><i class="fas fa-info-circle me-1"></i>@(Model.Session.Status == Yoklama.Models.Entities.SessionStatus.Open ? "Açık" : "Kapatıldı")</p>
+                @if (isAdmin)
+                {
+                    <p class="mb-0 text-info"><i class="fas fa-info-circle me-1"></i><strong>Gözlem Modu - Sadece Görüntüleme</strong></p>
+                }
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("ExportSessionCsv", "Reports", new { sessionId = Model.Session.SessionId })" 
+               class="btn btn-outline-success btn-sm">
+                <i class="fas fa-download me-1"></i>CSV İndir
+            </a>
+            <a class="btn btn-outline-secondary btn-sm" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-arrow-left me-1"></i>Ana Sayfa
+            </a>
+        </div>
+    </div>
+<!-- Attendance Form -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent">
+            <h5 class="mb-0">
+                <i class="fas fa-clipboard-check me-2"></i>
+                Yoklama Listesi
+            </h5>
+        </div>
+        <div class="card-body">
+            @if (isAdmin)
+            {
+                <!-- Admin görüntüleme modu -->
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Gözlem Modu:</strong> Bu yoklama oturumunu sadece görüntüleyebilirsiniz. Değişiklik yapamazsınız.
+                </div>
+                
+                <!-- Admin için öğrenci listesi -->
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:50px;">No</th>
+                                <th>Öğrenci</th>
+                                <th style="width:200px;">Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @{
+                            var i = 0;
+                        }
+                        @foreach (var s in Model.Students)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge bg-danger">@s.StudentNumber</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <strong class="text-truncate" style="max-width: 200px;" title="@s.FullName">@s.FullName</strong>
+                                    </div>
+                                </td>
+                                <td data-status="@(s.Status == Yoklama.Models.Entities.AttendanceStatus.Present ? "Mevcut" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Absent ? "Yok" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Late ? "Geç" : "Mazur")">
+                                    <span class="badge @(s.Status == Yoklama.Models.Entities.AttendanceStatus.Present ? "bg-success" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Absent ? "bg-danger" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Late ? "bg-warning" : "bg-info")">
+                                        @(s.Status == Yoklama.Models.Entities.AttendanceStatus.Present ? "Mevcut" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Absent ? "Yok" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Late ? "Geç" : "Mazur")
+                                    </span>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                 <button type="button" class="btn btn-outline-secondary btn-secondary-hover d-none d-md-flex" onclick="window.print()">
+                                <i class="fas fa-print me-1"></i>Yazdır
+                            </button>
+            }
+            else
+            {
+                @using (Html.BeginForm("BulkMark", "Attendance", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="SessionId" value="@Model.Session.SessionId" />
+
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:50px;">No</th>
+                                <th>Öğrenci</th>
+                                <th style="width:200px;">Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @{
+                            var i = 0;
+                        }
+                        @foreach (var s in Model.Students)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge bg-danger">@s.StudentNumber</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <strong class="text-truncate" style="max-width: 200px;" title="@s.FullName">@s.FullName</strong>
+                                    </div>
+                                </td>
+                                <td data-status="@(s.Status == Yoklama.Models.Entities.AttendanceStatus.Present ? "Mevcut" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Absent ? "Yok" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Late ? "Geç" : "Mazur")">
+                                    @if (isAdmin)
+                                    {
+                                        <!-- Admin için sadece görüntüleme -->
+                                        <span class="badge @(s.Status == Yoklama.Models.Entities.AttendanceStatus.Present ? "bg-success" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Absent ? "bg-danger" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Late ? "bg-warning" : "bg-info")">
+                                            @(s.Status == Yoklama.Models.Entities.AttendanceStatus.Present ? "Mevcut" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Absent ? "Yok" : s.Status == Yoklama.Models.Entities.AttendanceStatus.Late ? "Geç 🕐" : "Mazur")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <!-- Öğretmen için düzenlenebilir select -->
+                                        <select class="form-select form-select-sm" name="Students[@i].Status" id="status_@i" @(Model.Session.Status == Yoklama.Models.Entities.SessionStatus.Open ? "" : "disabled")>
+                                            <option value="1" selected="@(s.Status == Yoklama.Models.Entities.AttendanceStatus.Present)">Mevcut</option>
+                                            <option value="2" selected="@(s.Status == Yoklama.Models.Entities.AttendanceStatus.Absent)">Yok</option>
+                                            <option value="3" selected="@(s.Status == Yoklama.Models.Entities.AttendanceStatus.Late)">Geç</option>
+                                            <option value="4" selected="@(s.Status == Yoklama.Models.Entities.AttendanceStatus.Excused)">Mazur</option>
+                                        </select>
+                                    }
+                                </td>
+                                
+
+                            </tr>
+                            <tr class="d-none">
+                                <td colspan="5">
+                                    <input type="hidden" name="Students[@i].StudentId" value="@s.StudentId" />
+                                    @if (s.RowVersion != null)
+                                    {
+                                        <input type="hidden" name="Students[@i].RowVersion" value="@Convert.ToBase64String(s.RowVersion)" />
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (!isAdmin)
+                {
+                    <div class="d-flex justify-content-between align-items-center mt-3 bottom-wrapper">
+                        <div class="text-muted bottom-text">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                Değişiklikleri kaydetmek için "Toplu Kaydet" butonunu kullanın.
+                            </small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-secondary-hover d-none d-md-flex" onclick="window.print()">
+                                <i class="fas fa-print me-1"></i>Yazdır
+                            </button>
+                            <button type="submit" class="btn btn-primary" @(Model.Session.Status == Yoklama.Models.Entities.SessionStatus.Open ? "" : "disabled")>
+                                <i class="fas fa-save me-1"></i>Toplu Kaydet
+                            </button>
+                        </div>
+                    </div>
+                }
+                }
+            }
+           
+        </div>
+    </div>
+
+    @if (Model.Session.Status == Yoklama.Models.Entities.SessionStatus.Open && !isAdmin)
+    {
+        <div class="d-flex justify-content-center my-3">
+            <form asp-controller="Attendance" asp-action="CloseSession" method="post" class="d-inline" id="closeSessionForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="sessionId" value="@Model.Session.SessionId" />
+                <button type="button" class="btn btn-danger" onclick="openCloseSessionModal()">
+                    <i class="fas fa-stop-circle me-1"></i>Yoklamayı Sonlandır
+                </button>
+            </form>
+        </div>
+    }
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4 d-print-none g-2 m-2">
+        <div class="col-md-6 col-xl-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-users text-primary fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="mb-1">@totalStudents</h4>
+                    <small class="text-muted">Toplam Öğrenci</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-check text-success fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="mb-1 text-success">@presentCount</h4>
+                    <small class="text-muted">Mevcut</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-times text-danger fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="mb-1 text-danger">@absentCount</h4>
+                    <small class="text-muted">Yok</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-clock text-warning fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="mb-1 text-warning">@lateCount</h4>
+                    <small class="text-muted">Geç</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Rate -->
+    <div class="row mb-4 d-print-none">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">Devam Oranı</h5>
+                            <small class="text-muted">Mevcut öğrenci oranı</small>
+                        </div>
+                        <div class="text-end">
+                            <h3 class="mb-0 @(attendanceRate >= 80 ? "text-success" : attendanceRate >= 60 ? "text-warning" : "text-danger")">
+                                @attendanceRate.ToString("F1")%
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 8px;">
+                        <div class="progress-bar @(attendanceRate >= 80 ? "bg-success" : attendanceRate >= 60 ? "bg-warning" : "bg-danger")" 
+                             role="progressbar" style="width: @attendanceRate.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)%" 
+                             aria-valuenow="@attendanceRate.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+@section Styles {
+    <style>
+        @@media print {
+            .d-print-none {
+                display: none !important;
+            }
+            .alert, .text-info {
+                display: none !important;
+            }
+            .card {
+                border: 1px solid #dee2e6 !important;
+                box-shadow: none !important;
+            }
+            .table {
+                font-size: 12px;
+            }
+            .btn, .form-control, .form-select {
+                display: none !important;
+            }
+            .badge i, .fas, .fa {
+                display: none !important;
+            }
+            .table td:last-child {
+                display: table-cell !important;
+            }
+            .table th:last-child {
+                display: table-cell !important;
+            }
+            .table td:last-child::before {
+                content: none !important;
+            }
+            .badge {
+                background: none !important;
+                color: #000 !important;
+                border: none !important;
+                padding: 0 !important;
+                font-weight: normal !important;
+            }
+            /* Öğrenci durumları için yazdır stili */
+            .table td[data-status]::after {
+                content: attr(data-status) !important;
+                display: inline !important;
+                font-weight: normal !important;
+            }
+            .table td[data-status] .badge {
+                display: none !important;
+            }
+        }
+        @@media (max-width: 1060px){
+            .bottom-wrapper {
+                    flex-direction: column;
+                }
+                .bottom-text {
+                    margin-bottom: 20px;
+                }
+                .btn-secondary-hover {
+                    background-color: rgb(117, 117, 117);
+                    color: white;
+                }
+
+                .flex-direction {
+         flex-direction: column;
+         border: 2px solid rgba(177, 177, 177, 0.164);
+         border-radius: 5px;
+         padding: 10px;
+                }
+        }
+       
+
+    </style>
+}
+
+<!-- Close Session Modal -->
+<div class="modal fade" id="closeSessionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header text-white" style="background: linear-gradient(90deg, #c2255c, #e64980);">
+                <h5 class="modal-title"><i class="fas fa-lock me-2"></i>Oturumu Kapat</h5>
+            </div>
+            <div class="modal-body py-4">
+                <div class="d-flex align-items-start">
+                    <div class="me-3"><span class="badge bg-danger text-uppercase">Uyarı</span></div>
+                    <div class="flex-fill">Bu oturum kapatıldığında düzenleme yapılamaz. Devam etmek istiyor musunuz?</div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light-subtle">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirmCloseSessionBtn"><i class="fas fa-stop me-1"></i>Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            function toggleLateMinutes(index) {
+                var status = $('#status_' + index).val();
+                if (status == 3) { // Late
+                    $('#lateMinutes_' + index).show();
+                } else {
+                    $('#lateMinutes_' + index).hide();
+                    $('#lateMinutes_' + index).val('');
+                }
+            }
+
+            // Initial
+            for (var i = 0; i < @Model.Students.Count; i++) {
+                toggleLateMinutes(i);
+            }
+
+            // On change
+            $('select[name^="Students["][name$="].Status"]').change(function() {
+                var index = $(this).attr('name').match(/\[(\d+)\]/)[1];
+                toggleLateMinutes(index);
+            });
+        });
+
+        function openCloseSessionModal() {
+            new bootstrap.Modal(document.getElementById('closeSessionModal')).show();
+        }
+        window.openCloseSessionModal = openCloseSessionModal;
+        document.getElementById('confirmCloseSessionBtn')?.addEventListener('click', function () {
+            document.getElementById('closeSessionForm').submit();
+        });
+    </script>
+}

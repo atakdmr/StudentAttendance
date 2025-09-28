@@ -1,0 +1,220 @@
+@model Yoklama.Models.ViewModels.GroupReportVm
+@{
+    ViewData["Title"] = $"{Model.Group.Name} - Grup Devam Raporu";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Grup Devam Raporu</h2>
+                <div class="btn-group">
+                    <button onclick="window.print()" class="btn btn-secondary">
+                        <i class="fas fa-print me-1"></i>
+                        Yazdır
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Info Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="card-title">@Model.Group.Name</h5>
+                            <p class="card-text">
+                                <strong>Grup Kodu:</strong> @Model.Group.Code<br>
+                                @if (!string.IsNullOrEmpty(Model.Group.Description))
+                                {
+                                    <strong>Açıklama:</strong> @Model.Group.Description<br>
+                                }
+                                <strong>Rapor Dönemi:</strong> @Model.FromDate?.ToString("dd.MM.yyyy") - @Model.ToDate?.ToString("dd.MM.yyyy")
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h4 class="text-primary">@Model.StudentSummaries.Count</h4>
+                                    <small class="text-muted">Toplam Öğrenci</small>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="text-success">@Model.StudentSummaries.Count(s => s.Summary.AttendanceRate >= 80)</h4>
+                                    <small class="text-muted">İyi Devam (%80+)</small>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="text-warning">@Model.StudentSummaries.Count(s => s.Summary.AttendanceRate < 80)</h4>
+                                    <small class="text-muted">Düşük Devam (%80-)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Filter -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="from" class="form-label">Başlangıç Tarihi</label>
+                            <input type="date" class="form-control" id="from" name="from" 
+                                   value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="to" class="form-label">Bitiş Tarihi</label>
+                            <input type="date" class="form-control" id="to" name="to" 
+                                   value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-filter me-1"></i>
+                                    Filtrele
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Summaries -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Öğrenci Devam Özeti</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.StudentSummaries.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Öğrenci No</th>
+                                        <th>Ad Soyad</th>
+                                        <th>Toplam Ders</th>
+                                        <th>Mevcut</th>
+                                        <th>Yok</th>
+                                        <th>Geç</th>
+                                        <th>Mazur</th>
+                                        <th>Devam Oranı</th>
+                                        <th class="text-center">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var studentSummary in Model.StudentSummaries)
+                                    {
+                                        <tr class="@(studentSummary.Summary.AttendanceRate < 80 ? "table-warning" : "")">
+                                            <td>@studentSummary.Student.StudentNumber</td>
+                                            <td><span class="text-truncate d-inline-block" style="max-width: 150px;" title="@studentSummary.Student.FullName">@studentSummary.Student.FullName</span></td>
+                                            <td>@studentSummary.Summary.TotalSessions</td>
+                                            <td>
+                                                <span class="badge bg-success">@studentSummary.Summary.PresentCount</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-danger">@studentSummary.Summary.AbsentCount</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-warning">@studentSummary.Summary.LateCount</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">@studentSummary.Summary.ExcusedCount</span>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var rate = studentSummary.Summary.AttendanceRate;
+                                                    var badgeClass = rate >= 90 ? "bg-success" : rate >= 80 ? "bg-warning" : "bg-danger";
+                                                }
+                                                <span class="badge @badgeClass">%@rate.ToString("F1")</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="@Url.Action("Student", "Reports", new { id = studentSummary.Student.Id, from = Model.FromDate, to = Model.ToDate })" 
+                                                   class="btn btn-sm btn-outline-primary" title="Detaylı Rapor">
+                                                    <i class="fas fa-chart-line"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Summary Statistics -->
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center">
+                                        <h4>@Model.StudentSummaries.Average(s => s.Summary.AttendanceRate).ToString("F1")%</h4>
+                                        <p class="mb-0">Ortalama Devam</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <h4>@Model.StudentSummaries.Sum(s => s.Summary.PresentCount)</h4>
+                                        <p class="mb-0">Toplam Mevcut</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body text-center">
+                                        <h4>@Model.StudentSummaries.Sum(s => s.Summary.AbsentCount)</h4>
+                                        <p class="mb-0">Toplam Yok</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body text-center">
+                                        <h4>@Model.StudentSummaries.Sum(s => s.Summary.LateCount)</h4>
+                                        <p class="mb-0">Toplam Geç</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Bu dönemde devam kaydı bulunmuyor</h5>
+                            <p class="text-muted">Seçilen tarih aralığında herhangi bir ders kaydı bulunamadı.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        @@media print {
+            .btn-group, .card:nth-child(2) {
+                display: none !important;
+            }
+            
+            .container-fluid {
+                max-width: none !important;
+            }
+            
+            .table-warning {
+                background-color: #fff3cd !important;
+            }
+        }
+    </style>
+}

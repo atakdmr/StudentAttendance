@@ -1,0 +1,85 @@
+@model Yoklama.Models.ViewModels.CreateEditVm
+@{
+    ViewData["Title"] = "Ders Düzenle";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="EditLesson" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Ders Başlığı</label>
+                            <input asp-for="Title" class="form-control" required maxlength="100" placeholder="Maksimum 100 karakter" />
+                            <div class="form-text">Maksimum 100 karakter girebilirsiniz</div>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DayOfWeek" class="form-label">Gün</label>
+                            <select asp-for="DayOfWeek" class="form-select" required>
+                                <option value="1" selected="@(Model.DayOfWeek == 1)">Pazartesi</option>
+                                <option value="2" selected="@(Model.DayOfWeek == 2)">Salı</option>
+                                <option value="3" selected="@(Model.DayOfWeek == 3)">Çarşamba</option>
+                                <option value="4" selected="@(Model.DayOfWeek == 4)">Perşembe</option>
+                                <option value="5" selected="@(Model.DayOfWeek == 5)">Cuma</option>
+                                <option value="6" selected="@(Model.DayOfWeek == 6)">Cumartesi</option>
+                                <option value="7" selected="@(Model.DayOfWeek == 7)">Pazar</option>
+                            </select>
+                            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StartTime" class="form-label">Başlangıç Saati</label>
+                                <input asp-for="StartTime" type="time" class="form-control" required />
+                                <span asp-validation-for="StartTime" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EndTime" class="form-label">Bitiş Saati</label>
+                                <input asp-for="EndTime" type="time" class="form-control" required />
+                                <span asp-validation-for="EndTime" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="mb-3">
+                                <label asp-for="TeacherId" class="form-label">Öğretmen</label>
+                                <select asp-for="TeacherId" class="form-select">
+                                    @foreach (var teacher in ViewBag.Teachers)
+                                    {
+                                        <option value="@teacher.Id" selected="@(Model.TeacherId == teacher.Id)">@teacher.FullName</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="TeacherId" class="text-danger"></span>
+                            </div>
+                        }
+
+
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="GroupId" />
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Güncelle
+                            </button>
+                            <a asp-action="Index" asp-controller="Lessons" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

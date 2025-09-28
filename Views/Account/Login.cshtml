@@ -1,0 +1,54 @@
+@model Yoklama.Models.ViewModels.LoginVm
+@{
+    ViewData["Title"] = "Giriş";
+}
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="text-center mb-4">
+            <div class="login-logo">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h2>Yoklama Sistemi</h2>
+            <p class="text-muted">Hesabınıza giriş yapın</p>
+        </div>
+
+        @Html.ValidationSummary(excludePropertyErrors: true, message: "", htmlAttributes: new { @class = "text-danger mb-3" })
+
+        <form asp-action="Login" asp-controller="Account" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReturnUrl" />
+            
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label">Kullanıcı Adı</label>
+                <input asp-for="UserName" class="form-control" placeholder="Kullanıcı adınızı girin" autofocus />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            
+            <div class="mb-4">
+                <label asp-for="Password" class="form-label">Şifre</label>
+                <input asp-for="Password" class="form-control" placeholder="Şifrenizi girin" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Giriş Yap
+                </button>
+            </div>
+        </form>
+        
+        <div class="mt-4 text-center">
+            <small class="text-muted">
+                <i class="fas fa-info-circle me-1"></i>
+                yönetici: <strong>admin</strong> / <strong>Admin@12345</strong>
+                <br>
+            </small>
+            <small class="text-muted">
+                <i class="fas fa-info-circle me-1"></i>
+            öğretmen: <strong>teacher1</strong> / <strong>Teacher@123</strong>
+            </small>
+        </div>
+    </div>
+</div>
