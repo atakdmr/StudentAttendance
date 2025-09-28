@@ -11,7 +11,7 @@ using Yoklama.Data;
 namespace Yoklama.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250927142320_Initial")]
+    [Migration("20250928184614_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
