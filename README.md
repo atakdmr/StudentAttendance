@@ -51,58 +51,6 @@ Modern and user-friendly ASP.NET Core MVC based student attendance management sy
 - **SMS Integration**: NetGSM API
 - **Security**: HTTPS, XSS Protection, CSRF Protection
 
-## 📦 Installation
-
-### Requirements
-- .NET 9.0 SDK
-- Visual Studio 2022 or VS Code
-
-### Steps
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/atakdmr/StudentAttendance.git
-cd StudentAttendance
-```
-
-2. **Install packages**
-```bash
-dotnet restore
-```
-
-3. **Create database**
-```bash
-dotnet ef database update
-```
-
-4. **Run the application**
-```bash
-dotnet run
-```
-
-5. **Open in browser**
-```
-https://localhost:5001
-```
-
-## 🔧 Configuration
-
-### SMS Settings
-Fill in NetGSM API information in `appsettings.json`:
-
-```json
-{
-  "SmsSettings": {
-    "Username": "your_username",
-    "Password": "your_password",
-    "ApiUrl": "https://api.netgsm.com.tr/sms/send/get"
-  }
-}
-```
-
-### Production Settings
-Edit `appsettings.Production.json` for production environment.
-
 ## 📱 Usage
 
 ### Admin User
@@ -134,29 +82,6 @@ Edit `appsettings.Production.json` for production environment.
 - **AttendanceRecords**: Attendance records
 - **AuditLogs**: System logs
 
-## 🚀 Deployment
-
-### Self-contained Publish
-```bash
-dotnet publish --configuration Release --output ./publish --self-contained true --runtime win-x64
-```
-
-### Docker (Opsiyonel)
-```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
-COPY . /app
-WORKDIR /app
-EXPOSE 80
-ENTRYPOINT ["dotnet", "Yoklama.dll"]
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## 📄 License
 
