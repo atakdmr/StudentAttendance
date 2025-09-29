@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Yoklama.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class FinalUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

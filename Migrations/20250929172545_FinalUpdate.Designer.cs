@@ -11,8 +11,8 @@ using Yoklama.Data;
 namespace Yoklama.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250928184614_Initial")]
-    partial class Initial
+    [Migration("20250929172545_FinalUpdate")]
+    partial class FinalUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
