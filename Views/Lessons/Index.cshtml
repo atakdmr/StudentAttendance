@@ -3,8 +3,235 @@
     ViewData["Title"] = "Derslerim";
 }
 
+<style>
+/* Mobil optimizasyonu */
+@@media (max-width: 768px) {
+    .mobile-lesson-card {
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e9ecef;
+    }
+    
+    .mobile-lesson-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    
+    .mobile-lesson-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #212529;
+        margin: 0;
+        flex: 1;
+        margin-right: 8px;
+    }
+    
+    .mobile-lesson-time {
+        background: #007bff;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    
+    .mobile-lesson-info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    
+    .mobile-lesson-info-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #6c757d;
+    }
+    
+    .mobile-lesson-info-item i {
+        width: 16px;
+        margin-right: 8px;
+        color: #007bff;
+    }
+    
+    .mobile-lesson-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .mobile-btn {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .mobile-btn-primary {
+        background: #007bff;
+        color: white;
+    }
+    
+    .mobile-btn-primary:hover {
+        background: #0056b3;
+        color: white;
+    }
+    
+    .mobile-btn-outline-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .mobile-btn-outline-secondary:hover {
+        background: #5a6268;
+        color: white;
+    }
+    .mobile-btn-success {
+        background: #28a745;
+        color: white;
+    }
+    
+    .mobile-btn-success:hover {
+        background: #1e7e34;
+        color: white;
+    }
+    
+    .mobile-btn-outline {
+        background: white;
+        color: #007bff;
+        border: 1px solid #007bff;
+    }
+    
+    .mobile-btn-outline:hover {
+        background: #007bff;
+        color: white;
+    }
+    
+    .mobile-session-status {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+    
+    .mobile-session-open {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .mobile-session-closed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .mobile-session-none {
+        background: #e2e3e5;
+        color: #6c757d;
+    }
+    
+    /* Desktop tablosunu gizle */
+    .desktop-table {
+        display: none !important;
+    }
+    
+    /* Mobil kartları göster */
+    .mobile-cards {
+        display: block !important;
+    }
+    
+    /* Container ayarları */
+    .container-fluid {
+        padding: 12px;
+    }
+    
+    /* Filtreleme bölümü mobil optimizasyonu */
+    .card-body .row.g-3 {
+        gap: 12px;
+    }
+    
+    .card-body .col-md-3 {
+        margin-bottom: 12px;
+    }
+    
+    .form-label {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    
+    .form-select, .form-control {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    .btn {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+    
+    /* Başlık optimizasyonu */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .page-header h2 {
+        font-size: 18px;
+        margin-bottom: 0;
+        font-weight: 600;
+    }
+    
+    .page-header p {
+        font-size: 13px;
+        margin-bottom: 0;
+        color: #6c757d;
+    }
+    
+    .page-header .d-flex {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    /* Buton optimizasyonu */
+    .page-header .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+    }
+}
+
+/* Desktop için mobil kartları gizle */
+@@media (min-width: 769px) {
+    .mobile-cards {
+        display: none !important;
+    }
+    
+    .desktop-table {
+        display: block !important;
+    }
+}
+</style>
+
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
         <div>
             @if (Model.IsAdmin)
             {
@@ -30,31 +257,31 @@
         </div>
     </div>
 
-    @if (Model.IsAdmin)
-    {
-        <!-- Filtreleme Bölümü -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <form method="get" class="row g-3">
-                            <div class="col-md-3">
-                                <label for="groupId" class="form-label fw-semibold">
-                                    <i class="fas fa-layer-group me-2 text-primary"></i>Grup Filtresi
-                                </label>
-                                <select name="groupId" id="groupId" class="form-select">
-                                    <option value="">Tüm Gruplar</option>
-                                    @foreach (var group in ViewBag.Groups ?? new List<Yoklama.Models.Entities.Group>())
-                                    {
-                                        <option value="@group.Id" selected="@(ViewBag.SelectedGroupId?.ToString() == group.Id.ToString())">
-                                            @group.Name (@group.Code)
-                                        </option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="col-md-3">
+    <!-- Filtreleme Bölümü -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <label for="groupId" class="form-label fw-semibold">
+                                <i class="fas fa-layer-group me-2 text-primary"></i>Grup Seçimi
+                            </label>
+                            <select name="groupId" id="groupId" class="form-select">
+                                <option value="">Tüm Gruplar</option>
+                                @foreach (var group in ViewBag.Groups ?? new List<Yoklama.Models.Entities.Group>())
+                                {
+                                    <option value="@group.Id" selected="@(ViewBag.SelectedGroupId?.ToString() == group.Id.ToString())">
+                                        @group.Name (@group.Code)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        @if (Model.IsAdmin)
+                        {
+                            <div class="col-lg-3 col-md-6">
                                 <label for="teacherId" class="form-label fw-semibold">
-                                    <i class="fas fa-chalkboard-teacher me-2 text-primary"></i>Öğretmen Filtresi
+                                    <i class="fas fa-chalkboard-teacher me-2 text-primary"></i>Öğretmen Seçimi
                                 </label>
                                 <select name="teacherId" id="teacherId" class="form-select">
                                     <option value="">Tüm Öğretmenler</option>
@@ -66,36 +293,38 @@
                                     }
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <label for="lessonTitle" class="form-label fw-semibold">
-                                    <i class="fas fa-book me-2 text-primary"></i>Ders Adı
-                                </label>
+                        }
+                        <div class="col-lg-3 col-md-6">
+                            <label for="lessonTitle" class="form-label fw-semibold">
+                                <i class="fas fa-book me-2 text-primary"></i>Ders Seçimi
+                            </label>
+                            <div class="input-group">
                                 <input type="text" name="lessonTitle" id="lessonTitle" class="form-control" 
                                        value="@ViewBag.SelectedLessonTitle" placeholder="Ders adı ara...">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">&nbsp;</label>
-                                <div class="d-flex gap-2">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-filter me-1"></i>Filtrele
-                                    </button>
-                                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
-                                        <i class="fas fa-times me-1"></i>Temizle
-                                    </a>
-                                </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <label class="form-label fw-semibold">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i>Temizle
+                                </a>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    }
+    </div>
 
     @if (Model.Lessons.Any())
     {
         <div class="row">
             <div class="col-12">
-                <div class="card border-0 shadow-sm">
+                <div class="card border-0 shadow-sm desktop-table">
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
@@ -251,13 +480,13 @@
                                                             }
                                                             else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Closed)
                                                             {
-                                                                <a class="btn btn-primary btn-sm" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Yoklama Al">
-                                                                    <i class="fas fa-clipboard-check me-1"></i>Yoklama Al
+                                                                <a class="btn btn-secondary btn-sm" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Detayları Gör">
+                                                                    <i class="fas fa-info-circle me-1"></i>Detaylar
                                                                 </a>
                                                             }
                                                             else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Finalized)
                                                             {
-                                                                <a class="btn btn-success btn-sm" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Sonuçları Gör">
+                                                                <a class="btn btn-outline-secondary btn-sm" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Sonuçları Gör">
                                                                     <i class="fas fa-eye me-1"></i>Sonuçları Gör
                                                                 </a>
                                                             }
@@ -279,6 +508,73 @@
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Mobil Görünüm - Kartlar -->
+        <div class="mobile-cards" style="display: none;">
+            @foreach (var lesson in Model.Lessons)
+            {
+                <div class="mobile-lesson-card">
+                    <div class="mobile-lesson-header">
+                        <h5 class="mobile-lesson-title">@lesson.Title</h5>
+                        <div class="mobile-lesson-time">
+                            @lesson.StartTime.ToString(@"hh\:mm") - @lesson.EndTime.ToString(@"hh\:mm")
+                        </div>
+                    </div>
+                    
+                    <div class="mobile-lesson-info">
+                        <div class="mobile-lesson-info-item">
+                            <i class="fas fa-layer-group"></i>
+                            <span>@(lesson.Group?.Name ?? "Grup Yok")</span>
+                        </div>
+                        <div class="mobile-lesson-info-item">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>@GetDayName(lesson.DayOfWeek)</span>
+                        </div>
+                        <div class="mobile-lesson-info-item">
+                            <i class="fas fa-user"></i>
+                            <span>@(lesson.Teacher?.FullName ?? "Öğretmen Yok")</span>
+                        </div>
+                        <div class="mobile-lesson-info-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mobile-session-status @GetSessionStatusClass(lesson.SessionStatus)">
+                                @GetSessionStatusText(lesson.SessionStatus)
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="mobile-lesson-actions">
+                        @if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Open)
+                        {
+                            <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
+                               class="mobile-btn mobile-btn-success">
+                                <i class="fas fa-play me-1"></i>Yoklamaya Devam Et
+                            </a>
+                        }
+                        else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Closed)
+                        {
+                            <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
+                               class="mobile-btn mobile-btn-outline-secondary">
+                                <i class="fas fa-info-circle me-1"></i>Detayları Gör
+                            </a>
+                        }
+                        else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Finalized)
+                        {
+                            <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
+                               class="mobile-btn mobile-btn-outline-secondary">
+                                <i class="fas fa-eye me-1"></i>Sonuçları Gör
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("OpenSession", "Lessons", new { lessonId = lesson.Id })" 
+                               class="mobile-btn mobile-btn-primary">
+                                <i class="fas fa-play me-1"></i>Yoklama Başlat
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     }
     else
@@ -316,6 +612,45 @@
         </div>
     }
 </div>
+
+@functions {
+    string GetDayName(int dayOfWeek)
+    {
+        return dayOfWeek switch
+        {
+            1 => "Pazartesi",
+            2 => "Salı",
+            3 => "Çarşamba",
+            4 => "Perşembe",
+            5 => "Cuma",
+            6 => "Cumartesi",
+            7 => "Pazar",
+            _ => "Bilinmeyen"
+        };
+    }
+    
+    string GetSessionStatusClass(Yoklama.Models.Entities.SessionStatus? status)
+    {
+        return status switch
+        {
+            Yoklama.Models.Entities.SessionStatus.Open => "mobile-session-open",
+            Yoklama.Models.Entities.SessionStatus.Closed => "mobile-session-closed",
+            Yoklama.Models.Entities.SessionStatus.Finalized => "mobile-session-closed",
+            _ => "mobile-session-none"
+        };
+    }
+    
+    string GetSessionStatusText(Yoklama.Models.Entities.SessionStatus? status)
+    {
+        return status switch
+        {
+            Yoklama.Models.Entities.SessionStatus.Open => "Bekliyor",
+            Yoklama.Models.Entities.SessionStatus.Closed => "Kapatıldı",
+            Yoklama.Models.Entities.SessionStatus.Finalized => "Tamamlandı",
+            _ => "Açık"
+        };
+    }
+}
 
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
@@ -357,22 +692,18 @@
             // Modal'ı göster
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
+        
+        // Otomatik filtreleme (dropdown'lar için)
+        document.getElementById('groupId').addEventListener('change', function() {
+            document.querySelector('form').submit();
+        });
+        
+        // Enter tuşu ile arama
+        document.getElementById('lessonTitle').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.querySelector('form').submit();
+            }
+        });
     </script>
-}
-
-@functions {
-    string GetDayName(int dayOfWeek)
-    {
-        return dayOfWeek switch
-        {
-            1 => "Pazartesi",
-            2 => "Salı",
-            3 => "Çarşamba",
-            4 => "Perşembe",
-            5 => "Cuma",
-            6 => "Cumartesi",
-            7 => "Pazar",
-            _ => "Bilinmiyor"
-        };
-    }
 }

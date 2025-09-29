@@ -416,7 +416,46 @@
         }
         window.openCloseSessionModal = openCloseSessionModal;
         document.getElementById('confirmCloseSessionBtn')?.addEventListener('click', function () {
-            document.getElementById('closeSessionForm').submit();
+            // Önce yoklama verilerini kaydet
+            saveAttendanceData().then(() => {
+                // Sonra oturumu kapat
+                document.getElementById('closeSessionForm').submit();
+            });
         });
+        
+        // Yoklama verilerini kaydetme fonksiyonu
+        function saveAttendanceData() {
+            return new Promise((resolve, reject) => {
+                // Ana form'u bul
+                const mainForm = document.querySelector('form[action*="BulkMark"]');
+                if (!mainForm) {
+                    resolve();
+                    return;
+                }
+                
+                // Form verilerini topla
+                const formData = new FormData(mainForm);
+                
+                // AJAX ile kaydet
+                fetch(mainForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        resolve();
+                    } else {
+                        reject(new Error('Kaydetme hatası'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    resolve(); // Hata olsa bile devam et
+                });
+            });
+        }
     </script>
 }

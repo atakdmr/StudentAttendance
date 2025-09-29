@@ -181,97 +181,101 @@
                 @foreach (dynamic session in ViewBag.SessionsToday)
                 {
                     <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm h-100 @(session.Status == Yoklama.Models.Entities.SessionStatus.Open ? "gradient-border-warning" : session.Status == Yoklama.Models.Entities.SessionStatus.Closed ? "gradient-border-success" : "gradient-border-info")">
-                            <div class="card-body d-flex flex-column p-4">
-                                <!-- Header -->
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="flex-grow-1">
-                                        <h6 class="card-title mb-1 fw-bold text-dark text-truncate" style="max-width: 200px;" title="@session.Lesson.Title">@session.Lesson.Title</h6>
-                                        <small class="text-muted text-truncate d-block" style="max-width: 150px;" title="@session.Group.Name">@session.Group.Name</small>
-                                    </div>
-                                    @if (session.Status == Yoklama.Models.Entities.SessionStatus.Open)
-                                    {
-                                        <span class="text-warning fw-semibold d-flex align-items-center">
-                                            <i class="fas fa-clock me-2"></i>Beklemede
-                                        </span>
-                                    }
-                                    else if (session.Status == Yoklama.Models.Entities.SessionStatus.Closed)
-                                    {
-                                        <span class="text-success fw-semibold d-flex align-items-center">
-                                            <i class="fas fa-check me-2"></i>Kapatıldı
-                                        </span>
-                                    }
-                                    else if (session.Status == Yoklama.Models.Entities.SessionStatus.Finalized)
-                                    {
-                                        <span class="text-info fw-semibold d-flex align-items-center">
-                                            <i class="fas fa-eye me-2"></i>Tamamlandı
-                                        </span>
-                                    }
-                                </div>
+    <div class="card border-0 shadow-sm h-100 position-relative @(session.Status == Yoklama.Models.Entities.SessionStatus.Open ? "gradient-border-warning" : session.Status == Yoklama.Models.Entities.SessionStatus.Closed ? "gradient-border-success" : "gradient-border-info")">
+        <div class="card-body d-flex flex-column p-4">
+            
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="flex-grow-1">
+                    <h6 class="card-title mb-1 fw-bold text-dark text-truncate" style="max-width: 200px;" title="@session.Lesson.Title">@session.Lesson.Title</h6>
+                    <small class="text-muted text-truncate d-block" style="max-width: 150px;" title="@session.Group.Name">@session.Group.Name</small>
+                </div>
+                @if (session.Status == Yoklama.Models.Entities.SessionStatus.Open)
+                {
+                    <span class="text-warning fw-semibold d-flex align-items-center">
+                        <i class="fas fa-clock me-2"></i>Beklemede
+                    </span>
+                }
+                else if (session.Status == Yoklama.Models.Entities.SessionStatus.Closed)
+                {
+                    <span class="text-success fw-semibold d-flex align-items-center">
+                        <i class="fas fa-check me-2"></i>Kapatıldı
+                    </span>
+                }
+                else if (session.Status == Yoklama.Models.Entities.SessionStatus.Finalized)
+                {
+                    <span class="text-info fw-semibold d-flex align-items-center">
+                        <i class="fas fa-eye me-2"></i>Tamamlandı
+                    </span>
+                }
+            </div>
 
-                                <!-- Details -->
-                                <div class="mb-3">
-                                    <div class="row g-2">
-                                        <div class="col-6">
-                                            <div class="d-flex align-items-center">
-                                                <div class="bg-light rounded-circle p-2 me-2">
-                                                    <i class="fas fa-users text-primary fs-3"></i>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <div class="fw-semibold small">Grup</div>
-                                                    <div class="text-muted small text-truncate" style="max-width: 120px;" title="@session.Group.Name">@session.Group.Name</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="d-flex align-items-center">
-                                                <div class="bg-light rounded-circle p-2 me-2">
-                                                    <i class="fas fa-clock text-warning fs-3"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-semibold small">Saat</div>
-                                                    <div class="text-muted small">@session.ScheduledAt.ToString("HH:mm")</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Action Button -->
-                                <div class="mt-auto">
-                                    @if (session.Status == Yoklama.Models.Entities.SessionStatus.Open)
-                                    {
-                                        @if (User.IsInRole("Teacher"))
-                                        {
-                                            <form method="post" action="@Url.Action("OpenSession", "Lessons")" class="d-inline w-100">
-                                                <input type="hidden" name="lessonId" value="@session.Lesson.Id" />
-                                                <button type="submit" class="btn btn-warning btn-lg w-100 fw-semibold py-2">
-                                                    <i class="fas fa-play me-2 fs-5"></i>
-                                                    <span class="fs-5">Yoklama Başlat</span>
-                                                </button>
-                                            </form>
-                                        }
-                                    }
-                                    else if (session.Status == Yoklama.Models.Entities.SessionStatus.Closed)
-                                    {
-                                        <a href="@Url.Action("Session", "Attendance", new { id = session.Id })"
-                                            class="btn btn-success btn-lg w-100 fw-semibold py-2">
-                                            <i class="fas fa-clipboard-check me-2 fs-5"></i>
-                                            <span class="fs-5">Yoklama Al</span>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Session", "Attendance", new { id = session.Id })"
-                                            class="btn btn-info btn-lg w-100 fw-semibold py-2">
-                                            <i class="fas fa-eye me-2 fs-5"></i>
-                                            <span class="fs-5">Sonuçları Gör</span>
-                                        </a>
-                                    }
-                                </div>
+            <!-- Details -->
+            <div class="mb-3">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-2 me-2">
+                                <i class="fas fa-users text-primary fs-3"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold small">Grup</div>
+                                <div class="text-muted small text-truncate" style="max-width: 120px;" title="@session.Group.Name">@session.Group.Name</div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-2 me-2">
+                                <i class="fas fa-clock text-warning fs-3"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold small">Saat</div>
+                                <div class="text-muted small">@session.ScheduledAt.ToString("HH:mm")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="mt-auto" style="position: relative; z-index: 10;">
+                @if (session.Status == Yoklama.Models.Entities.SessionStatus.Open)
+                {
+                    @if (User.IsInRole("Teacher"))
+                    {
+                        <form method="post" action="@Url.Action("OpenSession", "Lessons")" class="d-inline w-100">
+                            <input type="hidden" name="lessonId" value="@session.Lesson.Id" />
+                            <button type="submit" class="btn btn-warning btn-lg w-100 fw-semibold py-2">
+                                <i class="fas fa-play me-2 fs-5"></i>
+                                <span class="fs-5">Yoklama Başlat</span>
+                            </button>
+                        </form>
+                    }
+                }
+                else if (session.Status == Yoklama.Models.Entities.SessionStatus.Closed)
+                {
+                    <a href="@Url.Action("Session", "Attendance", new { id = session.Id })"
+                       class="btn btn-success btn-lg w-100 fw-semibold py-2"
+                       style="position: relative; z-index: 10;">
+                        <i class="fas fa-clipboard-check me-2 fs-5"></i>
+                        <span class="fs-5">Yoklama Al</span>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Session", "Attendance", new { sessionId = session.Id })"
+                       class="btn btn-info btn-lg w-100 fw-semibold py-2"
+                       style="position: relative; z-index: 10;">
+                        <i class="fas fa-eye me-2 fs-5"></i>
+                        <span class="fs-5">Sonuçları Gör</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
                 }
             </div>
         }

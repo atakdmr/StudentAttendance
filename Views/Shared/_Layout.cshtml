@@ -160,51 +160,6 @@
                         }
                     </div>
                     <div class="d-flex align-items-center gap-1">
-                        @{ 
-                            var latestLogs = Db.AuditLogs
-                                .OrderByDescending(x => x.Timestamp)
-                                .Take(5)
-                                .ToList();
-                        }
-                        <div class="dropdown me-1">
-                            <button class="btn btn-icon btn-soft position-relative rounded-circle notif-bell" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Bildirimler">
-                                <i class="fa-solid fa-bell"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow notification-dropdown" aria-labelledby="notifDropdown">
-                                <li class="dropdown-header d-flex justify-content-between align-items-center">
-                                    <span>Son Bildirimler</span>
-                                    <a class="small" asp-controller="Notifications" asp-action="Index">Tümünü Gör</a>
-                                </li>
-                                @if (latestLogs.Count == 0)
-                                {
-                                    <li><span class="dropdown-item-text text-muted">Bildirim bulunmuyor.</span></li>
-                                }
-                                else
-                                {
-                                    foreach (var log in latestLogs)
-                                    {
-                                        var actionText = log.Action == "Create" ? "Oluşturuldu" : log.Action == "Update" ? "Güncellendi" : log.Action == "Delete" ? "Silindi" : "Bilgi";
-                                        var entityText = log.Entity == "Lesson" ? "Ders" : log.Entity == "Student" ? "Öğrenci" : log.Entity == "Group" ? "Grup" : log.Entity == "User" ? "Kullanıcı" : log.Entity;
-                                        var icon = log.Action == "Create" ? "fa-circle-plus" : log.Action == "Update" ? "fa-pen-to-square" : log.Action == "Delete" ? "fa-trash" : "fa-info-circle";
-                                        var color = log.Action == "Create" ? "text-success" : log.Action == "Update" ? "text-warning" : log.Action == "Delete" ? "text-danger" : "text-secondary";
-                                        var border = log.Action == "Create" ? "border-success" : log.Action == "Update" ? "border-warning" : log.Action == "Delete" ? "border-danger" : "border-secondary";
-                                        <li>
-                                            <div class="dropdown-item">
-                                                <div class="d-flex align-items-start gap-2 border-start border-2 @border ps-2">
-                                                    <div class="@color mt-1"><i class="fa-solid @icon"></i></div>
-                                                    <div class="flex-fill">
-                                                        <div class="small"><span class="@color fw-semibold">@actionText</span> · <strong>@entityText</strong> <span class="text-muted">#@log.EntityId</span></div>
-                                                        <small class="text-muted">@log.Timestamp.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    }
-                                }
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item text-primary" asp-controller="Notifications" asp-action="Index">Bildirimlerim - Tümünü Gör</a></li>
-                            </ul>
-                        </div>
                         <div class="dropdown">
                             <button class="btn btn-icon rounded-circle btn-soft btn-user" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Hesabım">
                                 <i class="fa-solid fa-user"></i>

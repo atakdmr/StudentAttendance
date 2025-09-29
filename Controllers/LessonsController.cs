@@ -37,6 +37,17 @@ namespace Yoklama.Controllers
             if (!isAdmin) 
             {
                 query = query.Where(l => l.TeacherId == currentUserId.Value);
+                
+                // Öğretmen için filtreleme
+                if (groupId.HasValue)
+                {
+                    query = query.Where(l => l.GroupId == groupId.Value);
+                }
+                
+                if (!string.IsNullOrWhiteSpace(lessonTitle))
+                {
+                    query = query.Where(l => l.Title.ToLower().Contains(lessonTitle.ToLower()));
+                }
             }
             else
             {
@@ -121,6 +132,35 @@ namespace Yoklama.Controllers
                 lessonsWithSessions.Add(lessonVm);
             }
 
+            // Filtreleme verilerini yükle
+            var groups = new List<Group>();
+            var teachersList = new List<User>();
+            
+            if (isAdmin)
+            {
+                // Admin için tüm gruplar ve öğretmenler
+                groups = await _db.Groups.OrderBy(g => g.Name).ToListAsync();
+                teachersList = await _db.Users
+                    .Where(u => (u.Role == UserRole.Teacher || u.Role == UserRole.Admin) && u.IsActive)
+                    .OrderBy(u => u.FullName)
+                    .ToListAsync();
+            }
+            else
+            {
+                // Öğretmen için sadece kendi derslerinin grupları
+                var lessonGroupIds = lessons.Select(l => l.GroupId).Distinct().ToList();
+                groups = await _db.Groups
+                    .Where(g => lessonGroupIds.Contains(g.Id))
+                    .OrderBy(g => g.Name)
+                    .ToListAsync();
+            }
+            
+            ViewBag.Groups = groups;
+            ViewBag.Teachers = teachersList;
+            ViewBag.SelectedGroupId = groupId;
+            ViewBag.SelectedTeacherId = teacherId;
+            ViewBag.SelectedLessonTitle = lessonTitle;
+            
             // Admin için dersleri grupla (aynı ders adından sadece 1 tane)
             if (isAdmin)
             {
@@ -128,19 +168,6 @@ namespace Yoklama.Controllers
                     .GroupBy(l => l.Title)
                     .Select(g => g.First()) // Her grup için sadece ilk dersi al
                     .ToList();
-                
-                // Admin için filtreleme verilerini yükle
-                var groups = await _db.Groups.OrderBy(g => g.Name).ToListAsync();
-                var teachersList = await _db.Users
-                    .Where(u => (u.Role == UserRole.Teacher || u.Role == UserRole.Admin) && u.IsActive)
-                    .OrderBy(u => u.FullName)
-                    .ToListAsync();
-                
-                ViewBag.Groups = groups;
-                ViewBag.Teachers = teachersList;
-                ViewBag.SelectedGroupId = groupId;
-                ViewBag.SelectedTeacherId = teacherId;
-                ViewBag.SelectedLessonTitle = lessonTitle;
                 
                 var vm = new LessonsVm
                 {

@@ -432,53 +432,11 @@ body {
     padding: 10px !important;
 }
 
-/* Notification dropdown responsive */
-.notification-dropdown {
-    min-width: 280px;
-    max-width: 90vw;
-    max-height: 70vh;
-    overflow-y: auto;
-}
-
-@media (max-width: 768px) {
-    .notification-dropdown {
-        min-width: 250px;
-        max-width: 85vw;
-        right: 0 !important;
-        left: auto !important;
-    }
-    
-    .notification-dropdown .dropdown-item {
-        padding: 0.75rem 1rem;
-    }
-    
-    .notification-dropdown .small {
-        font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .notification-dropdown {
-        min-width: 200px;
-        max-width: 80vw;
-    }
-    
-    .notification-dropdown .dropdown-item {
-        padding: 0.5rem 0.75rem;
-    }
-    
-    .notification-dropdown .small {
-        font-size: 0.75rem;
-    }
-}
 
 .btn-soft {
     box-shadow: 0 1px 2px rgba(0,0,0,.04);
 }
 
-/* Notification bell subtle animation */
-.notif-bell i { transition: transform .15s ease; }
-.notif-bell:hover i { transform: rotate(-10deg); }
 
 /* Sidebar burger styled like sidebar background */
 .btn-sidebar {

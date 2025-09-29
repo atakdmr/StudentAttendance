@@ -16,7 +16,7 @@ namespace Yoklama.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string dayOfWeek, string groupId, string teacherId, string lessonTitle, string sortBy = "day")
+        public async Task<IActionResult> Index(string dayOfWeek, string groupId, string lessonTitle, string sortBy = "day")
         {
             ViewData["Title"] = "Ders Programı";
             
@@ -40,11 +40,6 @@ namespace Yoklama.Controllers
                 parsedGroupId = group;
             }
 
-            Guid? parsedTeacherId = null;
-            if (!string.IsNullOrEmpty(teacherId) && Guid.TryParse(teacherId, out var teacher))
-            {
-                parsedTeacherId = teacher;
-            }
 
             var lessonsQuery = _context.Lessons
                 .Where(l => l.IsActive)
@@ -57,14 +52,6 @@ namespace Yoklama.Controllers
             {
                 // Öğretmen: sadece kendi dersleri
                 lessonsQuery = lessonsQuery.Where(l => l.TeacherId == currentUser.Id);
-            }
-            else
-            {
-                // Admin için filtreleme
-                if (parsedTeacherId.HasValue)
-                {
-                    lessonsQuery = lessonsQuery.Where(l => l.TeacherId == parsedTeacherId.Value);
-                }
             }
 
             if (parsedDayOfWeek.HasValue)
@@ -140,8 +127,6 @@ namespace Yoklama.Controllers
 
             ViewBag.DayOfWeek = parsedDayOfWeek;
             ViewBag.SortBy = sortBy;
-            ViewBag.Teachers = teachers;
-            ViewBag.SelectedTeacherId = parsedTeacherId;
             ViewBag.SelectedLessonTitle = lessonTitle;
 
             // Haftalık ders programı için günleri oluştur

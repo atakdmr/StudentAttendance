@@ -90,35 +90,14 @@ namespace Yoklama.Controllers
                 DisplayName = user.FullName
             };
 
-            // Recent activities
-            var recentLogs = await _db.AuditLogs
-                .Where(a => a.UserId == user.Id)
-                .OrderByDescending(a => a.Timestamp)
-                .Take(8)
-                .ToListAsync();
-
-            vm.RecentActivities = recentLogs
-                .Select(l => new ActivityItemVm
-                {
-                    Action = l.Action,
-                    Entity = l.Entity,
-                    EntityId = l.EntityId,
-                    Timestamp = l.Timestamp
-                })
-                .ToList();
-
-            // Summary for last 30 days
-            var since = DateTime.UtcNow.AddDays(-30);
-            var createdCount = await _db.AuditLogs.CountAsync(a => a.UserId == user.Id && a.Action == "Create" && a.Timestamp >= since);
-            var updatedCount = await _db.AuditLogs.CountAsync(a => a.UserId == user.Id && a.Action == "Update" && a.Timestamp >= since);
-            var deletedCount = await _db.AuditLogs.CountAsync(a => a.UserId == user.Id && a.Action == "Delete" && a.Timestamp >= since);
-
+            // Empty activities since notifications are removed
+            vm.RecentActivities = new List<ActivityItemVm>();
             vm.ActivitySummary = new ActivitySummaryVm
             {
-                Created = createdCount,
-                Updated = updatedCount,
-                Deleted = deletedCount,
-                LastActivityAt = recentLogs.FirstOrDefault()?.Timestamp
+                Created = 0,
+                Updated = 0,
+                Deleted = 0,
+                LastActivityAt = null
             };
 
             return View(vm);
