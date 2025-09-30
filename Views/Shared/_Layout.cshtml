@@ -233,6 +233,13 @@
                     </script>
                 }
 
+                <!-- Mobil Geri Butonu -->
+                <div class="mobile-back-button d-md-none">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="goBack()">
+                        <i class="fas fa-arrow-left me-1"></i>Geri
+                    </button>
+                </div>
+
                 <div class="container-fluid px-2 px-sm-3 px-md-4">
                     @RenderBody()
                 </div>
@@ -250,11 +257,72 @@
         @RenderBody()
     }
 
+    <!-- Mobil Geri Butonu Stilleri -->
+    <style>
+        .mobile-back-button {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 1rem;
+            margin: 0;
+        }
+        
+        .mobile-back-button .btn {
+            border-radius: 20px;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .mobile-back-button .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Desktop'ta gizle */
+        @@media (min-width: 768px) {
+            .mobile-back-button {
+                display: none !important;
+            }
+        }
+    </style>
+
     <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/modern.js" asp-append-version="true"></script>
+
+    <!-- Mobil Geri Butonu JavaScript -->
+    <script>
+        function goBack() {
+            // Eğer history varsa geri git, yoksa ana sayfaya yönlendir
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Ana sayfaya yönlendir
+                window.location.href = '@Url.Action("Index", "Home")';
+            }
+        }
+        
+        // Mobil cihazlarda geri butonunu gizle/göster
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ana sayfa ise geri butonunu gizle
+            const currentPath = window.location.pathname;
+            const isHomePage = currentPath === '/' || currentPath === '/Home' || currentPath === '/Home/Index';
+            
+            if (isHomePage) {
+                const backButton = document.querySelector('.mobile-back-button');
+                if (backButton) {
+                    backButton.style.display = 'none';
+                }
+            }
+        });
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
