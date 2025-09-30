@@ -571,7 +571,7 @@
                         @if (Model.IsAdmin)
                         {
                             <button type="button" class="mobile-btn mobile-btn-outline-info" 
-                                    onclick="showLessonDetails('@lesson.Id', '@lesson.Title', '@(lesson.Teacher?.FullName ?? "Öğretmen Yok")', '@(lesson.Group?.Name ?? "Grup Yok")', '@GetDayName(lesson.DayOfWeek)', '@lesson.StartTime.ToString(@"hh\:mm")', '@lesson.EndTime.ToString(@"hh\:mm")')">
+                                    onclick="showLessonDetails('@lesson.Id', '@lesson.Title', '@(lesson.Teacher?.FullName ?? "Öğretmen Yok")', '@(lesson.Group?.Name ?? "Grup Yok")', '@GetDayName(lesson.DayOfWeek)', '@lesson.StartTime.ToString(@"hh\:mm")', '@lesson.EndTime.ToString(@"hh\:mm")', '@(lesson.SessionId?.ToString() ?? "")')">
                                 <i class="fas fa-info-circle me-1"></i>Detaylar
                             </button>
                         }
@@ -728,7 +728,7 @@
         }
         
         // Admin için ders detayları gösterme fonksiyonu
-        function showLessonDetails(id, title, teacher, group, day, startTime, endTime) {
+        function showLessonDetails(id, title, teacher, group, day, startTime, endTime, sessionId) {
             var modal = document.createElement('div');
             modal.className = 'modal fade';
             modal.innerHTML = `
@@ -781,6 +781,9 @@
                             </div>
                         </div>
                         <div class="modal-footer">
+                            ${sessionId ? `<a href="/Attendance/Session?sessionId=${sessionId}" class="btn btn-primary me-2">
+                                <i class="fas fa-external-link-alt me-1"></i>İlgili Derse Git
+                            </a>` : ''}
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
                         </div>
                     </div>

@@ -47,6 +47,10 @@ namespace Yoklama.Controllers
             if (!string.IsNullOrWhiteSpace(vm.ReturnUrl) && Url.IsLocalUrl(vm.ReturnUrl))
                 return Redirect(vm.ReturnUrl);
 
+            // Admin kullanıcıları Admin/Index'e yönlendir
+            if (user.Role == Models.Entities.UserRole.Admin)
+                return RedirectToAction("Index", "Admin");
+
             return RedirectToAction("Index", "Home");
         }
 
