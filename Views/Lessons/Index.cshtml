@@ -363,9 +363,12 @@
                                                 <i class="fas fa-info-circle me-2 text-primary"></i>Durum
                                             </th>
                                         }
-                                        <th class="border-0 py-3 px-4 text-end">
-                                            <i class="fas fa-cogs me-2 text-primary"></i>İşlemler
-                                        </th>
+                                        @if (!Model.IsAdmin)
+                                        {
+                                            <th class="border-0 py-3 px-4 text-end">
+                                                <i class="fas fa-cogs me-2 text-primary"></i>İşlemler
+                                            </th>
+                                        }
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -381,16 +384,15 @@
                                                         <div class="fw-semibold text-truncate" style="max-width: 200px;" title="@lesson.Title">@lesson.Title</div>
                                                         @if (Model.IsAdmin)
                                                         {
-                                                            @if (lesson.AllLessons.Count > 1)
-                                                            {
-                                                                <small class="text-muted">@(lesson.Teacher?.FullName ?? "Öğretmen Yok") - @lesson.AllLessons.Count farklı grup/saat</small>
-                                                            }
-                                                            else
-                                                            {
-                                                                <small class="text-muted d-block">
-                                                                    <i class="fas fa-user me-1"></i>@(lesson.Teacher?.FullName ?? "Öğretmen Yok")
-                                                                </small>
-                                                            }
+                                                            <small class="text-muted d-block">
+                                                                <i class="fas fa-user me-1"></i>@(lesson.Teacher?.FullName ?? "Öğretmen Yok")
+                                                            </small>
+                                                            <small class="text-muted d-block">
+                                                                <i class="fas fa-layer-group me-1"></i>@(lesson.Group?.Name ?? "Grup Yok")
+                                                            </small>
+                                                            <small class="text-muted">
+                                                                @GetDayName(lesson.DayOfWeek) @($"{lesson.StartTime.Hours:D2}:{lesson.StartTime.Minutes:D2}")
+                                                            </small>
                                                         }
                                                         else
                                                         {
@@ -460,53 +462,10 @@
                                                     }
                                                 </td>
                                             }
-                                            <td class="py-3 px-4 text-end">
-                                                <div class="d-flex gap-1 justify-content-end">
-                                                    @if (Model.IsAdmin)
-                                                    {
-                                                        @if (lesson.AllLessons.Count > 1)
-                                                        {
-                                                            <!-- Grup/Saat Dropdown -->
-                                                            <div class="dropdown">
-                                                                <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button" 
-                                                                        data-bs-toggle="dropdown" aria-expanded="false" title="Grup/Saatleri Göster">
-                                                                    <i class="fas fa-list me-1"></i>@lesson.AllLessons.Count grup/saat
-                                                                </button>
-                                                                <ul class="dropdown-menu">
-                                                                    @foreach (var detailLesson in lesson.AllLessons)
-                                                                    {
-                                                                        <li>
-                                                                            <a class="dropdown-item d-flex justify-content-between align-items-center" 
-                                                                               asp-action="EditLesson" asp-route-id="@detailLesson.Id">
-                                                                                <div>
-                                                                                    <div class="fw-medium">@(detailLesson.Group?.Name ?? "Grup Yok")</div>
-                                                                                    <small class="text-muted">
-                                                                                        @GetDayName(detailLesson.DayOfWeek) @($"{detailLesson.StartTime.Hours:D2}:{detailLesson.StartTime.Minutes:D2}")
-                                                                                    </small>
-                                                                                </div>
-                                                                                <i class="fas fa-arrow-right text-muted"></i>
-                                                                            </a>
-                                                                        </li>
-                                                                    }
-                                                                </ul>
-                                                            </div>
-                                                        }
-                                                        else
-                                                        {
-                                                            <!-- Tek öğretmen için normal edit butonu -->
-                                                            <a class="btn btn-outline-secondary btn-sm" asp-action="EditLesson" asp-route-id="@lesson.Id" title="Düzenle">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                        }
-                                                        <button type="button" class="btn btn-outline-danger btn-sm" 
-                                                                data-lesson-id="@lesson.Id" 
-                                                                data-lesson-title="@lesson.Title"
-                                                                onclick="deleteLesson(this)" title="Sil">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    }
-                                                    else
-                                                    {
+                                            @if (!Model.IsAdmin)
+                                            {
+                                                <td class="py-3 px-4 text-end">
+                                                    <div class="d-flex gap-1 justify-content-end">
                                                         @if (lesson.SessionStatus.HasValue)
                                                         {
                                                             @if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Open)
@@ -535,8 +494,9 @@
                                                             </a>
                                                         }
                                                     }
-                                                </div>
-                                            </td>
+                                                    </div>
+                                                </td>
+                                            }
                                         </tr>
                                     }
                                 </tbody>

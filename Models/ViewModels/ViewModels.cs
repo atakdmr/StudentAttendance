@@ -384,10 +384,6 @@ namespace Yoklama.Models.ViewModels
         public User? Teacher { get; set; }
         public Guid? SessionId { get; set; }
         public SessionStatus? SessionStatus { get; set; }
-        
-        // Admin için dropdown özellikleri
-        public int TeacherCount { get; set; }
-        public List<LessonWithSessionVm> AllLessons { get; set; } = new();
     }
 
 }

@@ -172,31 +172,12 @@ namespace Yoklama.Controllers
             ViewBag.SelectedLessonTitle = lessonTitle;
             ViewBag.SelectedDayOfWeek = dayOfWeek;
             
-            // Admin için dersleri grupla ve öğretmen dropdown'u için hazırla
+            // Admin için tüm dersleri göster (edit yok, sadece görüntüleme)
             if (isAdmin)
             {
-                var groupedLessons = lessonsWithSessions
-                    .GroupBy(l => new { l.Title, TeacherId = l.Teacher?.Id }) // Öğretmen + ders adına göre grupla
-                    .Select(g => new LessonWithSessionVm
-                    {
-                        Id = g.First().Id, // Ana ders ID'si
-                        Title = g.Key.Title,
-                        DayOfWeek = g.First().DayOfWeek,
-                        StartTime = g.First().StartTime,
-                        EndTime = g.First().EndTime,
-                        IsActive = g.First().IsActive,
-                        Group = g.First().Group,
-                        Teacher = g.First().Teacher,
-                        SessionId = g.First().SessionId,
-                        SessionStatus = g.First().SessionStatus,
-                        TeacherCount = 1, // Artık her grup tek öğretmen
-                        AllLessons = g.ToList() // Aynı öğretmenin farklı gruplar/saatler
-                    })
-                    .ToList();
-                
                 var vm = new LessonsVm
                 {
-                    Lessons = groupedLessons,
+                    Lessons = lessonsWithSessions,
                     IsAdmin = isAdmin
                 };
                 
