@@ -172,12 +172,26 @@ namespace Yoklama.Controllers
             ViewBag.SelectedLessonTitle = lessonTitle;
             ViewBag.SelectedDayOfWeek = dayOfWeek;
             
-            // Admin için dersleri grupla (aynı ders adından sadece 1 tane)
+            // Admin için dersleri grupla ve öğretmen sayısını hesapla
             if (isAdmin)
             {
                 var groupedLessons = lessonsWithSessions
                     .GroupBy(l => l.Title)
-                    .Select(g => g.First()) // Her grup için sadece ilk dersi al
+                    .Select(g => new LessonWithSessionVm
+                    {
+                        Id = g.First().Id, // İlk dersin ID'sini kullan (expand için)
+                        Title = g.Key,
+                        DayOfWeek = g.First().DayOfWeek,
+                        StartTime = g.First().StartTime,
+                        EndTime = g.First().EndTime,
+                        IsActive = g.First().IsActive,
+                        Group = g.First().Group,
+                        Teacher = g.First().Teacher,
+                        SessionId = g.First().SessionId,
+                        SessionStatus = g.First().SessionStatus,
+                        TeacherCount = g.Count(), // Öğretmen sayısını ekle
+                        AllLessons = g.ToList() // Tüm dersleri sakla
+                    })
                     .ToList();
                 
                 var vm = new LessonsVm
