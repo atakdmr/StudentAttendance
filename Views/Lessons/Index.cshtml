@@ -514,7 +514,13 @@
                 <div class="mobile-lesson-card">
                     <div class="mobile-lesson-header">
                         <h5 class="mobile-lesson-title">@lesson.Title</h5>
-                        @if (!Model.IsAdmin)
+                        @if (Model.IsAdmin)
+                        {
+                            <div class="mobile-lesson-time">
+                                @GetDayName(lesson.DayOfWeek) @lesson.StartTime.ToString(@"hh\:mm") - @lesson.EndTime.ToString(@"hh\:mm")
+                            </div>
+                        }
+                        else
                         {
                             <div class="mobile-lesson-time">
                                 @lesson.StartTime.ToString(@"hh\:mm") - @lesson.EndTime.ToString(@"hh\:mm")
@@ -522,7 +528,26 @@
                         }
                     </div>
                     
-                    @if (!Model.IsAdmin)
+                    @if (Model.IsAdmin)
+                    {
+                        <div class="mobile-lesson-info">
+                            <div class="mobile-lesson-info-item">
+                                <i class="fas fa-user"></i>
+                                <span>@(lesson.Teacher?.FullName ?? "Öğretmen Yok")</span>
+                            </div>
+                            <div class="mobile-lesson-info-item">
+                                <i class="fas fa-layer-group"></i>
+                                <span>@(lesson.Group?.Name ?? "Grup Yok")</span>
+                            </div>
+                            <div class="mobile-lesson-info-item">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="mobile-session-status @GetSessionStatusClass(lesson.SessionStatus)">
+                                    @GetSessionStatusText(lesson.SessionStatus)
+                                </span>
+                            </div>
+                        </div>
+                    }
+                    else
                     {
                         <div class="mobile-lesson-info">
                             <div class="mobile-lesson-info-item">
@@ -549,15 +574,9 @@
                     <div class="mobile-lesson-actions">
                         @if (Model.IsAdmin)
                         {
-                            <a href="@Url.Action("EditLesson", "Lessons", new { id = lesson.Id })" 
-                               class="mobile-btn mobile-btn-outline">
-                                <i class="fas fa-edit me-1"></i>Düzenle
-                            </a>
-                            <button type="button" class="mobile-btn mobile-btn-outline-secondary" 
-                                    data-lesson-id="@lesson.Id" 
-                                    data-lesson-title="@lesson.Title"
-                                    onclick="deleteLesson(this)">
-                                <i class="fas fa-trash me-1"></i>Sil
+                            <button type="button" class="mobile-btn mobile-btn-outline-info" 
+                                    onclick="showLessonDetails('@lesson.Id', '@lesson.Title', '@(lesson.Teacher?.FullName ?? "Öğretmen Yok")', '@(lesson.Group?.Name ?? "Grup Yok")', '@GetDayName(lesson.DayOfWeek)', '@lesson.StartTime.ToString(@"hh\:mm")', '@lesson.EndTime.ToString(@"hh\:mm")')">
+                                <i class="fas fa-info-circle me-1"></i>Detaylar
                             </button>
                         }
                         else
@@ -710,6 +729,76 @@
             
             // Modal'ı göster
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+        
+        // Admin için ders detayları gösterme fonksiyonu
+        function showLessonDetails(id, title, teacher, group, day, startTime, endTime) {
+            var modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-book me-2"></i>${title}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center p-3 bg-light rounded">
+                                        <i class="fas fa-user fa-2x text-primary me-3"></i>
+                                        <div>
+                                            <h6 class="mb-1">Öğretmen</h6>
+                                            <span class="text-muted">${teacher}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center p-3 bg-light rounded">
+                                        <i class="fas fa-layer-group fa-2x text-success me-3"></i>
+                                        <div>
+                                            <h6 class="mb-1">Grup</h6>
+                                            <span class="text-muted">${group}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center p-3 bg-light rounded">
+                                        <i class="fas fa-calendar-day fa-2x text-info me-3"></i>
+                                        <div>
+                                            <h6 class="mb-1">Gün</h6>
+                                            <span class="text-muted">${day}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center p-3 bg-light rounded">
+                                        <i class="fas fa-clock fa-2x text-warning me-3"></i>
+                                        <div>
+                                            <h6 class="mb-1">Saat</h6>
+                                            <span class="text-muted">${startTime} - ${endTime}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            var bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            
+            // Modal kapandığında DOM'dan kaldır
+            modal.addEventListener('hidden.bs.modal', function() {
+                document.body.removeChild(modal);
+            });
         }
         
         // Otomatik filtreleme (dropdown'lar için)
