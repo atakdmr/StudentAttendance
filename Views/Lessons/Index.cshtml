@@ -559,10 +559,6 @@
                                 <span>@GetDayName(lesson.DayOfWeek)</span>
                             </div>
                             <div class="mobile-lesson-info-item">
-                                <i class="fas fa-user"></i>
-                                <span>@(lesson.Teacher?.FullName ?? "Öğretmen Yok")</span>
-                            </div>
-                            <div class="mobile-lesson-info-item">
                                 <i class="fas fa-info-circle"></i>
                                 <span class="mobile-session-status @GetSessionStatusClass(lesson.SessionStatus)">
                                     @GetSessionStatusText(lesson.SessionStatus)
