@@ -53,6 +53,16 @@ namespace Yoklama.Controllers
                 // Öğretmen: sadece kendi dersleri
                 lessonsQuery = lessonsQuery.Where(l => l.TeacherId == currentUser.Id);
             }
+            else
+            {
+                // Admin: Filtreleme yapılmadıysa hiçbir ders gösterme
+                var hasFilters = parsedDayOfWeek.HasValue || parsedGroupId.HasValue || !string.IsNullOrWhiteSpace(lessonTitle);
+                if (!hasFilters)
+                {
+                    // Admin kullanıcı için filtre yoksa boş liste döndür
+                    lessonsQuery = lessonsQuery.Where(l => false); // Hiçbir ders döndürmez
+                }
+            }
 
             if (parsedDayOfWeek.HasValue)
                 lessonsQuery = lessonsQuery.Where(l => l.DayOfWeek == parsedDayOfWeek.Value);
@@ -160,7 +170,8 @@ namespace Yoklama.Controllers
                 Days = days,
                 Groups = groups,
                 SelectedGroupId = parsedGroupId,
-                IsAdmin = currentUser.Role == UserRole.Admin
+                IsAdmin = currentUser.Role == UserRole.Admin,
+                HasAnyFilters = parsedDayOfWeek.HasValue || parsedGroupId.HasValue || !string.IsNullOrWhiteSpace(lessonTitle)
             };
 
             return View(vm);

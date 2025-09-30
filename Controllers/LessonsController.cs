@@ -25,7 +25,7 @@ namespace Yoklama.Controllers
             _userService = userService;
         }
 
-        public async Task<IActionResult> Index(Guid? groupId = null, Guid? teacherId = null, string? lessonTitle = null)
+        public async Task<IActionResult> Index(Guid? groupId = null, Guid? teacherId = null, string? lessonTitle = null, int? dayOfWeek = null)
         {
             var currentUserId = _userService.GetCurrentUserId(User);
             if (currentUserId == null) return Unauthorized();
@@ -48,6 +48,11 @@ namespace Yoklama.Controllers
                 {
                     query = query.Where(l => l.Title.ToLower().Contains(lessonTitle.ToLower()));
                 }
+                
+                if (dayOfWeek.HasValue)
+                {
+                    query = query.Where(l => l.DayOfWeek == dayOfWeek.Value);
+                }
             }
             else
             {
@@ -65,6 +70,11 @@ namespace Yoklama.Controllers
                 if (!string.IsNullOrWhiteSpace(lessonTitle))
                 {
                     query = query.Where(l => l.Title.ToLower().Contains(lessonTitle.ToLower()));
+                }
+                
+                if (dayOfWeek.HasValue)
+                {
+                    query = query.Where(l => l.DayOfWeek == dayOfWeek.Value);
                 }
             }
 
@@ -160,6 +170,7 @@ namespace Yoklama.Controllers
             ViewBag.SelectedGroupId = groupId;
             ViewBag.SelectedTeacherId = teacherId;
             ViewBag.SelectedLessonTitle = lessonTitle;
+            ViewBag.SelectedDayOfWeek = dayOfWeek;
             
             // Admin için dersleri grupla (aynı ders adından sadece 1 tane)
             if (isAdmin)

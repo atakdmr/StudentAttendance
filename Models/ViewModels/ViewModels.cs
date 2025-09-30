@@ -345,6 +345,7 @@ namespace Yoklama.Models.ViewModels
         public List<Group> Groups { get; set; } = new();
         public Guid? SelectedGroupId { get; set; }
         public bool IsAdmin { get; set; }
+        public bool HasAnyFilters { get; set; }
     }
 
     public class ScheduleDayVm
