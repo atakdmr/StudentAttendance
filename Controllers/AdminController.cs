@@ -289,6 +289,15 @@ namespace Yoklama.Controllers
 
             var groups = await _db.Groups.OrderBy(g => g.Name).ToListAsync();
 
+            // Toplam istatistikler için ayrı sorgular
+            var totalStudents = await _db.Students.CountAsync();
+            var activeStudents = await _db.Students.CountAsync(s => s.IsActive);
+            var inactiveStudents = totalStudents - activeStudents;
+
+            // Filtreli istatistikler
+            var filteredActiveStudents = await query.CountAsync(s => s.IsActive);
+            var filteredInactiveStudents = total - filteredActiveStudents;
+
             var vm = new StudentListVm
             {
                 Students = items.Select(s => new StudentListItemVm
@@ -309,7 +318,11 @@ namespace Yoklama.Controllers
                 Search = search,
                 Page = page,
                 PageSize = pageSize,
-                TotalCount = total
+                TotalCount = total,
+                // İstatistikler - filtre varsa filtreli, yoksa toplam
+                TotalStudentsCount = string.IsNullOrWhiteSpace(search) && !groupId.HasValue ? totalStudents : total,
+                ActiveStudentsCount = string.IsNullOrWhiteSpace(search) && !groupId.HasValue ? activeStudents : filteredActiveStudents,
+                InactiveStudentsCount = string.IsNullOrWhiteSpace(search) && !groupId.HasValue ? inactiveStudents : filteredInactiveStudents
             };
 
             return View(vm);

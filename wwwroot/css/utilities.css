@@ -1,0 +1,115 @@
+/* Utility Classes - Modern Yoklama System */
+
+/* Enhanced Text Truncation with Modern Tooltip */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+    display: inline-block;
+    cursor: help;
+    position: relative;
+}
+
+.text-truncate-sm {
+    max-width: 120px;
+}
+
+.text-truncate-md {
+    max-width: 200px;
+}
+
+.text-truncate-lg {
+    max-width: 300px;
+}
+
+/* Modern tooltip system */
+.text-truncate[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    z-index: 1050;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 350px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0.5rem;
+    opacity: 0;
+    animation: tooltipFadeIn 0.2s ease forwards;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.text-truncate[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: var(--dark-bg);
+    z-index: 1051;
+    margin-top: 0.25rem;
+    opacity: 0;
+    animation: tooltipFadeIn 0.2s ease forwards;
+}
+
+@keyframes tooltipFadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Table specific truncation */
+.table td {
+    position: relative;
+    vertical-align: middle;
+}
+
+.table td .text-truncate {
+    display: inline-block;
+    width: 100%;
+}
+
+/* Responsive truncation widths */
+@media (max-width: 768px) {
+    .text-truncate { max-width: 150px; }
+    .text-truncate-sm { max-width: 100px; }
+    .text-truncate-md { max-width: 150px; }
+    .text-truncate-lg { max-width: 200px; }
+    
+}
+
+/* Shadow utilities */
+.shadow-sm {
+    box-shadow: var(--shadow-sm);
+}
+
+.shadow-lg {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Password strength bar */
+.password-strength {
+    position: relative;
+    background: #e5e7eb;
+    border-radius: 6px;
+    height: 6px;
+    overflow: hidden;
+}
+
+.password-strength .password-strength-bar {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 0%;
+    background: var(--danger-color);
+    transition: width .2s ease, background-color .2s ease;
+}

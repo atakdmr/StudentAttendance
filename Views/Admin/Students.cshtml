@@ -77,7 +77,7 @@
             <div class="card bg-primary text-white shadow-sm">
                 <div class="card-body text-center">
                     <i class="fas fa-graduation-cap fa-2x mb-2"></i>
-                    <h3 class="mb-1">@Model.Students.Count</h3>
+                    <h3 class="mb-1">@Model.TotalStudentsCount</h3>
                     <small>Toplam Öğrenci</small>
                 </div>
             </div>
@@ -86,7 +86,7 @@
             <div class="card bg-success text-white shadow-sm">
                 <div class="card-body text-center">
                     <i class="fas fa-check-circle fa-2x mb-2"></i>
-                    <h3 class="mb-1">@Model.Students.Count(s => s.IsActive)</h3>
+                    <h3 class="mb-1">@Model.ActiveStudentsCount</h3>
                     <small>Aktif Öğrenci</small>
                 </div>
             </div>
@@ -95,7 +95,7 @@
             <div class="card bg-warning text-white shadow-sm">
                 <div class="card-body text-center">
                     <i class="fas fa-pause-circle fa-2x mb-2"></i>
-                    <h3 class="mb-1">@Model.Students.Count(s => !s.IsActive)</h3>
+                    <h3 class="mb-1">@Model.InactiveStudentsCount</h3>
                     <small>Pasif Öğrenci</small>
                 </div>
             </div>

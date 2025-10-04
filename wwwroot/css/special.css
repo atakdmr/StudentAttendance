@@ -1,0 +1,122 @@
+/* Special Styles - Modern Yoklama System */
+
+/* Login Page - Minimalist */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+    padding: 2rem;
+}
+
+.login-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    padding: 3rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-logo {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.login-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.login-card .text-muted {
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+}
+
+/* Preloader */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.212);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 300ms ease;
+}
+
+/* Minimal 3-dot pulse Loader */
+.loader {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    animation: dot-pulse 0.9s ease-in-out infinite;
+}
+
+/* Hidden state for smooth fade-out */
+#preloader.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Content default hidden and fade-in helper */
+#content {
+    opacity: 0;
+    transition: opacity 300ms ease;
+}
+
+#content.is-visible {
+    opacity: 1;
+}
+
+.loader::before,
+.loader::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-dark);
+    animation: dot-pulse 0.9s ease-in-out infinite;
+}
+
+/* left dot */
+.loader::before { left: -24px; animation-delay: -0.2s; }
+
+/* right dot */
+.loader::after { left: 24px; animation-delay: 0.2s; }
+
+@keyframes dot-pulse {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+/* Mobile responsive adjustments for login */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 1rem;
+    }
+
+    .login-card {
+        padding: 2rem;
+    }
+}

@@ -220,7 +220,7 @@ namespace Yoklama.Controllers
 
         // GET: /Lessons/CreateLesson
         [HttpGet]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateLesson(Guid? groupId)
         {
             var currentUserId = _userService.GetCurrentUserId(User);
@@ -262,7 +262,7 @@ namespace Yoklama.Controllers
         // POST: /Lessons/CreateLesson
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateLesson(CreateEditVm vm)
         {
             var currentUserId = _userService.GetCurrentUserId(User);
@@ -346,7 +346,7 @@ namespace Yoklama.Controllers
 
         // GET: /Lessons/EditLesson/{id}
         [HttpGet]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditLesson(Guid id)
         {
             var currentUserId = _userService.GetCurrentUserId(User);
@@ -391,7 +391,7 @@ namespace Yoklama.Controllers
         // POST: /Lessons/EditLesson
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditLesson(CreateEditVm vm)
         {
             var currentUserId = _userService.GetCurrentUserId(User);
@@ -483,7 +483,7 @@ namespace Yoklama.Controllers
         // POST: /Lessons/DeleteLesson
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteLesson(Guid id)
 
         {
@@ -507,6 +507,7 @@ namespace Yoklama.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Teacher,Admin")]
         public async Task<IActionResult> OpenSession(Guid lessonId)
         {
             var currentUserId = _userService.GetCurrentUserId(User);
@@ -518,8 +519,9 @@ namespace Yoklama.Controllers
 
             if (lesson == null) return NotFound();
 
-            // Öğretmen kontrolü
-            if (!User.IsInRole(UserRole.Admin.ToString()) && lesson.TeacherId != currentUserId)
+            // Öğretmen kontrolü - öğretmenler sadece kendi derslerini açabilir
+            var isAdmin = User.IsInRole(UserRole.Admin.ToString());
+            if (!isAdmin && lesson.TeacherId != currentUserId.Value)
                 return Forbid();
 
             // Bugünün tarihini kontrol et
@@ -530,17 +532,17 @@ namespace Yoklama.Controllers
             if (lesson.DayOfWeek != todayDayOfWeek)
                 return BadRequest("Bu ders bugün değil!");
 
-            // Zaten açık oturum var mı kontrol et
-            var existingSession = await _db.AttendanceSessions
-                .FirstOrDefaultAsync(s => s.LessonId == lesson.Id && 
+            // Zaten açık oturum var mı kontrol et - DateTimeOffset için SQLite uyumlu sorgu
+            var allSessions = await _db.AttendanceSessions.ToListAsync();
+            var existingOpenSession = allSessions
+                .FirstOrDefault(s => s.LessonId == lesson.Id && 
+                    s.Status == SessionStatus.Open &&
                     s.ScheduledAt >= today && s.ScheduledAt < today.AddDays(1));
 
-            if (existingSession != null)
+            if (existingOpenSession != null)
             {
-                if (existingSession.Status == SessionStatus.Open)
-                    return BadRequest("Bu ders için zaten açık bir oturum var!");
-                else if (existingSession.Status == SessionStatus.Closed)
-                    return BadRequest("Bu ders için zaten kapatılmış bir oturum var!");
+                // Eğer açık oturum varsa, o oturuma yönlendir
+                return RedirectToAction("Session", "Attendance", new { sessionId = existingOpenSession.Id });
             }
 
             // Yeni oturum oluştur
@@ -549,7 +551,9 @@ namespace Yoklama.Controllers
                 LessonId = lesson.Id,
                 ScheduledAt = ComputeNextOccurrenceWithTime(lesson.DayOfWeek, lesson.StartTime),
                 Status = SessionStatus.Open,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                TeacherId = currentUserId.Value,
+                GroupId = lesson.GroupId
             };
 
             _db.AttendanceSessions.Add(session);

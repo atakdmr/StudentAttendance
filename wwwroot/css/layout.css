@@ -1,0 +1,89 @@
+/* Layout Styles - Modern Yoklama System */
+
+/* Main Content */
+.main-content {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    will-change: margin-left;
+    transition: margin-left .24s cubic-bezier(.2,.8,.2,1), opacity .25s ease;
+    background: var(--light-bg);
+    opacity: 0; /* fade-in with loader */
+}
+
+.sidebar.collapsed~.main-content {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+/* visible state for content after load */
+.main-content.is-visible {
+    opacity: 1;
+    transition: opacity 300ms ease;
+}
+
+/* Content Header */
+.content-header {
+    background: var(--card-bg);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    min-height: var(--header-height);
+    box-sizing: border-box;
+}
+
+/* Keep header top bar aligned in one row on desktop */
+.content-header > .d-flex {
+    flex-wrap: nowrap !important;
+}
+
+@media (max-width: 768px) {
+    /* Allow wrapping on mobile */
+    .content-header > .d-flex { flex-wrap: wrap !important; }
+}
+
+/* iPad specific header adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .content-header > .d-flex {
+        flex-wrap: nowrap !important;
+    }
+    
+    .content-header 
+    
+    .content-header .btn-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    /* Show sidebar toggle button on tablet */
+    .sidebar-toggle {
+        position: static !important;
+        box-shadow: var(--shadow-sm) !important;
+        margin-left: 0.5rem;
+    }
+}
+
+.content-body {
+    padding: 2rem;
+}
+
+/* Profile Header alignment tweaks */
+.profile-header {
+    min-height: 72px;
+}
+
+.profile-header 
+
+.profile-header .flex-fill {
+    min-width: 200px;
+}
+
+/* Logout button container - force to right */
+.logout-container {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+}

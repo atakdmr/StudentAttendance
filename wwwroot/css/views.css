@@ -1,0 +1,1115 @@
+/* View-Specific Styles - Minimal & Essential Only */
+
+/* Mobile Back Button - Layout.cshtml */
+.mobile-back-button {
+    position: sticky;
+    top: 70px;
+    z-index: 99;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 0.75rem 1rem;
+}
+
+.mobile-back-button .btn {
+    border-radius: 12px;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .mobile-back-button {
+        display: none !important;
+    }
+}
+
+/* Schedule Grid - Schedule/Index.cshtml */
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.day-column {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    background: white;
+}
+
+.day-header {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #007bff;
+}
+
+.day-title {
+    margin: 0;
+    font-weight: 600;
+    color: #495057;
+}
+
+.day-lessons {
+    padding: 0.75rem;
+    min-height: 200px;
+}
+
+.lesson-card {
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.lesson-time {
+    font-weight: 600;
+    color: #007bff;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.lesson-title {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.lesson-group, .lesson-teacher {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.lesson-actions {
+    margin-top: 0.5rem;
+}
+
+.no-lessons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 0.875rem;
+    padding: 2rem 0;
+}
+
+.no-lessons i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
+.my-lesson {
+    border: 2px solid transparent;
+    border-radius: 5px;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(to right, #38c0ff, #081f6b) border-box;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.empty-state {
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+    border: 1px dashed #dee2e6;
+}
+
+/* ===== SCHEDULE PAGE MOBILE STYLES ===== */
+/* Schedule/Index.cshtml - Mobile responsive styles */
+@media (max-width: 768px) {
+    .schedule-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 0.5rem;
+    }
+    
+    .day-column {
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+    }
+    
+    .day-header {
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #007bff;
+    }
+    
+    .day-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #2d3748;
+        letter-spacing: 0.025em;
+    }
+    
+    .lesson-card {
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        transition: all 0.2s ease;
+    }
+    
+    .lesson-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .lesson-time {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2563eb;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        display: inline-block;
+        border: 1px solid #bfdbfe;
+    }
+    
+    .lesson-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+    
+    .lesson-group, .lesson-teacher {
+        font-size: 0.95rem;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+    }
+    
+    .lesson-group i, .lesson-teacher i {
+        margin-right: 0.5rem;
+        color: #718096;
+        width: 16px;
+        text-align: center;
+    }
+    
+    .lesson-actions {
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .lesson-actions .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: 1px solid #10b981;
+        color: white;
+        transition: all 0.2s ease;
+        text-transform: none;
+        letter-spacing: 0.025em;
+        font-family: inherit;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    .lesson-actions .btn:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        border-color: #059669;
+        color: white;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+    
+    .lesson-actions .btn:active {
+        background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+        border-color: #047857;
+        box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+    
+    .lesson-actions .btn i {
+        margin-right: 0.5rem;
+        font-size: 1.1em;
+    }
+    
+    .my-lesson {
+        background: #ffffff;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        background: linear-gradient(white, white) padding-box,
+                    linear-gradient(to right, #38c0ff, #081f6b) border-box;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+    
+    .my-lesson .lesson-time {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+    }
+    
+    .no-lessons {
+        padding: 3rem 2rem;
+        font-size: 1rem;
+        color: #718096;
+    }
+    
+    .no-lessons i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #cbd5e0;
+    }
+    
+    .no-lessons span {
+        font-weight: 500;
+    }
+    
+    /* Filter section mobile improvements */
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e2e8f0;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .form-label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-select, .form-control {
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        transition: all 0.2s ease;
+    }
+    
+    .form-select:focus, .form-control:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .btn-primary {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        border: none;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        transition: all 0.2s ease;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    
+    .btn-outline-secondary {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 2px solid #6b7280;
+        color: #6b7280;
+        background: transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #6b7280;
+        color: white;
+        box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+    }
+}
+
+/* ===== REPORTS PAGE STYLES ===== */
+/* Reports/Index.cshtml - Mobile reports layout */
+@media (max-width: 768px) {
+    .reports-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
+        background-color: #f8f9fa !important;
+    }
+    
+    /* Hide desktop table, show mobile cards */
+    .desktop-table {
+        display: none !important;
+    }
+    
+    .mobile-cards {
+        display: block !important;
+        padding: 1rem;
+    }
+    
+    .mobile-report-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+    
+    .mobile-report-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .mobile-report-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .mobile-report-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1a202c;
+        margin: 0 0 0.5rem 0;
+        line-height: 1.4;
+    }
+    
+    .mobile-report-date {
+        font-size: 0.875rem;
+        color: #718096;
+        font-weight: 500;
+    }
+    
+    .mobile-report-info {
+        margin-bottom: 1rem;
+    }
+    
+    .mobile-report-info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        color: #4a5568;
+        font-weight: 500;
+    }
+    
+    .mobile-report-info-item i {
+        margin-right: 0.5rem;
+        color: #718096;
+        width: 16px;
+        text-align: center;
+    }
+    
+    .mobile-report-actions {
+        padding-top: 0.75rem;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .mobile-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        width: 100%;
+        font-family: inherit;
+    }
+    
+    .mobile-btn-outline-secondary {
+        background: transparent;
+        border: 1px solid #6b7280;
+        color: #6b7280;
+    }
+    
+    .mobile-btn-outline-secondary:hover {
+        background: #6b7280;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .mobile-btn i {
+        margin-right: 0.5rem;
+        font-size: 1em;
+    }
+    
+    /* Filter section mobile improvements for reports */
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e2e8f0;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .form-label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-select, .form-control {
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        transition: all 0.2s ease;
+    }
+    
+    .form-select:focus, .form-control:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .btn-primary {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        background: #0d6efd;
+        border: 1px solid #0d6efd;
+        color: white;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-primary:hover {
+        background: #0b5ed7;
+        border-color: #0b5ed7;
+        color: white;
+    }
+    
+    .btn-outline-primary {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 1px solid #3b82f6;
+        color: #3b82f6;
+        background: transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #3b82f6;
+        color: white;
+    }
+    
+    .btn-outline-secondary {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 1px solid #6b7280;
+        color: #6b7280;
+        background: transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #6b7280;
+        color: white;
+    }
+    
+    .reports-header > div:first-child {
+        width: 100% !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .reports-header > div:last-child {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+    
+    .reports-header .btn {
+        width: 100% !important;
+        text-align: center !important;
+    }
+    
+    /* Filtreleme bölümü mobil optimizasyonu */
+    .card-body .row.g-3 {
+        gap: 12px;
+    }
+    
+    .card-body .col-md-4, .card-body .col-lg-3 {
+        margin-bottom: 12px;
+    }
+    
+    .form-label {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    
+    .form-select, .form-control {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    .btn {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+    
+    /* Tablo mobil optimizasyonu */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th, .table td {
+        padding: 0.5rem 0.25rem;
+        vertical-align: middle;
+    }
+    
+    .table th {
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+    
+    .table td {
+        font-size: 0.8rem;
+    }
+    
+    /* Butonlar mobil optimizasyonu */
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Empty state mobil optimizasyonu */
+    .card-body.text-center {
+        padding: 2rem 1rem !important;
+    }
+    
+    .card-body.text-center h4 {
+        font-size: 1.25rem;
+    }
+    
+    .card-body.text-center p {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .card-body.text-center .d-flex {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .card-body.text-center .btn {
+        width: 100% !important;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* ===== ATTENDANCE PAGE STYLES ===== */
+/* Attendance/Index.cshtml - Mobile session cards */
+@media (max-width: 768px) {
+    .mobile-session-card {
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e9ecef;
+    }
+    
+    .mobile-session-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    
+    .mobile-session-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #212529;
+        margin: 0;
+        flex: 1;
+        margin-right: 8px;
+    }
+    
+    .mobile-session-time {
+        background: #007bff;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    
+    .mobile-session-info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    
+    .mobile-session-info-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #6c757d;
+    }
+    
+    .mobile-session-info-item i {
+        width: 16px;
+        margin-right: 8px;
+        color: #007bff;
+    }
+    
+    .mobile-session-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    /* Desktop tablosunu gizle */
+    .desktop-table {
+        display: none !important;
+    }
+    
+    /* Mobil kartları göster */
+    .mobile-cards {
+        display: block !important;
+    }
+}
+
+/* Desktop için mobil kartları gizle */
+@media (min-width: 769px) {
+    .mobile-cards {
+        display: none !important;
+    }
+    
+    .desktop-table {
+        display: block !important;
+    }
+}
+
+/* ===== ANNOUNCEMENT BORDER STYLES ===== */
+/* Duyuru kartları için özel border kalınlığı - TÜM CİHAZLAR İÇİN */
+.card.border-danger,
+.card.border-danger:hover {
+    border-width: 2px !important;
+    border-style: solid !important;
+    border-color: #dc3545 !important;
+}
+
+.card.border-warning,
+.card.border-warning:hover {
+    border-width: 2px !important;
+    border-style: solid !important;
+    border-color: #ffc107 !important;
+}
+
+.card.border-success,
+.card.border-success:hover {
+    border-width: 2px !important;
+    border-style: solid !important;
+    border-color: #198754 !important;
+}
+
+/* ===== HOME PAGE STYLES ===== */
+/* Home/Index.cshtml - Today's lessons card mobile layout */
+@media (max-width: 768px) {
+    .today-lessons-card .d-flex {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    .today-lessons-card .d-flex .flex-grow-1 {
+        width: 100% !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .today-lessons-card .d-flex .text-end {
+        width: 100% !important;
+        text-align: left !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+    
+    .today-lessons-card .d-flex .text-end span {
+        margin-right: 0 !important;
+        margin-bottom: 0.25rem !important;
+    }
+}
+
+/* ===== LESSONS PAGE STYLES ===== */
+/* Lessons/Index.cshtml - Mobile lesson cards */
+@media (max-width: 768px) {
+    .mobile-lesson-card {
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e9ecef;
+    }
+    
+    .mobile-lesson-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    
+    .mobile-lesson-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #212529;
+        margin: 0;
+        flex: 1;
+        margin-right: 8px;
+    }
+    
+    .mobile-lesson-time {
+        background: #007bff;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    
+    .mobile-lesson-info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    
+    .mobile-lesson-info-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #6c757d;
+    }
+    
+    .mobile-lesson-info-item i {
+        width: 16px;
+        margin-right: 8px;
+        color: #007bff;
+    }
+    
+    .mobile-lesson-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .mobile-btn {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .mobile-btn-primary {
+        background: #007bff;
+        color: white;
+    }
+    
+    .mobile-btn-primary:hover {
+        background: #0056b3;
+        color: white;
+    }
+    
+    .mobile-btn-outline-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .mobile-btn-outline-secondary:hover {
+        background: #5a6268;
+        color: white;
+    }
+    
+    .mobile-btn-success {
+        background: #28a745;
+        color: white;
+    }
+    
+    .mobile-btn-success:hover {
+        background: #1e7e34;
+        color: white;
+    }
+    
+    .mobile-btn-outline {
+        background: white;
+        color: #007bff;
+        border: 1px solid #007bff;
+    }
+    
+    .mobile-btn-outline:hover {
+        background: #007bff;
+        color: white;
+    }
+    
+    .mobile-btn-warning {
+        background: #ffc107;
+        color: #212529;
+    }
+    
+    .mobile-btn-warning:hover {
+        background: #e0a800;
+        color: #212529;
+    }
+    
+    .mobile-btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .mobile-btn-danger:hover {
+        background: #c82333;
+        color: white;
+    }
+    
+    .mobile-session-status {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+    
+    .mobile-session-open {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .mobile-session-closed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .mobile-session-none {
+        background: #e2e3e5;
+        color: #6c757d;
+    }
+    
+    /* Container ayarları */
+    .container-fluid {
+        padding: 12px;
+    }
+    
+    /* Filtreleme bölümü mobil optimizasyonu */
+    .card-body .row.g-3 {
+        gap: 12px;
+    }
+    
+    .card-body .col-md-3 {
+        margin-bottom: 12px;
+    }
+    
+    .form-label {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    
+    .form-select, .form-control {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    .btn {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+    
+    /* Başlık optimizasyonu */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .page-header h2 {
+        font-size: 18px;
+        margin-bottom: 0;
+        font-weight: 600;
+    }
+    
+    .page-header p {
+        font-size: 13px;
+        margin-bottom: 0;
+        color: #6c757d;
+    }
+    
+    .page-header .d-flex {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    /* Buton optimizasyonu */
+    .page-header .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+    }
+}
+
+/* ===== GROUPS DETAILS PAGE STYLES ===== */
+/* Groups/Details.cshtml - Mobile student cards */
+@media (max-width: 768px) {
+    .mobile-student-card {
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e9ecef;
+    }
+    
+    .mobile-student-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    
+    .mobile-student-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #212529;
+        margin: 0;
+        flex: 1;
+        margin-right: 8px;
+    }
+    
+    .mobile-student-number {
+        background: #007bff;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    
+    .mobile-student-info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    
+    .mobile-student-info-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #6c757d;
+    }
+    
+    .mobile-student-info-item i {
+        width: 16px;
+        margin-right: 8px;
+        color: #007bff;
+    }
+    
+    .mobile-student-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    /* Groups details mobile button optimizations */
+    .mobile-back-button {
+        margin-bottom: 12px;
+    }
+    
+    .mobile-back-button .btn {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    /* Header button optimizations for mobile */
+    .d-flex.justify-content-between.align-items-center.mb-3.flex-wrap {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px;
+    }
+    
+    .d-flex.justify-content-between.align-items-center.mb-3.flex-wrap h2 {
+        font-size: 18px;
+        margin-bottom: 0;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .d-flex.justify-content-between.align-items-center.mb-3.flex-wrap .btn-group {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+    }
+    
+    .d-flex.justify-content-between.align-items-center.mb-3.flex-wrap .btn-group .btn {
+        flex: 1;
+        padding: 10px 12px;
+        font-size: 13px;
+        justify-content: center;
+    }
+    
+    /* Group info card mobile optimization */
+    .card-body .row {
+        flex-direction: column !important;
+    }
+    
+    .card-body .col-md-8,
+    .card-body .col-md-4 {
+        margin-bottom: 16px;
+    }
+    
+    .card-body .col-md-4 .row.text-center {
+        flex-direction: row !important;
+        justify-content: space-around;
+    }
+    
+    .card-body .col-md-4 .col-6 {
+        flex: 1;
+        margin-bottom: 0;
+    }
+    
+    .card-body .col-md-4 h4 {
+        font-size: 24px;
+        margin-bottom: 4px;
+    }
+    
+    .card-body .col-md-4 small {
+        font-size: 12px;
+    }
+}
+

@@ -21,9 +21,16 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/modern.css" asp-append-version="true" />
+    <!-- Custom Styles - Modular CSS -->
+    <link rel="stylesheet" href="~/css/variables.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/utilities.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/responsive.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/special.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/views.css" asp-append-version="true" />
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -38,12 +45,19 @@
     {
         <!-- Modern Sidebar -->
         <nav class="sidebar" id="sidebar">
-            <a asp-controller="Home" asp-action="Index" class="sidebar-header text-light text-decoration-none">
-                <div class="logo">
-                    <i class="fas fa-graduation-cap"></i>
+            <div class="sidebar-header">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <a asp-controller="Home" asp-action="Index" class="text-light text-decoration-none d-flex align-items-center">
+                        <div class="logo">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="title">Yoklama Sistemi</div>
+                    </a>
+                    <button class="btn btn-sm btn-outline-light sidebar-close d-md-none" type="button" aria-label="Kapat">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <div class="title">Yoklama Sistemi</div>
-            </a>
+            </div>
 
             <div class="sidebar-nav">
                 <!-- Ana Sayfa -->
@@ -125,6 +139,12 @@
                                 <div class="text">Devamsızlar</div>
                             </a>
                         </div>
+                        <div class="nav-item">
+                            <a href="@Url.Action("Index", "Announcements")" class="nav-link" data-page="announcements">
+                                <div class="icon"><i class="fas fa-bullhorn"></i></div>
+                                <div class="text">Duyurular</div>
+                            </a>
+                        </div>
                     </div>
                 }
 
@@ -144,44 +164,100 @@
             </div>
         </nav>
 
+        <!-- Account Sidebar (Mobile) -->
+        <div class="account-sidebar d-md-none" id="accountSidebar">
+            <div class="account-sidebar-header">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">Hesabım</h5>
+                    <button class="btn btn-sm btn-outline-light account-close" type="button" aria-label="Kapat">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="account-sidebar-content">
+                <div class="account-user-info p-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="avatar bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:48px;height:48px;">
+                            <i class="fa-solid fa-user fa-lg"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 text-white">@(User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "")</h6>
+                            <small class="text-light">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="account-menu">
+                    <a href="@Url.Action("Profile", "Account")" class="account-menu-item">
+                        <i class="fa-solid fa-id-badge me-3"></i>
+                        <span>Hesabım</span>
+                    </a>
+                    <a href="#" class="account-menu-item" onclick="document.getElementById('logoutForm').submit(); return false;">
+                        <i class="fa-solid fa-right-from-bracket me-3"></i>
+                        <span>Çıkış Yap</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Content -->
         <main class="main-content">
             <div class="content-header">
                 <div class="d-flex justify-content-between align-items-center gap-2">
-                    <div class="d-flex flex-column justify-content-center">
-                        <h1 class="h3 mb-0"><a asp-controller="Home" asp-action="Index" style="text-decoration: none; color: var(--primary-dark)">@ViewData["Title"]</a></h1>
-                        @if (ViewBag.Breadcrumb != null)
-                        {
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb mb-0">
-                                    @ViewBag.Breadcrumb
-                                </ol>
-                            </nav>
-                        }
-                    </div>
-                    <div class="d-flex align-items-center gap-1">
-                        <div class="dropdown">
-                            <button class="btn btn-icon rounded-circle btn-soft btn-user" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Hesabım">
-                                <i class="fa-solid fa-user"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow dropdown-menu-user" aria-labelledby="userDropdown" style="min-width: 280px;">
-                                <li class="dropdown-user-header px-3 py-3">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="avatar bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:36px;height:36px;"><i class="fa-solid fa-user"></i></div>
-                                        <div class="d-flex flex-column">
-                                            <strong>@(User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "")</strong>
-                                            <span class="small text-muted">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="fa-solid fa-id-badge me-2"></i>Hesabım</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit(); return false;"><i class="fa-solid fa-right-from-bracket me-2"></i>Çıkış Yap</a></li>
-                            </ul>
-                        </div>
+                    <!-- Mobil için düzenleme -->
+                    <div class="d-flex align-items-center gap-2 d-md-none">
                         <button class="sidebar-toggle btn btn-icon btn-sidebar rounded-circle" type="button" aria-label="Menüyü Aç/Kapat">
                             <i class="fas fa-bars-staggered"></i>
                         </button>
+                        <div class="d-flex flex-column justify-content-center flex-grow-1 text-center">
+                            <h1 class="h3 mb-0 mx-auto"><a asp-controller="Home" asp-action="Index" style="text-decoration: none; color: var(--primary-dark)">@ViewData["Title"]</a></h1>
+                            @if (ViewBag.Breadcrumb != null)
+                            {
+                                <nav aria-label="breadcrumb" class="mx-auto">
+                                    <ol class="breadcrumb mb-0 justify-content-center">
+                                        @ViewBag.Breadcrumb
+                                    </ol>
+                                </nav>
+                            }
+                        </div>
+                        <button class="account-toggle btn btn-icon rounded-circle btn-soft btn-user" type="button" id="accountToggle" aria-label="Hesabımı Aç/Kapat">
+                            <i class="fa-solid fa-user"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Desktop için eski düzen -->
+                    <div class="d-none d-md-flex justify-content-between align-items-center gap-2 w-100">
+                        <div class="d-flex flex-column justify-content-center">
+                            <h1 class="h3 mb-0"><a asp-controller="Home" asp-action="Index" style="text-decoration: none; color: var(--primary-dark)">@ViewData["Title"]</a></h1>
+                            @if (ViewBag.Breadcrumb != null)
+                            {
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb mb-0">
+                                        @ViewBag.Breadcrumb
+                                    </ol>
+                                </nav>
+                            }
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <div class="dropdown">
+                                <button class="btn btn-icon rounded-circle btn-soft btn-user" type="button" id="userDropdownDesktop" data-bs-toggle="dropdown" aria-expanded="false" title="Hesabım">
+                                    <i class="fa-solid fa-user"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow dropdown-menu-user" aria-labelledby="userDropdownDesktop" style="min-width: 280px;">
+                                    <li class="dropdown-user-header px-3 py-3">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="avatar bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:36px;height:36px;"><i class="fa-solid fa-user"></i></div>
+                                            <div class="d-flex flex-column">
+                                                <strong>@(User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "")</strong>
+                                                <span class="small text-muted">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="fa-solid fa-id-badge me-2"></i>Hesabım</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit(); return false;"><i class="fa-solid fa-right-from-bracket me-2"></i>Çıkış Yap</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -256,40 +332,6 @@
         <!-- Login Layout - Minimalist -->
         @RenderBody()
     }
-
-    <!-- Mobil Geri Butonu Stilleri -->
-    <style>
-        .mobile-back-button {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            padding: 0.5rem 1rem;
-            margin: 0;
-        }
-        
-        .mobile-back-button .btn {
-            border-radius: 20px;
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s ease;
-        }
-        
-        .mobile-back-button .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        /* Desktop'ta gizle */
-        @@media (min-width: 768px) {
-            .mobile-back-button {
-                display: none !important;
-            }
-        }
-    </style>
 
     <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

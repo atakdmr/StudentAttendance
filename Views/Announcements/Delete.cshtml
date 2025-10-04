@@ -1,0 +1,94 @@
+@model Yoklama.Models.Entities.Announcement
+@{
+    ViewData["Title"] = "Duyuru Sil";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">Duyuru Sil</h2>
+                    <p class="text-muted mb-0">Duyuru silme işlemini onaylayın</p>
+                </div>
+                <div>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Geri
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Dikkat: Bu işlem geri alınamaz!
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Bu duyuruyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Silinecek Duyuru:</h6>
+                        <div class="border @(Model.Priority == 3 ? "border-danger" : Model.Priority == 2 ? "border-warning" : "border-success") rounded p-3 bg-light">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-0">@Model.Title</h5>
+                                <div>
+                                    @switch (Model.Priority)
+                                    {
+                                        case 3:
+                                            <span class="badge bg-danger">Kritik</span>
+                                            break;
+                                        case 2:
+                                            <span class="badge bg-warning">Önemli</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-info">Normal</span>
+                                            break;
+                                    }
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success ms-1">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary ms-1">Pasif</span>
+                                    }
+                                </div>
+                            </div>
+                            <p class="text-muted mb-0">@Model.Content</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">Oluşturan</small>
+                            <div class="fw-semibold">@Model.CreatedBy.FullName</div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted">Oluşturulma Tarihi</small>
+                            <div class="fw-semibold">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" class="mt-4">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-2"></i>Evet, Sil
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

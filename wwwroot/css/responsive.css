@@ -1,0 +1,264 @@
+/* Responsive Styles - Modern Yoklama System */
+
+/* iPad and Tablet specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Tablet behaves like mobile: off-canvas by default */
+    .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .sidebar.show ~ .main-content {
+        margin-left: 0;
+    }
+    
+    /* Header centering when collapsed */
+    .sidebar .sidebar-header { justify-content: center; gap: 0; }
+    .sidebar .sidebar-header .title { display: none; }
+    .sidebar.show .sidebar-header { justify-content: flex-start; gap: 1rem; }
+    .sidebar.show .sidebar-header .title { display: block; opacity: 1; width: auto; }
+    
+    /* Center sidebar icons on tablet */
+    .sidebar .nav-link {
+        justify-content: center;
+        padding: 0.75rem;
+        position: relative;
+    }
+    
+    .sidebar.show .nav-link {
+        justify-content: flex-start;
+        padding: 0.75rem 1.5rem;
+        gap: 1rem;
+    }
+    
+    .sidebar .nav-link .icon {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* In collapsed tablet state text is hidden; when expanded show again */
+    .sidebar .nav-link .text { display: none; }
+    .sidebar.show .nav-link .text { display: inline; opacity: 1; width: auto; }
+    
+    /* When both collapsed and show classes coexist (tablet), force visibility */
+    .sidebar.collapsed.show .nav-link .text { display: inline; opacity: 1; width: auto; }
+    .sidebar.collapsed.show .sidebar-header .title { display: block; opacity: 1; width: auto; }
+    
+    /* Fix icon alignment issues */
+    .sidebar .nav-link i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+    
+    .content-header {
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .content-body {
+        padding: 1.5rem;
+    }
+    
+    /* Section titles hidden when collapsed, visible when expanded */
+    .sidebar .nav-section-title { display: none; opacity: 0; height: 0; padding: 0; margin: 0; }
+    .sidebar.show .nav-section-title { display: block; opacity: 1; height: auto; padding: 0 1.5rem 0.5rem; margin: 0; }
+    
+    /* Profile page tablet adjustments */
+    .profile-header {
+        flex-wrap: nowrap !important;
+    }
+    
+    .profile-header .flex-fill {
+        min-width: 150px;
+    }
+    
+    /* Table responsive adjustments */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    /* Card spacing adjustments */
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    /* Button spacing */
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Dropdown adjustments */
+    .dropdown-menu {
+        font-size: 0.875rem;
+    }
+    
+    /* Tablet spacing and protection from handle overlap */
+    .sidebar { padding-right: 10px; }
+    .sidebar.show .nav-item { margin: 0.5rem 0; }
+    .sidebar.show .nav-link { padding: 0.9rem 1.5rem; }
+    .sidebar.show .nav-section-title { padding: 0 1.5rem 0.6rem; }
+}
+
+/* Mobile Header Styles - Layout.cshtml */
+@media (max-width: 767px) {
+    .content-header .d-flex.align-items-center.gap-2.d-md-none {
+        justify-content: space-between !important;
+        width: 100% !important;
+        flex-direction: row !important;
+        display: flex !important;
+    }
+    
+    .content-header .d-flex.align-items-center.gap-2.d-md-none > *:first-child {
+        flex: 0 0 auto !important;
+        width: 40px !important;
+    }
+    
+    .content-header .d-flex.align-items-center.gap-2.d-md-none .flex-grow-1 {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        flex: 1 !important;
+        justify-content: center !important;
+    }
+    
+    .content-header .d-flex.align-items-center.gap-2.d-md-none > *:last-child {
+        flex: 0 0 auto !important;
+        width: 40px !important;
+    }
+    
+    .content-header .d-flex.align-items-center.gap-2.d-md-none .flex-grow-1 h1 {
+        text-align: center !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    
+    .content-header .d-flex.align-items-center.gap-2.d-md-none .flex-grow-1 nav {
+        width: 100% !important;
+        text-align: center !important;
+    }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed {
+        width: var(--sidebar-width);
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed.show {
+        transform: translateX(0);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .sidebar.collapsed~.main-content {
+        margin-left: 0;
+    }
+
+    .content-body {
+        padding: 1rem;
+    }
+    
+    /* Mobile specific profile adjustments */
+    .profile-header {
+        flex-wrap: wrap !important;
+    }
+    
+    .profile-header .logout-container {
+        margin-left: 0 !important;
+        margin-top: 0.5rem;
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+    
+    /* Mobile table adjustments */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    /* Mobile card adjustments */
+    .card-body {
+        padding: 1rem;
+    }
+    
+    /* Mobile button adjustments */
+    .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    /* Default global toggle button positioning disabled on mobile; header handles it */
+    .sidebar-toggle { position: static; box-shadow: none; }
+    /* Header-specific toggle sits under the user name at right */
+
+    .nav-subitems {
+        display: block;
+    }
+}
+
+/* Mutual exclusion overlay for mobile */
+.mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.mobile-overlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Back Button z-index fix */
+.mobile-back-button {
+    z-index: 999 !important;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .loader, .loader::before, .loader::after {
+        animation-duration: 2.5s;
+        animation-timing-function: linear;
+    }
+}

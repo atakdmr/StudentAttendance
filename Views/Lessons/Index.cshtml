@@ -3,233 +3,6 @@
     ViewData["Title"] = "Derslerim";
 }
 
-<style>
-/* Mobil optimizasyonu */
-@@media (max-width: 768px) {
-    .mobile-lesson-card {
-        background: white;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        border: 1px solid #e9ecef;
-    }
-    
-    .mobile-lesson-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 12px;
-    }
-    
-    .mobile-lesson-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #212529;
-        margin: 0;
-        flex: 1;
-        margin-right: 8px;
-    }
-    
-    .mobile-lesson-time {
-        background: #007bff;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 500;
-        white-space: nowrap;
-    }
-    
-    .mobile-lesson-info {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-bottom: 12px;
-    }
-    
-    .mobile-lesson-info-item {
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-        color: #6c757d;
-    }
-    
-    .mobile-lesson-info-item i {
-        width: 16px;
-        margin-right: 8px;
-        color: #007bff;
-    }
-    
-    .mobile-lesson-actions {
-        display: flex;
-        gap: 8px;
-    }
-    
-    .mobile-btn {
-        flex: 1;
-        padding: 10px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        text-align: center;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .mobile-btn-primary {
-        background: #007bff;
-        color: white;
-    }
-    
-    .mobile-btn-primary:hover {
-        background: #0056b3;
-        color: white;
-    }
-    
-    .mobile-btn-outline-secondary {
-        background: #6c757d;
-        color: white;
-    }
-    
-    .mobile-btn-outline-secondary:hover {
-        background: #5a6268;
-        color: white;
-    }
-    .mobile-btn-success {
-        background: #28a745;
-        color: white;
-    }
-    
-    .mobile-btn-success:hover {
-        background: #1e7e34;
-        color: white;
-    }
-    
-    .mobile-btn-outline {
-        background: white;
-        color: #007bff;
-        border: 1px solid #007bff;
-    }
-    
-    .mobile-btn-outline:hover {
-        background: #007bff;
-        color: white;
-    }
-    
-    .mobile-session-status {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 11px;
-        font-weight: 500;
-        text-transform: uppercase;
-    }
-    
-    .mobile-session-open {
-        background: #d4edda;
-        color: #155724;
-    }
-    
-    .mobile-session-closed {
-        background: #f8d7da;
-        color: #721c24;
-    }
-    
-    .mobile-session-none {
-        background: #e2e3e5;
-        color: #6c757d;
-    }
-    
-    /* Desktop tablosunu gizle */
-    .desktop-table {
-        display: none !important;
-    }
-    
-    /* Mobil kartları göster */
-    .mobile-cards {
-        display: block !important;
-    }
-    
-    /* Container ayarları */
-    .container-fluid {
-        padding: 12px;
-    }
-    
-    /* Filtreleme bölümü mobil optimizasyonu */
-    .card-body .row.g-3 {
-        gap: 12px;
-    }
-    
-    .card-body .col-md-3 {
-        margin-bottom: 12px;
-    }
-    
-    .form-label {
-        font-size: 13px;
-        margin-bottom: 4px;
-    }
-    
-    .form-select, .form-control {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-    
-    .btn {
-        font-size: 13px;
-        padding: 8px 12px;
-    }
-    
-    /* Başlık optimizasyonu */
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-    
-    .page-header h2 {
-        font-size: 18px;
-        margin-bottom: 0;
-        font-weight: 600;
-    }
-    
-    .page-header p {
-        font-size: 13px;
-        margin-bottom: 0;
-        color: #6c757d;
-    }
-    
-    .page-header .d-flex {
-        width: 100%;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    
-    /* Buton optimizasyonu */
-    .page-header .btn {
-        padding: 6px 10px;
-        font-size: 12px;
-        flex: 1;
-        min-width: 120px;
-        text-align: center;
-    }
-}
-
-/* Desktop için mobil kartları gizle */
-@@media (min-width: 769px) {
-    .mobile-cards {
-        display: none !important;
-    }
-    
-    .desktop-table {
-        display: block !important;
-    }
-}
-</style>
-
 <div class="container-fluid">
     <div class="page-header d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -363,12 +136,9 @@
                                                 <i class="fas fa-info-circle me-2 text-primary"></i>Durum
                                             </th>
                                         }
-                                        @if (!Model.IsAdmin)
-                                        {
-                                            <th class="border-0 py-3 px-4 text-end">
-                                                <i class="fas fa-cogs me-2 text-primary"></i>İşlemler
-                                            </th>
-                                        }
+                                        <th class="border-0 py-3 px-4 text-end">
+                                            <i class="fas fa-cogs me-2 text-primary"></i>İşlemler
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -462,41 +232,56 @@
                                                     }
                                                 </td>
                                             }
-                                            @if (!Model.IsAdmin)
-                                            {
-                                                <td class="py-3 px-4 text-end">
-                                                    <div class="d-flex gap-1 justify-content-end">
+                                            <td class="py-3 px-4 text-end">
+                                                <div class="d-flex gap-2 justify-content-end align-items-center">
+                                                    @if (Model.IsAdmin)
+                                                    {
+                                                        <button type="button" class="btn btn-sm" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; border-radius: 6px; font-weight: 500;" 
+                                                                onclick="showLessonDetails('@lesson.Id', '@lesson.Title', '@(lesson.Teacher?.FullName ?? "Öğretmen Yok")', '@(lesson.Group?.Name ?? "Grup Yok")', '@GetDayName(lesson.DayOfWeek)', '@lesson.StartTime.ToString(@"hh\:mm")', '@lesson.EndTime.ToString(@"hh\:mm")', '@(lesson.SessionId?.ToString() ?? "")')">
+                                                            <i class="fas fa-info-circle"></i> Detaylar
+                                                        </button>
+                                                        <a href="@Url.Action("EditLesson", "Lessons", new { id = lesson.Id })" class="btn btn-sm" style="background: #3b82f6; border: 1px solid #3b82f6; color: white; border-radius: 6px; font-weight: 500;">
+                                                            <i class="fas fa-edit"></i> Güncelle
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm" style="background: #ef4444; border: 1px solid #ef4444; color: white; border-radius: 6px; font-weight: 500;" 
+                                                                onclick="deleteLesson(this)" 
+                                                                data-lesson-id="@lesson.Id" 
+                                                                data-lesson-title="@lesson.Title">
+                                                            <i class="fas fa-trash"></i> Sil
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
                                                         @if (lesson.SessionStatus.HasValue)
                                                         {
-                                                            @if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Open)
-                                                            {
-                                                                <a class="btn btn-primary btn-sm" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Yoklama Al">
-                                                                    <i class="fas fa-clipboard-check me-1"></i>Yoklama Al
-                                                                </a>
-                                                            }
-                                                            else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Closed)
-                                                            {
-                                                                <a class="btn btn-secondary btn-sm" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Detayları Gör">
-                                                                    <i class="fas fa-info-circle me-1"></i>Detaylar
-                                                                </a>
-                                                            }
-                                                            else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Finalized)
-                                                            {
-                                                                <a class="btn btn-outline-secondary btn-sm" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Sonuçları Gör">
-                                                                    <i class="fas fa-eye me-1"></i>Sonuçları Gör
-                                                                </a>
-                                                            }
+                                                        @if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Open)
+                                                        {
+                                                            <a class="btn btn-sm" style="background: #10b981; border: 1px solid #10b981; color: white; border-radius: 6px; font-weight: 500;" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Yoklama Al">
+                                                                <i class="fas fa-clipboard-check me-1"></i>Yoklama Al
+                                                            </a>
+                                                        }
+                                                        else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Closed)
+                                                        {
+                                                            <a class="btn btn-sm" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; border-radius: 6px; font-weight: 500;" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Detayları Gör">
+                                                                <i class="fas fa-info-circle me-1"></i>Detaylar
+                                                            </a>
+                                                        }
+                                                        else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Finalized)
+                                                        {
+                                                            <a class="btn btn-sm" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; border-radius: 6px; font-weight: 500;" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Sonuçları Gör">
+                                                                <i class="fas fa-eye me-1"></i>Sonuçları Gör
+                                                            </a>
+                                                        }
                                                         }
                                                         else
                                                         {
-                                                            <a class="btn btn-primary btn-sm" asp-action="OpenSession" asp-route-lessonId="@lesson.Id" title="Oturum Aç">
+                                                            <a class="btn btn-sm" style="background: #3b82f6; border: 1px solid #3b82f6; color: white; border-radius: 6px; font-weight: 500;" asp-action="OpenSession" asp-route-lessonId="@lesson.Id" title="Oturum Aç">
                                                                 <i class="fas fa-play me-1"></i>Oturum Aç
                                                             </a>
                                                         }
                                                     }
-                                                    </div>
-                                                </td>
-                                            }
+                                                </div>
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>
@@ -571,32 +356,35 @@
                         @if (Model.IsAdmin)
                         {
                             <button type="button" class="mobile-btn mobile-btn-outline-info" 
-                                    onclick="showLessonDetails('@lesson.Id', '@lesson.Title', '@(lesson.Teacher?.FullName ?? "Öğretmen Yok")', '@(lesson.Group?.Name ?? "Grup Yok")', '@GetDayName(lesson.DayOfWeek)', '@lesson.StartTime.ToString(@"hh\:mm")', '@lesson.EndTime.ToString(@"hh\:mm")', '@(lesson.SessionId?.ToString() ?? "")')">
+                                    onclick="showLessonDetailsWithActions('@lesson.Id', '@lesson.Title', '@(lesson.Teacher?.FullName ?? "Öğretmen Yok")', '@(lesson.Group?.Name ?? "Grup Yok")', '@GetDayName(lesson.DayOfWeek)', '@lesson.StartTime.ToString(@"hh\:mm")', '@lesson.EndTime.ToString(@"hh\:mm")', '@(lesson.SessionId?.ToString() ?? "")')">
                                 <i class="fas fa-info-circle me-1"></i>Detaylar
                             </button>
                         }
                         else
                         {
-                            @if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Open)
+                            @if (lesson.SessionStatus.HasValue)
                             {
-                                <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
-                                   class="mobile-btn mobile-btn-success">
-                                    <i class="fas fa-play me-1"></i>Yoklamaya Devam Et
-                                </a>
-                            }
-                            else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Closed)
-                            {
-                                <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
-                                   class="mobile-btn mobile-btn-outline-secondary">
-                                    <i class="fas fa-info-circle me-1"></i>Detayları Gör
-                                </a>
-                            }
-                            else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Finalized)
-                            {
-                                <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
-                                   class="mobile-btn mobile-btn-outline-secondary">
-                                    <i class="fas fa-eye me-1"></i>Sonuçları Gör
-                                </a>
+                                @if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Open)
+                                {
+                                    <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
+                                       class="mobile-btn mobile-btn-success">
+                                        <i class="fas fa-play me-1"></i>Yoklamaya Devam Et
+                                    </a>
+                                }
+                                else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Closed)
+                                {
+                                    <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
+                                       class="mobile-btn mobile-btn-outline-secondary">
+                                        <i class="fas fa-info-circle me-1"></i>Detayları Gör
+                                    </a>
+                                }
+                                else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Finalized)
+                                {
+                                    <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
+                                       class="mobile-btn mobile-btn-outline-secondary">
+                                        <i class="fas fa-eye me-1"></i>Sonuçları Gör
+                                    </a>
+                                }
                             }
                             else
                             {
@@ -727,64 +515,219 @@
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
         
-        // Admin için ders detayları gösterme fonksiyonu
-        function showLessonDetails(id, title, teacher, group, day, startTime, endTime, sessionId) {
+        function deleteLessonFromModal(id, title) {
+            // Mevcut detay modalını kapat
+            var detailModal = document.querySelector('.modal.show');
+            if (detailModal) {
+                var bsModal = bootstrap.Modal.getInstance(detailModal);
+                if (bsModal) {
+                    bsModal.hide();
+                }
+            }
+            
+            // Modal mesajını güncelle
+            var messageElement = document.getElementById('deleteMessage');
+            if (messageElement) {
+                messageElement.textContent = '"' + title + '" dersini silmek istediğinizden emin misiniz?';
+            }
+            
+            // Form action'ını ayarla
+            document.getElementById('deleteForm').action = '@Url.Action("DeleteLesson")' + '?id=' + id;
+            
+            // Delete modal'ını göster
+            setTimeout(function() {
+                new bootstrap.Modal(document.getElementById('deleteModal')).show();
+            }, 300);
+        }
+        
+        // Admin için ders detayları ve işlemler gösterme fonksiyonu (sadece admin kullanabilir)
+        function showLessonDetailsWithActions(id, title, teacher, group, day, startTime, endTime, sessionId) {
             var modal = document.createElement('div');
             modal.className = 'modal fade';
             modal.innerHTML = `
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                                <i class="fas fa-book me-2"></i>${title}
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Ders Detayları
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body">
-                            <div class="row g-3">
+                        <div class="modal-body p-4">
+                            <div class="row g-4">
                                 <div class="col-12">
-                                    <div class="d-flex align-items-center p-3 bg-light rounded">
-                                        <i class="fas fa-user fa-2x text-primary me-3"></i>
-                                        <div>
-                                            <h6 class="mb-1">Öğretmen</h6>
-                                            <span class="text-muted">${teacher}</span>
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-header bg-light border-0">
+                                            <h6 class="card-title text-primary mb-0">
+                                                <i class="fas fa-book me-2"></i>${title}
+                                            </h6>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="d-flex align-items-center p-3 bg-light rounded">
-                                        <i class="fas fa-layer-group fa-2x text-success me-3"></i>
-                                        <div>
-                                            <h6 class="mb-1">Grup</h6>
-                                            <span class="text-muted">${group}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="d-flex align-items-center p-3 bg-light rounded">
-                                        <i class="fas fa-calendar-day fa-2x text-info me-3"></i>
-                                        <div>
-                                            <h6 class="mb-1">Gün</h6>
-                                            <span class="text-muted">${day}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="d-flex align-items-center p-3 bg-light rounded">
-                                        <i class="fas fa-clock fa-2x text-warning me-3"></i>
-                                        <div>
-                                            <h6 class="mb-1">Saat</h6>
-                                            <span class="text-muted">${startTime} - ${endTime}</span>
+                                        <div class="card-body p-4">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-user text-success"></i>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted d-block">Öğretmen</small>
+                                                            <span class="fw-semibold text-dark">${teacher}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-users text-info"></i>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted d-block">Grup</small>
+                                                            <span class="fw-semibold text-dark">${group}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-calendar-day text-warning"></i>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted d-block">Gün</small>
+                                                            <span class="fw-semibold text-dark">${day}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-clock text-danger"></i>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted d-block">Saat Aralığı</small>
+                                                            <span class="fw-semibold text-dark">${startTime} - ${endTime}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            ${sessionId ? `<a href="/Attendance/Session?sessionId=${sessionId}" class="btn btn-primary me-2">
-                                <i class="fas fa-external-link-alt me-1"></i>İlgili Derse Git
-                            </a>` : ''}
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                        <div class="modal-footer bg-light border-0 p-3">
+                            <div class="d-flex gap-2 w-100 justify-content-end">
+                                ${sessionId ? `<a href="/Attendance/Session?sessionId=${sessionId}" class="btn btn-sm" style="background: #10b981; border: 1px solid #10b981; color: white; border-radius: 6px; font-weight: 500;">
+                                    <i class="fas fa-external-link-alt me-1"></i>İlgili Derse Git
+                                </a>` : ''}
+                                <a href="/Lessons/EditLesson?id=${id}" class="btn btn-sm" style="background: #3b82f6; border: 1px solid #3b82f6; color: white; border-radius: 6px; font-weight: 500;">
+                                    <i class="fas fa-edit me-1"></i>Güncelle
+                                </a>
+                                <button type="button" class="btn btn-sm" style="background: #ef4444; border: 1px solid #ef4444; color: white; border-radius: 6px; font-weight: 500;" onclick="deleteLessonFromModal('${id}', '${title}')">
+                                    <i class="fas fa-trash me-1"></i>Sil
+                                </button>
+                                <button type="button" class="btn btn-sm" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; border-radius: 6px; font-weight: 500;" data-bs-dismiss="modal">Kapat</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            var bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            
+            modal.addEventListener('hidden.bs.modal', function() {
+                document.body.removeChild(modal);
+            });
+        }
+        
+        // Admin için ders detayları gösterme fonksiyonu
+        function showLessonDetails(id, title, teacher, group, day, startTime, endTime, sessionId) {
+            var modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Ders Detayları
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-header bg-light border-0">
+                                            <h6 class="card-title text-primary mb-0">
+                                                <i class="fas fa-book me-2"></i>${title}
+                                            </h6>
+                                        </div>
+                                        <div class="card-body p-4">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-user text-success"></i>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted d-block">Öğretmen</small>
+                                                            <span class="fw-semibold text-dark">${teacher}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-users text-info"></i>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted d-block">Grup</small>
+                                                            <span class="fw-semibold text-dark">${group}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-calendar-day text-warning"></i>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted d-block">Gün</small>
+                                                            <span class="fw-semibold text-dark">${day}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-clock text-danger"></i>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted d-block">Saat Aralığı</small>
+                                                            <span class="fw-semibold text-dark">${startTime} - ${endTime}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light border-0 p-3">
+                            <div class="d-flex gap-2 w-100 justify-content-end">
+                                ${sessionId ? `<a href="/Attendance/Session?sessionId=${sessionId}" class="btn btn-sm" style="background: #10b981; border: 1px solid #10b981; color: white; border-radius: 6px; font-weight: 500;">
+                                    <i class="fas fa-external-link-alt me-1"></i>İlgili Derse Git
+                                </a>` : ''}
+                                <a href="/Lessons/EditLesson?id=${id}" class="btn btn-sm" style="background: #3b82f6; border: 1px solid #3b82f6; color: white; border-radius: 6px; font-weight: 500;">
+                                    <i class="fas fa-edit me-1"></i>Güncelle
+                                </a>
+                                <button type="button" class="btn btn-sm" style="background: #ef4444; border: 1px solid #ef4444; color: white; border-radius: 6px; font-weight: 500;" onclick="deleteLessonFromModal('${id}', '${title}')">
+                                    <i class="fas fa-trash me-1"></i>Sil
+                                </button>
+                                <button type="button" class="btn btn-sm" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; border-radius: 6px; font-weight: 500;" data-bs-dismiss="modal">Kapat</button>
+                            </div>
                         </div>
                     </div>
                 </div>

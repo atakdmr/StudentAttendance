@@ -52,6 +52,16 @@ public class HomeController : Controller
                         .OrderBy(s => s.ScheduledAt)
                         .ToList();
                     ViewBag.SessionsToday = sessionsToday;
+
+                    // Aktif duyuruları getir
+                    var activeAnnouncements = await _db.Announcements
+                        .Where(a => a.IsActive)
+                        .Include(a => a.CreatedBy)
+                        .OrderByDescending(a => a.Priority)
+                        .ThenByDescending(a => a.CreatedAt)
+                        .Take(5) // Son 5 duyuru
+                        .ToListAsync();
+                    ViewBag.ActiveAnnouncements = activeAnnouncements;
                 }
                 else if (User.IsInRole("Teacher"))
                 {
@@ -72,6 +82,16 @@ public class HomeController : Controller
                         .OrderBy(s => s.ScheduledAt)
                         .ToList();
                     ViewBag.SessionsToday = sessionsToday;
+
+                    // Aktif duyuruları getir
+                    var activeAnnouncements = await _db.Announcements
+                        .Where(a => a.IsActive)
+                        .Include(a => a.CreatedBy)
+                        .OrderByDescending(a => a.Priority)
+                        .ThenByDescending(a => a.CreatedAt)
+                        .Take(5) // Son 5 duyuru
+                        .ToListAsync();
+                    ViewBag.ActiveAnnouncements = activeAnnouncements;
                 }
             }
         }

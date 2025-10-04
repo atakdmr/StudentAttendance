@@ -28,6 +28,7 @@ namespace Yoklama.Data
         public DbSet<AttendanceSession> AttendanceSessions => Set<AttendanceSession>();
         public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+        public DbSet<Announcement> Announcements => Set<Announcement>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,0 +1,116 @@
+@model Yoklama.Models.Entities.Announcement
+@{
+    ViewData["Title"] = "Duyuru Detayları";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">Duyuru Detayları</h2>
+                    <p class="text-muted mb-0">Duyuru bilgilerini görüntüleyin</p>
+                </div>
+                <div>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Geri
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card @(Model.Priority == 3 ? "border-danger" : Model.Priority == 2 ? "border-warning" : "border-success")">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">@Model.Title</h5>
+                    <div>
+                        @switch (Model.Priority)
+                        {
+                            case 3:
+                                <span class="badge bg-danger">Kritik</span>
+                                break;
+                            case 2:
+                                <span class="badge bg-warning">Önemli</span>
+                                break;
+                            default:
+                                <span class="badge bg-info">Normal</span>
+                                break;
+                        }
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success ms-1">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary ms-1">Pasif</span>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>İçerik</h6>
+                        <div class="border rounded p-3 bg-light">
+                            @Html.Raw(Model.Content.Replace("\n", "<br>"))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Duyuru Bilgileri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted">Oluşturan</small>
+                        <div class="fw-semibold">@Model.CreatedBy.FullName</div>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">Oluşturulma Tarihi</small>
+                        <div class="fw-semibold">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</div>
+                    </div>
+                    @if (Model.UpdatedAt.HasValue)
+                    {
+                        <div class="mb-3">
+                            <small class="text-muted">Son Güncelleme</small>
+                            <div class="fw-semibold">@Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                    }
+                    <div class="mb-0">
+                        <small class="text-muted">Durum</small>
+                        <div>
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Pasif</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">İşlemler</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-edit me-2"></i>Düzenle
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Sil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

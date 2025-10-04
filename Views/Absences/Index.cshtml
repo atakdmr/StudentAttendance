@@ -1,17 +1,19 @@
 @model IEnumerable<Yoklama.Models.Entities.AttendanceRecord>
 @{
     ViewData["Title"] = "Devamsız Öğrenciler";
-    
+
     // Calculate statistics
     var totalAbsences = Model.Count();
     var todayAbsences = Model.Count(r => r.Session.ScheduledAt.Date == DateTime.Today);
-    var thisWeekAbsences = Model.Count(r => r.Session.ScheduledAt >= DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek));
+    var thisWeekAbsences = Model.Count(r => r.Session.ScheduledAt >=
+    DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek));
     var uniqueStudents = Model.Select(r => r.StudentId).Distinct().Count();
 }
 
 <div class="container-fluid">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-column flex-md-row gap-2 text-center text-md-start">
+    <div
+        class="d-flex justify-content-between align-items-center mb-4 flex-column flex-md-row gap-2 text-center text-md-start absences-header">
         <div>
             <h2 class="mb-1">
                 <i class="fas fa-user-times text-danger me-2"></i>Devamsız Öğrenciler
@@ -24,7 +26,8 @@
             </button>
             <form asp-action="SendSms" method="post" class="d-inline w-100">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-primary text-center" onclick="return confirm('Tüm devamsız öğrencilere SMS gönderilsin mi?')">
+                <button type="submit" class="btn btn-primary text-center"
+                    onclick="return confirm('Tüm devamsız öğrencilere SMS gönderilsin mi?')">
                     <i class="fas fa-sms me-1"></i>SMS Gönder
                 </button>
             </form>
@@ -98,14 +101,14 @@
             </button>
         </div>
         <div class="card-body">
-            
+
             <form method="get" class="row g-3" id="filterForm">
                 <div class="col-lg-2 col-md-6">
                     <label class="form-label">
                         <i class="fas fa-search me-1"></i>Arama
                     </label>
-                    <input type="text" class="form-control" name="search" value="@ViewBag.Search" 
-                           placeholder="Öğrenci, ders veya grup ara...">
+                    <input type="text" class="form-control" name="search" value="@ViewBag.Search"
+                        placeholder="Öğrenci, ders veya grup ara...">
                 </div>
                 <div class="col-lg-2 col-md-6">
                     <label class="form-label">
@@ -117,7 +120,8 @@
                         {
                             @foreach (var group in ViewBag.Groups)
                             {
-                                <option value="@group.Id" selected="@(ViewBag.GroupId?.ToString() == group.Id.ToString())">@group.Name</option>
+                                <option value="@group.Id" selected="@(ViewBag.GroupId?.ToString() == group.Id.ToString())">
+                                    @group.Name</option>
                             }
                         }
                     </select>
@@ -153,7 +157,7 @@
                     </button>
                 </div>
             </form>
-            
+
             <div id="warningAlert" class="alert alert-warning d-none mt-3" role="alert">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 <strong>Zaten tüm kayıtlar gösteriliyor!</strong> Filtreleme yapmak için yukarıdaki alanları doldurun.
@@ -196,52 +200,59 @@
                             </tr>
                         </thead>
                         <tbody>
-                        @foreach (var r in Model)
-                        {
-                            <tr>
-                                <td>
-                                    <div class="d-flex flex-column">
-                                        <span class="fw-bold">@r.Session.ScheduledAt.LocalDateTime.ToString("dd.MM.yyyy")</span>
-                                        <small class="text-muted">@r.Session.ScheduledAt.LocalDateTime.ToString("HH:mm")</small>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3">
-                                            <i class="fas fa-user text-danger"></i>
+                            @foreach (var r in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span
+                                                class="fw-bold">@r.Session.ScheduledAt.LocalDateTime.ToString("dd.MM.yyyy")</span>
+                                            <small
+                                                class="text-muted">@r.Session.ScheduledAt.LocalDateTime.ToString("HH:mm")</small>
                                         </div>
-                                        <div class="flex-grow-1">
-                                            <strong class="text-truncate d-block" style="max-width: 150px;" title="@r.Student.FullName">@r.Student.FullName</strong>
-                                            @if (!string.IsNullOrEmpty(r.Student.Phone))
-                                            {
-                                                <br><small class="text-muted"><i class="fas fa-phone me-1"></i>@r.Student.Phone</small>
-                                            }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3">
+                                                <i class="fas fa-user text-danger"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <strong class="text-truncate d-block" style="max-width: 150px;"
+                                                    title="@r.Student.FullName">@r.Student.FullName</strong>
+                                                @if (!string.IsNullOrEmpty(r.Student.Phone))
+                                                {
+                                                    <br>
+                                        
+                                                    <small class="text-muted"><i
+                                                            class="fas fa-phone me-1"></i>@r.Student.Phone</small>
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary">@r.Session.Lesson.Group.Name</span>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-book text-muted me-2"></i>
-                                        <span class="text-truncate" style="max-width: 200px;" title="@r.Session.Lesson.Title">@r.Session.Lesson.Title</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-danger">
-                                        <i class="fas fa-times me-1"></i>Yok
-                                    </span>
-                                </td>
-                                <td class="text-end no-print">
-                                    <a href="@Url.Action("Student", "Reports", new { studentId = r.StudentId })" 
-                                       class="btn btn-outline-info btn-sm" 
-                                       title="Öğrenci Raporu">
-                                        <i class="fas fa-eye me-1"></i>Rapor
-                                    </a>
-                                </td>
-                            </tr>
-                        }
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge bg-primary bg-opacity-10 text-primary">@r.Session.Lesson.Group.Name</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-book text-muted me-2"></i>
+                                            <span class="text-truncate" style="max-width: 200px;"
+                                                title="@r.Session.Lesson.Title">@r.Session.Lesson.Title</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times me-1"></i>Yok
+                                        </span>
+                                    </td>
+                                    <td class="text-end no-print">
+                                        <a href="@Url.Action("Student", "Reports", new { studentId = r.StudentId })"
+                                            class="btn btn-outline-info btn-sm" title="Öğrenci Raporu">
+                                            <i class="fas fa-eye me-1"></i>Rapor
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -260,102 +271,35 @@
     </div>
 </div>
 
-@section Styles {
-    <style>
-        @@media print {
-            .d-print-none {
-                display: none !important;
-            }
-            .card {
-                border: 1px solid #dee2e6 !important;
-                box-shadow: none !important;
-            }
-            .table {
-                font-size: 12px;
-            }
-            .btn {
-                display: none !important;
-            }
-        }
-        
-        /* Responsive improvements */
-        @@media (max-width: 768px) {
-            .card-header h6 {
-                font-size: 0.9rem;
-            }
-            .form-label {
-                font-size: 0.85rem;
-                font-weight: 600;
-            }
-            .btn-sm {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.75rem;
-            }
-        }
-        
-        @@media print {
-            .no-print, .btn, .card-header, .dropdown, .sidebar, .content-header .d-flex > div:last-child {
-                display: none !important;
-            }
-            
-            .table {
-                font-size: 12px;
-            }
-            
-            .table th, .table td {
-                padding: 0.5rem;
-            }
-            
-            .container-fluid {
-                padding: 0 !important;
-            }
-            
-            .card {
-                border: none !important;
-                box-shadow: none !important;
-            }
-        }
-        
-        @@media (max-width: 576px) {
-            .col-lg-3, .col-lg-2, .col-lg-1 {
-                margin-bottom: 0.5rem;
-            }
-        .btn {
-            width: 100% !important;
-            white-space: nowrap;
-            font-size: 0.875rem;
-        }
-        }
-    </style>
-}
+
 
 @section Scripts {
     <script>
         function clearFilters() {
             // Clear all form inputs
             document.getElementById('filterForm').reset();
-            
+
             // Redirect to clean URL
             window.location.href = '@Url.Action("Index", "Absences")';
         }
-        
+
         // Auto-submit form on change for better UX
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('filterForm');
             const inputs = form.querySelectorAll('select, input[type="date"]');
             const filterBtn = document.getElementById('filterBtn');
             const warningAlert = document.getElementById('warningAlert');
-            
+
             // Check if all filters are empty
             function areFiltersEmpty() {
                 const search = form.querySelector('input[name="search"]').value.trim();
                 const groupId = form.querySelector('select[name="groupId"]').value;
                 const startDate = form.querySelector('input[name="startDate"]').value;
                 const endDate = form.querySelector('input[name="endDate"]').value;
-                
+
                 return !search && !groupId && !startDate && !endDate;
             }
-            
+
             // Check if we should disable button (from localStorage)
             function checkButtonState() {
                 const hasShownAllRecords = localStorage.getItem('absencesAllRecordsShown') === 'true';
@@ -365,12 +309,12 @@
                     warningAlert.classList.remove('d-none');
                 }
             }
-            
+
             // Initialize button state
             checkButtonState();
-            
+
             // Handle form submit
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function (e) {
                 if (areFiltersEmpty()) {
                     const hasShownAllRecords = localStorage.getItem('absencesAllRecordsShown') === 'true';
                     if (hasShownAllRecords) {
@@ -392,7 +336,7 @@
                     filterBtn.innerHTML = '<i class="fas fa-search me-1 d-none d-sm-inline"></i><span class="d-sm-none">Ara</span><span class="d-none d-sm-inline">Filtrele</span>';
                 }
             });
-            
+
             // Enable button when any input changes
             function enableButton() {
                 localStorage.removeItem('absencesAllRecordsShown');
@@ -400,18 +344,18 @@
                 filterBtn.disabled = false;
                 filterBtn.innerHTML = '<i class="fas fa-search me-1 d-none d-sm-inline"></i><span class="d-sm-none">Ara</span><span class="d-none d-sm-inline">Filtrele</span>';
             }
-            
+
             // Add event listeners to all inputs
             inputs.forEach(input => {
-                input.addEventListener('change', function() {
+                input.addEventListener('change', function () {
                     enableButton();
                     // Don't auto-submit, let user click the filter button
                 });
             });
-            
+
             // Add event listener to search input for real-time updates
             const searchInput = form.querySelector('input[name="search"]');
-            searchInput.addEventListener('input', function() {
+            searchInput.addEventListener('input', function () {
                 if (this.value.trim() !== '') {
                     enableButton();
                 }
@@ -419,5 +363,3 @@
         });
     </script>
 }
-
-

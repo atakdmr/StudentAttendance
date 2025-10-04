@@ -4,19 +4,28 @@
 }
 
 <div class="container-fluid">
+    <!-- Mobile Back Button -->
+    <div class="mobile-back-button d-md-none">
+        <a href="@Url.Action("Index", "Groups")" class="btn btn-light">
+            <i class="fas fa-arrow-left me-2"></i>Geri
+        </a>
+    </div>
+
     <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                 <h2>@Model.Name (@Model.Code)</h2>
                 <div class="btn-group">
                     <a asp-controller="Groups" asp-action="Edit" asp-route-id="@Model.GroupId" class="btn btn-primary">
                         <i class="fas fa-edit me-1"></i>
-                        Grubu Düzenle
+                        <span class="d-none d-sm-inline">Grubu Düzenle</span>
+                        <span class="d-sm-none">Düzenle</span>
                     </a>
                     <a asp-controller="Reports" asp-action="Group" asp-route-id="@Model.GroupId" class="btn btn-secondary">
                         <i class="fas fa-chart-bar me-1"></i>
-                        Rapor
+                        <span class="d-none d-sm-inline">Rapor</span>
+                        <span class="d-sm-none">Rapor</span>
                     </a>
                 </div>
             </div>
@@ -75,7 +84,8 @@
                 <div class="card-body">
                     @if (Model.Lessons.Any())
                     {
-                        <div class="table-responsive">
+                        <!-- Desktop Table -->
+                        <div class="desktop-table table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
@@ -125,6 +135,45 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Mobile Cards -->
+                        <div class="mobile-cards">
+                            @foreach (var l in Model.Lessons)
+                            {
+                                var dayNames = new[] { "", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar" };
+                                <div class="mobile-lesson-card">
+                                    <div class="mobile-lesson-header">
+                                        <div class="mobile-lesson-title">@l.Title</div>
+                                        <div class="mobile-lesson-time">@l.StartTime.ToString(@"hh\:mm") - @l.EndTime.ToString(@"hh\:mm")</div>
+                                    </div>
+                                    <div class="mobile-lesson-info">
+                                        <div class="mobile-lesson-info-item">
+                                            <i class="fas fa-user"></i>
+                                            @l.TeacherName
+                                        </div>
+                                        <div class="mobile-lesson-info-item">
+                                            <i class="fas fa-calendar"></i>
+                                            @dayNames[l.DayOfWeek]
+                                        </div>
+                                    </div>
+                                    <div class="mobile-lesson-actions">
+                                        <a class="mobile-btn mobile-btn-success" asp-controller="Lessons" asp-action="OpenSession" asp-route-lessonId="@l.Id">
+                                            <i class="fas fa-play"></i>Oturumu Aç
+                                        </a>
+                                        <a class="mobile-btn mobile-btn-outline" asp-controller="Lessons" asp-action="EditLesson" asp-route-id="@l.Id">
+                                            <i class="fas fa-edit"></i>Düzenle
+                                        </a>
+                                        <form asp-controller="Lessons" asp-action="DeleteLesson" method="post" class="d-inline" onsubmit="return confirm('Bu dersi silmek istediğinizden emin misiniz?')">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@l.Id" />
+                                            <button type="submit" class="mobile-btn mobile-btn-danger">
+                                                <i class="fas fa-trash"></i>Sil
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     }
                     else
                     {
@@ -154,7 +203,8 @@
                 <div class="card-body">
                     @if (Model.Students.Any())
                     {
-                        <div class="table-responsive">
+                        <!-- Desktop Table -->
+                        <div class="desktop-table table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
@@ -197,6 +247,41 @@
                                     }
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Mobile Cards -->
+                        <div class="mobile-cards">
+                            @foreach (var s in Model.Students)
+                            {
+                                <div class="mobile-student-card">
+                                    <div class="mobile-student-header">
+                                        <div class="mobile-student-title">@s.FullName</div>
+                                        <div class="mobile-student-number">@s.StudentNumber</div>
+                                    </div>
+                                    <div class="mobile-student-info">
+                                        <div class="mobile-student-info-item">
+                                            <i class="fas fa-info-circle"></i>
+                                            @if (s.IsActive)
+                                            {
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check-circle me-1"></i>Aktif
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    <i class="fas fa-pause-circle me-1"></i>Pasif
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="mobile-student-actions">
+                                        <a class="mobile-btn mobile-btn-outline" asp-controller="Reports" asp-action="Student" asp-route-id="@s.StudentId">
+                                            <i class="fas fa-chart-line"></i>Rapor
+                                        </a>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     }
                     else

@@ -7,6 +7,11 @@ class ModernSidebar {
         this.mainContent = document.querySelector('.main-content');
         this.isMobileOrTablet = window.innerWidth <= 1024;
         
+        // Account sidebar elements
+        this.accountSidebar = document.getElementById('accountSidebar');
+        this.accountToggle = document.getElementById('accountToggle');
+        this.mobileOverlay = null;
+        
         this.init();
     }
 
@@ -14,6 +19,7 @@ class ModernSidebar {
         if (!this.sidebar) return;
         
         this.createToggleButton();
+        this.createMobileOverlay();
         this.bindEvents();
         this.setInitialState();
         this.highlightActiveNav();
@@ -41,13 +47,51 @@ class ModernSidebar {
         }
     }
 
+    createMobileOverlay() {
+        this.mobileOverlay = document.createElement('div');
+        this.mobileOverlay.className = 'mobile-overlay d-md-none';
+        this.mobileOverlay.addEventListener('click', () => {
+            this.hideAll();
+        });
+        document.body.appendChild(this.mobileOverlay);
+    }
+
     bindEvents() {
         // Toggle button click
         if (this.toggleBtn) {
             this.toggleBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                this.toggle();
+                this.toggleSidebar();
+            });
+        }
+
+        // Account toggle button click
+        if (this.accountToggle) {
+            this.accountToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleAccountSidebar();
+            });
+        }
+
+        // Sidebar close button
+        const sidebarCloseBtn = document.querySelector('.sidebar-close');
+        if (sidebarCloseBtn) {
+            sidebarCloseBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.hideSidebar();
+            });
+        }
+
+        // Account sidebar close button
+        const accountCloseBtn = document.querySelector('.account-close');
+        if (accountCloseBtn) {
+            accountCloseBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.hideAccountSidebar();
             });
         }
 
@@ -56,21 +100,10 @@ class ModernSidebar {
             this.handleResize();
         });
 
-        // Click outside to close on mobile and tablet
-        document.addEventListener('click', (e) => {
-            if (this.isMobileOrTablet && 
-                this.sidebar && 
-                this.sidebar.classList.contains('show') &&
-                !this.sidebar.contains(e.target) && 
-                !this.toggleBtn.contains(e.target)) {
-                this.hide();
-            }
-        });
-
         // Escape key to close on mobile and tablet
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isMobileOrTablet && this.sidebar.classList.contains('show')) {
-                this.hide();
+            if (e.key === 'Escape' && this.isMobileOrTablet) {
+                this.hideAll();
             }
         });
 
@@ -79,7 +112,17 @@ class ModernSidebar {
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 if (this.isMobileOrTablet) {
-                    this.hide();
+                    this.hideSidebar();
+                }
+            });
+        });
+
+        // Account menu item clicks - close account sidebar
+        const accountMenuItems = document.querySelectorAll('.account-menu-item');
+        accountMenuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                if (this.isMobileOrTablet) {
+                    this.hideAccountSidebar();
                 }
             });
         });
@@ -99,12 +142,21 @@ class ModernSidebar {
         }
     }
 
-    toggle() {
+    toggleSidebar() {
         if (!this.isMobileOrTablet) return; // no toggle on desktop
         if (this.sidebar.classList.contains('show')) {
-            this.hide();
+            this.hideSidebar();
         } else {
-            this.show();
+            this.showSidebar();
+        }
+    }
+
+    toggleAccountSidebar() {
+        if (!this.isMobileOrTablet) return; // no toggle on desktop
+        if (this.accountSidebar && this.accountSidebar.classList.contains('show')) {
+            this.hideAccountSidebar();
+        } else {
+            this.showAccountSidebar();
         }
     }
 
@@ -116,24 +168,61 @@ class ModernSidebar {
         // No-op: collapse behavior removed for desktop
     }
 
-    show() {
+    showSidebar() {
         if (!this.isMobileOrTablet) return;
+        
+        // Hide account sidebar first
+        this.hideAccountSidebar();
         
         this.sidebar.classList.add('show');
         this.updateToggleIcon('times');
-        if (this.isMobileOrTablet) {
-            document.body.style.overflow = 'hidden';
-        }
+        this.showOverlay();
+        document.body.style.overflow = 'hidden';
     }
 
-    hide() {
+    hideSidebar() {
         if (!this.isMobileOrTablet) return;
         
         this.sidebar.classList.remove('show');
         this.updateToggleIcon('bars');
-        if (this.isMobileOrTablet) {
-            document.body.style.overflow = '';
+        this.hideOverlay();
+        document.body.style.overflow = '';
+    }
+
+    showAccountSidebar() {
+        if (!this.isMobileOrTablet || !this.accountSidebar) return;
+        
+        // Hide main sidebar first
+        this.hideSidebar();
+        
+        this.accountSidebar.classList.add('show');
+        this.showOverlay();
+        document.body.style.overflow = 'hidden';
+    }
+
+    hideAccountSidebar() {
+        if (!this.isMobileOrTablet || !this.accountSidebar) return;
+        
+        this.accountSidebar.classList.remove('show');
+        this.hideOverlay();
+        document.body.style.overflow = '';
+    }
+
+    showOverlay() {
+        if (this.mobileOverlay) {
+            this.mobileOverlay.classList.add('show');
         }
+    }
+
+    hideOverlay() {
+        if (this.mobileOverlay) {
+            this.mobileOverlay.classList.remove('show');
+        }
+    }
+
+    hideAll() {
+        this.hideSidebar();
+        this.hideAccountSidebar();
     }
 
     updateToggleIcon(iconName) {
@@ -155,13 +244,13 @@ class ModernSidebar {
             if (this.isMobileOrTablet) {
                 // Switched to mobile/tablet
                 this.sidebar.classList.remove('collapsed');
-                this.hide();
+                this.hideAll();
                 this.moveToggleToHeader();
                 this.updateToggleIcon('bars');
                 if (this.toggleBtn) this.toggleBtn.style.display = '';
             } else {
                 // Switched to desktop
-                this.sidebar.classList.remove('show');
+                this.hideAll();
                 document.body.style.overflow = '';
                 if (this.toggleBtn) this.toggleBtn.style.display = 'none';
             }

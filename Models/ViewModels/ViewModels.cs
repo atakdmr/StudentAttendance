@@ -198,6 +198,11 @@ namespace Yoklama.Models.ViewModels
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
         public int TotalCount { get; set; }
+        
+        // İstatistikler
+        public int TotalStudentsCount { get; set; }
+        public int ActiveStudentsCount { get; set; }
+        public int InactiveStudentsCount { get; set; }
     }
 
     public class StudentCreateEditVm

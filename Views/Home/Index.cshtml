@@ -142,15 +142,17 @@
         {
             <div class="row mb-4">
                 <div class="col-12">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
-                            <i class="fas fa-calendar-day text-primary fs-3"></i>
+                    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center mb-3 today-lessons-card">
+                        <div class="d-flex align-items-center mb-3 mb-md-0">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-calendar-day text-primary fs-3"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-1">Bugünün Dersleri</h4>
+                                <p class="text-muted mb-0">Hızlı yoklama için derslerinize tıklayın</p>
+                            </div>
                         </div>
-                        <div class="flex-grow-1">
-                            <h4 class="mb-1">Bugünün Dersleri</h4>
-                            <p class="text-muted mb-0">Hızlı yoklama için derslerinize tıklayın</p>
-                        </div>
-                        <div class="text-end d-none d-md-block">
+                        <div class="text-start text-md-end d-none d-md-block">
                             <span class="text-warning fw-semibold me-3">
                                 <i class="fas fa-clock me-1"></i>Beklemede
                             </span>
@@ -161,7 +163,7 @@
                                 <i class="fas fa-eye me-1"></i>Tamamlandı
                             </span>
                         </div>
-                        <div class="d-block d-md-none mt-2">
+                        <div class="d-block d-md-none w-100">
                             <div class="d-flex flex-wrap gap-2">
                                 <span class="text-warning fw-semibold small">
                                     <i class="fas fa-clock me-1"></i>Beklemede
@@ -292,18 +294,43 @@
             </div>
         }
 
-        <div class="row mt-5">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Duyurular</h5>
-                        <p>Yoklama sistemi aktif. Derslerinizi düzenli olarak takip edin ve öğrenci devamını zamanında
-                            kaydedin.</p>
-                        <small class="text-muted">Son güncelleme: @DateTime.Now.ToString("dd.MM.yyyy")</small>
-                    </div>
+        @if (ViewBag.ActiveAnnouncements != null && ViewBag.ActiveAnnouncements.Count > 0)
+        {
+            <div class="row mt-5">
+                <div class="col-12">
+                    <h4 class="mb-3">Duyurular</h4>
+                    @foreach (var announcement in ViewBag.ActiveAnnouncements)
+                    {
+                        <div class="card mb-3 @(announcement.Priority == 3 ? "border-danger" : announcement.Priority == 2 ? "border-warning" : "border-success")">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-0">@announcement.Title</h6>
+                                    <div>
+                                        @if (announcement.Priority == 3)
+                                        {
+                                            <span class="badge bg-danger">Kritik</span>
+                                        }
+                                        else if (announcement.Priority == 2)
+                                        {
+                                            <span class="badge bg-warning">Önemli</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-info">Normal</span>
+                                        }
+                                    </div>
+                                </div>
+                                <p class="card-text">@announcement.Content</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-user me-1"></i>@announcement.CreatedBy.FullName - 
+                                    <i class="fas fa-clock me-1"></i>@announcement.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                </small>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
-        </div>
+        }
     </div>
 
     <footer class="bg-light text-center text-muted py-3 mt-5">
@@ -368,65 +395,4 @@ else
 }
 
 @section Styles {
-    <style>
-        .gradient-border-warning {
-            position: relative;
-            background: white;
-        }
-        .gradient-border-warning::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: inherit;
-            padding: 2px;
-            background: linear-gradient(45deg, #ffc107, #ff8c00, #fd7e14);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask-composite: exclude;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-        }
-
-        .gradient-border-success {
-            position: relative;
-            background: white;
-        }
-        .gradient-border-success::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: inherit;
-            padding: 2px;
-            background: linear-gradient(45deg, #28a745, #20c997, #17a2b8);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask-composite: exclude;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-        }
-
-        .gradient-border-info {
-            position: relative;
-            background: white;
-        }
-        .gradient-border-info::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: inherit;
-            padding: 2px;
-            background: linear-gradient(45deg, #17a2b8, #6f42c1, #e83e8c);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask-composite: exclude;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-        }
-    </style>
 }

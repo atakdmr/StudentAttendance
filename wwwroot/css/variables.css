@@ -1,0 +1,40 @@
+/* CSS Variables - Modern Yoklama System */
+
+:root {
+    /* Primary Colors */
+    --primary-color: #3b82f6;
+    --primary-dark: #2563eb;
+    --secondary-color: #64748b;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --info-color: #06b6d4;
+
+    /* Background Colors */
+    --dark-bg: #1e293b;
+    --darker-bg: #0f172a;
+    --light-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    
+    /* Text Colors */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+
+    /* Layout Dimensions */
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 70px;
+    --sidebar-shift: calc(var(--sidebar-width) - var(--sidebar-collapsed-width));
+    --header-height: 70px;
+    --border-radius: 8px;
+    --nav-icon-col: 40px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+    /* Transitions */
+    --transition: all 0.28s ease-out;
+}

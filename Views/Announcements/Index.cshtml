@@ -1,0 +1,124 @@
+@model IEnumerable<Yoklama.Models.Entities.Announcement>
+@{
+    ViewData["Title"] = "Duyurular";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">Duyurular</h2>
+                    <p class="text-muted mb-0">Sistem duyurularını yönetin</p>
+                </div>
+                <div>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Yeni Duyuru
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Başlık</th>
+                                        <th>İçerik</th>
+                                        <th>Öncelik</th>
+                                        <th>Durum</th>
+                                        <th>Oluşturan</th>
+                                        <th>Tarih</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var announcement in Model)
+                                    {
+                                        <tr class="@(announcement.Priority == 3 ? "table-danger" : announcement.Priority == 2 ? "table-warning" : "table-success")" style="--bs-table-accent-bg: rgba(0,0,0,0.05);">
+                                            <td>
+                                                <strong>@announcement.Title</strong>
+                                            </td>
+                                            <td>
+                                                @if (announcement.Content.Length > 50)
+                                                {
+                                                    @(announcement.Content.Substring(0, 50))<text>...</text>
+                                                }
+                                                else
+                                                {
+                                                    @announcement.Content
+                                                }
+                                            </td>
+                                            <td>
+                                                @switch (announcement.Priority)
+                                                {
+                                                    case 3:
+                                                        <span class="badge bg-danger">Kritik</span>
+                                                        break;
+                                                    case 2:
+                                                        <span class="badge bg-warning">Önemli</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-info">Normal</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (announcement.IsActive)
+                                                {
+                                                    <span class="badge bg-success">Aktif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Pasif</span>
+                                                }
+                                            </td>
+                                            <td>@announcement.CreatedBy.FullName</td>
+                                            <td>@announcement.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@announcement.Id" class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@announcement.Id" class="btn btn-sm btn-outline-warning">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@announcement.Id" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Henüz duyuru bulunmuyor</h5>
+                            <p class="text-muted">İlk duyurunuzu oluşturmak için yukarıdaki butonu kullanın.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
