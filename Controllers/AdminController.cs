@@ -16,11 +16,13 @@ namespace Yoklama.Controllers
     {
         private readonly IUserService _userService;
         private readonly AppDbContext _db;
+        private readonly ILessonConflictService _conflictService;
 
-        public AdminController(IUserService userService, AppDbContext db)
+        public AdminController(IUserService userService, AppDbContext db, ILessonConflictService conflictService)
         {
             _userService = userService;
             _db = db;
+            _conflictService = conflictService;
         }
 
         // Dashboard
@@ -66,12 +68,13 @@ namespace Yoklama.Controllers
         {
             var availableLessons = await _db.Lessons
                 .Where(l => l.IsActive)
+                .Include(l => l.Group)
                 .GroupBy(l => l.Title)
                 .Select(g => new LessonSelectVm
                 {
                     Id = g.First().Id,
                     Title = g.Key,
-                    GroupName = "" // Grup bilgisi gösterilmiyor
+                    GroupName = g.First().Group.Name
                 })
                 .OrderBy(l => l.Title)
                 .ToListAsync();
@@ -95,20 +98,29 @@ namespace Yoklama.Controllers
 
             var availableLessons = await _db.Lessons
                 .Where(l => l.IsActive)
+                .Include(l => l.Group)
                 .GroupBy(l => l.Title)
                 .Select(g => new LessonSelectVm
                 {
                     Id = g.First().Id,
                     Title = g.Key,
-                    GroupName = "" // Grup bilgisi gösterilmiyor
+                    GroupName = g.First().Group.Name
                 })
                 .OrderBy(l => l.Title)
                 .ToListAsync();
 
-            var assignedLessonIds = await _db.Lessons
+            // Get the lesson types (titles) that this user teaches, not the specific lesson instances
+            var assignedLessonTitles = await _db.Lessons
                 .Where(l => l.TeacherId == id && l.IsActive)
-                .Select(l => l.Id)
+                .Select(l => l.Title)
+                .Distinct()
                 .ToListAsync();
+
+            // Map lesson titles back to lesson IDs for the checkbox selection
+            var assignedLessonIds = availableLessons
+                .Where(l => assignedLessonTitles.Contains(l.Title))
+                .Select(l => l.Id)
+                .ToList();
 
             var vm = new UserCreateEditVm
             {
@@ -133,12 +145,13 @@ namespace Yoklama.Controllers
                 // Reload lessons for the view
                 var availableLessons = await _db.Lessons
                     .Where(l => l.IsActive)
+                    .Include(l => l.Group)
                     .GroupBy(l => l.Title)
                     .Select(g => new LessonSelectVm
                     {
                         Id = g.First().Id,
                         Title = g.Key,
-                        GroupName = "" // Grup bilgisi gösterilmiyor
+                        GroupName = g.First().Group.Name
                     })
                     .OrderBy(l => l.Title)
                     .ToListAsync();
@@ -182,23 +195,50 @@ namespace Yoklama.Controllers
                     TempData["Success"] = "Kullanıcı başarıyla oluşturuldu.";
                 }
 
-                // Update lesson assignments
+                // Update lesson assignments - allow multiple teachers for same lesson
                 var currentAssigned = await _db.Lessons
                     .Where(l => l.TeacherId == userId && l.IsActive)
                     .ToListAsync();
 
-                
-
-
+                // Lessons to add (new assignments)
                 var toAdd = vm.AssignedLessonIds.Where(id => !currentAssigned.Any(l => l.Id == id)).ToList();
+                
+                // Lessons to remove (unassigned) - remove the user's specific lesson instances
+                var toRemove = currentAssigned.Where(l => !vm.AssignedLessonIds.Contains(l.Id)).ToList();
 
+                // Add new lesson assignments - create new lesson instances for this teacher
                 foreach (var lessonId in toAdd)
                 {
-                    var lesson = await _db.Lessons.FindAsync(lessonId);
-                    if (lesson != null)
+                    var originalLesson = await _db.Lessons.FindAsync(lessonId);
+                    if (originalLesson != null)
                     {
-                        lesson.TeacherId = userId;
+                        // Check for conflicts before creating the lesson
+                        var conflict = await _conflictService.CheckConflictAsync(userId, originalLesson.GroupId, originalLesson.DayOfWeek, originalLesson.StartTime, originalLesson.EndTime);
+                        if (conflict.HasConflict)
+                        {
+                            TempData["ConflictError"] = $"Öğretmen ataması yapılamadı: {conflict.Message}";
+                            return RedirectToAction(nameof(Users));
+                        }
+
+                        // Create a new lesson instance for this teacher (same lesson, different teacher)
+                        var newLesson = new Lesson
+                        {
+                            Title = originalLesson.Title,
+                            DayOfWeek = originalLesson.DayOfWeek,
+                            StartTime = originalLesson.StartTime,
+                            EndTime = originalLesson.EndTime,
+                            GroupId = originalLesson.GroupId,
+                            TeacherId = userId,
+                            IsActive = true
+                        };
+                        _db.Lessons.Add(newLesson);
                     }
+                }
+
+                // Remove lesson assignments - delete the user's specific lesson instances
+                foreach (var lesson in toRemove)
+                {
+                    _db.Lessons.Remove(lesson);
                 }
 
                 await _db.SaveChangesAsync();
@@ -211,12 +251,13 @@ namespace Yoklama.Controllers
                 // Reload lessons for the view
                 var availableLessons = await _db.Lessons
                     .Where(l => l.IsActive)
+                    .Include(l => l.Group)
                     .GroupBy(l => l.Title)
                     .Select(g => new LessonSelectVm
                     {
                         Id = g.First().Id,
                         Title = g.Key,
-                        GroupName = "" // Grup bilgisi gösterilmiyor
+                        GroupName = g.First().Group.Name
                     })
                     .OrderBy(l => l.Title)
                     .ToListAsync();

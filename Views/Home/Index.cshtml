@@ -301,7 +301,7 @@
                     <h4 class="mb-3">Duyurular</h4>
                     @foreach (var announcement in ViewBag.ActiveAnnouncements)
                     {
-                        <div class="card mb-3 @(announcement.Priority == 3 ? "border-danger" : announcement.Priority == 2 ? "border-warning" : "border-success")">
+                        <div class="card mb-3 @(announcement.Priority == 3 ? "border-danger" : announcement.Priority == 2 ? "border-warning" : "border-primary")">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h6 class="card-title mb-0">@announcement.Title</h6>

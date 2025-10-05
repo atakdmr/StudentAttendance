@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0KPVsAtwKTQ=",
+  "dgSpecHash": "F8VaOco9YEg=",
   "success": true,
-  "projectFilePath": "C:\\Users\\akdem\\OneDrive\\Desktop\\yoklama_projesi\\Yoklama\\Yoklama.csproj",
+  "projectFilePath": "C:\\Users\\akdem\\OneDrive\\Desktop\\apps\\OneDrive\\Desktop\\attendance\\Yoklama.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\akdem\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\akdem\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",

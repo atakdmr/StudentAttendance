@@ -3,8 +3,40 @@
     ViewData["Title"] = "Gruplar";
 }
 <div class="container-fluid">
-    <h2 class="mb-3">Gruplar</h2>
-    <a class="btn btn-primary mb-3" asp-action="Create"><i class="fas fa-plus me-1"></i>Yeni Grup Ekle</a>
+    <!-- PC Header - Modern Layout -->
+    <div class="d-none d-md-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                <i class="fas fa-layer-group fa-lg"></i>
+            </div>
+            <div>
+                <h2 class="mb-0 text-dark fw-bold">Gruplar</h2>
+                <p class="text-muted mb-0 small">Sınıf gruplarını yönetin</p>
+            </div>
+        </div>
+        <a asp-action="Create" class="btn btn-primary btn-lg px-4 py-2 shadow-sm">
+            <i class="fas fa-plus me-2"></i>
+            Yeni Grup Ekle
+        </a>
+    </div>
+    
+    <!-- Mobile Header - Compact Layout -->
+    <div class="d-md-none mb-3">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div>
+                    <h4 class="mb-0 text-dark fw-bold">Gruplar</h4>
+                </div>
+            </div>
+            <a asp-action="Create" class="btn btn-primary btn-sm px-3">
+                <i class="fas fa-plus me-1"></i>
+                Yeni
+            </a>
+        </div>
+    </div>
     <div class="table-responsive">
     <table class="table table-sm table-striped align-middle">
         <thead>

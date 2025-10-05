@@ -1,5 +1,79 @@
 /* View-Specific Styles - Minimal & Essential Only */
 
+/* Icon Wrapper Styles */
+.icon-wrapper {
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Admin Users Mobile Styles */
+.user-card-mobile {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.user-card-mobile:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #dee2e6;
+}
+
+.user-card-mobile .card-body {
+    padding: 1rem;
+}
+
+.user-card-mobile .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.user-card-mobile .card-text {
+    font-size: 0.875rem;
+}
+
+.user-card-mobile .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.user-card-mobile .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+}
+
+/* Mobile Modal Adjustments */
+@media (max-width: 767px) {
+    .modal-dialog {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+    
+    .modal-content {
+        border-radius: 12px;
+    }
+    
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+        padding: 0.75rem;
+    }
+}
+
 /* Mobile Back Button - Layout.cshtml */
 .mobile-back-button {
     position: sticky;
@@ -113,7 +187,7 @@
     border: 2px solid transparent;
     border-radius: 5px;
     background: linear-gradient(white, white) padding-box,
-                linear-gradient(to right, #38c0ff, #081f6b) border-box;
+                linear-gradient(to right, #38c0ff, #4671ff) border-box;
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
 }
 
@@ -215,27 +289,20 @@
         font-size: 0.875rem;
         font-weight: 600;
         border-radius: 8px;
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        border: 1px solid #10b981;
+        background: linear-gradient(135deg, #0055ff 0%, #4671ff 100%);
+        border: 1px solid #4671ff;
         color: white;
         transition: all 0.2s ease;
         text-transform: none;
         letter-spacing: 0.025em;
         font-family: inherit;
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-    }
-    
-    .lesson-actions .btn:hover {
-        background: linear-gradient(135deg, #059669 0%, #047857 100%);
-        border-color: #059669;
-        color: white;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        box-shadow: 0 2px 8px rgba(70, 113, 255, 0.3);
     }
     
     .lesson-actions .btn:active {
-        background: linear-gradient(135deg, #047857 0%, #065f46 100%);
-        border-color: #047857;
-        box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+        background: linear-gradient(135deg, #4671ff 0%, #065f46 100%);
+        border-color: #4671ff;
+        box-shadow: 0 2px 6px rgba(70, 113, 255, 0.3);
     }
     
     .lesson-actions .btn i {
@@ -248,7 +315,7 @@
         border: 2px solid transparent;
         border-radius: 12px;
         background: linear-gradient(white, white) padding-box,
-                    linear-gradient(to right, #38c0ff, #081f6b) border-box;
+                    linear-gradient(to right, #38c0ff, #4671ff) border-box;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
     
@@ -1110,6 +1177,65 @@
     
     .card-body .col-md-4 small {
         font-size: 12px;
+    }
+}
+
+/* Admin/Students mobile card styles - Minimalist */
+.student-card-mobile {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.student-card-mobile .card-body {
+    padding: 1.5rem;
+}
+
+.student-card-mobile .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 0.5rem;
+}
+
+.student-card-mobile .card-text {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.student-card-mobile .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.student-card-mobile .btn {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    border-width: 2px;
+}
+
+.student-card-mobile .btn:hover {
+    border-width: 2px;
+}
+
+/* Mobile filter improvements */
+@media (max-width: 768px) {
+    .form-select-sm {
+        font-size: 0.85rem;
+    }
+    
+    .form-control-sm {
+        font-size: 0.85rem;
+    }
+    
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
     }
 }
 

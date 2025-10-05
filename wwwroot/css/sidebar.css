@@ -9,12 +9,42 @@
     width: var(--sidebar-width);
     background: linear-gradient(180deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
     color: white;
-    will-change: width;
-    transition: width .22s cubic-bezier(.2,.8,.2,1);
-    z-index: 1050;
+    will-change: width, transform;
+    transition: width .22s cubic-bezier(.2,.8,.2,1), transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1060;
     box-shadow: var(--shadow-lg);
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+/* Mobile/Tablet: sidebar hidden by default, show when .show class is added */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1060;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1060;
+    }
+    
+    /* Force override any conflicting rules */
+    body .sidebar.show {
+        transform: translateX(0) !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Desktop: sidebar always visible */
+@media (min-width: 1025px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
 }
 
 .sidebar.collapsed {
@@ -242,19 +272,25 @@
     top: 0;
     right: 0;
     height: 100vh;
-    width: 320px;
+    width: 260px;
     background: linear-gradient(180deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
     color: white;
-    z-index: 1050;
+    z-index: 1060;
     box-shadow: var(--shadow-lg);
-    transform: translateX(100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
     overflow-x: hidden;
 }
 
-.account-sidebar.show {
-    transform: translateX(0);
+/* Mobile/Tablet: account sidebar hidden by default, show when .show class is added */
+@media (max-width: 1024px) {
+    .account-sidebar {
+        transform: translateX(100%);
+    }
+    
+    .account-sidebar.show {
+        transform: translateX(0) !important;
+    }
 }
 
 .account-sidebar-header {

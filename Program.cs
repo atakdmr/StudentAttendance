@@ -34,6 +34,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<Yoklama.Services.IUserService, Yoklama.Services.AuthService>();
 builder.Services.AddScoped<Yoklama.Services.IGroupService, Yoklama.Services.GroupService>();
 builder.Services.AddScoped<Yoklama.Services.IAttendanceService, Yoklama.Services.AttendanceService>();
+builder.Services.AddScoped<Yoklama.Services.ILessonConflictService, Yoklama.Services.LessonConflictService>();
 builder.Services.AddHttpClient<Yoklama.Services.Sms.NetGsmSmsService>();
 builder.Services.AddScoped<Yoklama.Services.Sms.ISmsService, Yoklama.Services.Sms.NetGsmSmsService>();
 

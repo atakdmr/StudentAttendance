@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -44,11 +45,6 @@ namespace Yoklama.Controllers
                     query = query.Where(l => l.GroupId == groupId.Value);
                 }
                 
-                if (!string.IsNullOrWhiteSpace(lessonTitle))
-                {
-                    query = query.Where(l => l.Title.ToLower().Contains(lessonTitle.ToLower()));
-                }
-                
                 if (dayOfWeek.HasValue)
                 {
                     query = query.Where(l => l.DayOfWeek == dayOfWeek.Value);
@@ -67,11 +63,6 @@ namespace Yoklama.Controllers
                     query = query.Where(l => l.TeacherId == teacherId.Value);
                 }
                 
-                if (!string.IsNullOrWhiteSpace(lessonTitle))
-                {
-                    query = query.Where(l => l.Title.ToLower().Contains(lessonTitle.ToLower()));
-                }
-                
                 if (dayOfWeek.HasValue)
                 {
                     query = query.Where(l => l.DayOfWeek == dayOfWeek.Value);
@@ -84,6 +75,14 @@ namespace Yoklama.Controllers
                 .OrderBy(l => l.DayOfWeek)
                 .ThenBy(l => l.StartTime)
                 .ToListAsync();
+
+            // Türkçe karakter desteği için ders başlığı filtrelemesi
+            if (!string.IsNullOrWhiteSpace(lessonTitle))
+            {
+                var turkishCulture = new CultureInfo("tr-TR");
+                var searchTerm = lessonTitle.ToLower(turkishCulture);
+                lessons = lessons.Where(l => l.Title.ToLower(turkishCulture).Contains(searchTerm)).ToList();
+            }
 
             // Teacher bilgilerini manuel olarak yükle (Include çalışmıyor)
             var teacherIds = lessons.Select(l => l.TeacherId).Distinct().ToList();
@@ -507,7 +506,7 @@ namespace Yoklama.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> OpenSession(Guid lessonId)
         {
             var currentUserId = _userService.GetCurrentUserId(User);

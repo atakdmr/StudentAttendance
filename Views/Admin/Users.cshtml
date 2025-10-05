@@ -6,12 +6,37 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2>Kullanıcı Yönetimi</h2>
-                <a href="@Url.Action("CreateUser", "Admin")" class="btn btn-primary">
-                    <i class="fas fa-plus me-1"></i>
+            <!-- PC Header - Modern Layout -->
+            <div class="d-none d-md-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <i class="fas fa-users fa-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="mb-0 text-dark fw-bold">Kullanıcı Yönetimi</h2>
+                        <p class="text-muted mb-0 small">Sistem kullanıcılarını yönetin</p>
+                    </div>
+                </div>
+                <a href="@Url.Action("CreateUser", "Admin")" class="btn btn-primary btn-lg px-4 py-2 shadow-sm">
+                    <i class="fas fa-plus me-2"></i>
                     Yeni Kullanıcı
                 </a>
+            </div>
+            
+            <!-- Mobile Header - Compact Layout -->
+            <div class="d-md-none mb-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="mb-0 text-dark fw-bold">Kullanıcı Yönetimi</h4>
+                    </div>
+                    <a href="@Url.Action("CreateUser", "Admin")" class="btn btn-primary btn-sm px-3">
+                        <i class="fas fa-plus me-1"></i>
+                        Yeni
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -24,7 +49,8 @@
                 <div class="card-body">
                     @if (Model.Users.Any())
                     {
-                        <div class="table-responsive">
+                        <!-- Desktop Table View -->
+                        <div class="table-responsive d-none d-lg-block">
                             <table class="table table-striped">
                                 <thead class="table-dark">
                                     <tr>
@@ -92,6 +118,62 @@
                                     }
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Mobile Card View -->
+                        <div class="d-lg-none">
+                            @foreach (var user in Model.Users)
+                            {
+                                <div class="card mb-3 user-card-mobile">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div class="flex-grow-1">
+                                                <h6 class="card-title mb-1 text-truncate" data-tooltip="@user.FullName">@user.FullName</h6>
+                                                <p class="card-text text-muted mb-1 text-truncate" data-tooltip="@user.UserName">@user.UserName</p>
+                                            </div>
+                                            <div class="d-flex gap-1">
+                                                @if (user.Role == Yoklama.Models.Entities.UserRole.Admin)
+                                                {
+                                                    <span class="badge bg-danger">Admin</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-info">Öğretmen</span>
+                                                }
+                                                @if (user.IsActive)
+                                                {
+                                                    <span class="badge bg-success">Aktif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Pasif</span>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <a href="@Url.Action("EditUser", "Admin", new { id = user.Id })"
+                                                class="btn btn-sm btn-outline-primary flex-fill" title="Düzenle">
+                                                <i class="fas fa-edit me-1"></i>Düzenle
+                                            </a>
+                                            @{
+                                                bool canShowDelete = true;
+                                                if (user.Role == Yoklama.Models.Entities.UserRole.Admin)
+                                                {
+                                                    canShowDelete = Model.AdminCount >= 2;
+                                                }
+                                            }
+                                            @if (canShowDelete)
+                                            {
+                                                <button type="button" class="btn btn-sm btn-outline-danger flex-fill"
+                                                    onclick="confirmDelete('@user.Id', '@user.FullName', '@user.Role')"
+                                                    title="Sil">
+                                                    <i class="fas fa-trash me-1"></i>Sil
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     }
                     else

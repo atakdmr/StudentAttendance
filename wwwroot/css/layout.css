@@ -49,7 +49,9 @@
         flex-wrap: nowrap !important;
     }
     
-    .content-header 
+    .content-header {
+        padding: 1.5rem 1rem;
+    }   
     
     .content-header .btn-icon {
         width: 36px;
@@ -72,8 +74,6 @@
 .profile-header {
     min-height: 72px;
 }
-
-.profile-header 
 
 .profile-header .flex-fill {
     min-width: 200px;

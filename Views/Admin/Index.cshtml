@@ -5,8 +5,31 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <h2>Admin Dashboard</h2>
-            <p class="text-muted">Sistem yönetimi ve istatistikler</p>
+            <!-- PC Header - Modern Layout -->
+            <div class="d-none d-md-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <i class="fas fa-tachometer-alt fa-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="mb-0 text-dark fw-bold">Admin Dashboard</h2>
+                        <p class="text-muted mb-0 small">Sistem yönetimi ve istatistikler</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Header - Compact Layout -->
+            <div class="d-md-none mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0 text-dark fw-bold">Admin Dashboard</h4>
+                        <p class="text-muted mb-0 small">Sistem yönetimi ve istatistikler</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -114,30 +137,38 @@
 <!-- System Info -->
 <div class="row">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Sistem Bilgileri</h5>
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0 text-dark fw-semibold">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>Sistem Bilgileri
+                </h5>
             </div>
             <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-6 col-md-3">
-                        <div class="p-3">
-                            <h4 class="text-primary mb-1">@ViewBag.Stats.ActiveStudents</h4>
-                            <small class="text-muted">Aktif Öğrenci</small>
+                <div class="row align-items-center">
+                    <div class="col-6 col-md-4">
+                        <div class="text-center p-3">
+                            <div class="mb-2">
+                                <i class="fas fa-user-check fa-2x text-primary"></i>
+                            </div>
+                            <h3 class="text-primary mb-1 fw-bold">@ViewBag.Stats.ActiveStudents</h3>
+                            <small class="text-muted d-block">Aktif Öğrenci</small>
                         </div>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <div class="p-3">
-                            <h4 class="text-success mb-1">@ViewBag.Stats.TotalLessons</h4>
-                            <small class="text-muted">Toplam Ders</small>
+                    <div class="col-6 col-md-4">
+                        <div class="text-center p-3">
+                            <div class="mb-2">
+                                <i class="fas fa-book fa-2x text-success"></i>
+                            </div>
+                            <h3 class="text-success mb-1 fw-bold">@ViewBag.Stats.TotalLessons</h3>
+                            <small class="text-muted d-block">Toplam Ders</small>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
-                        <div class="text-center">
-                            <span class="badge bg-success fs-6 px-3 py-2">
-                                <i class="fas fa-circle me-1"></i>
+                    <div class="col-12 col-md-4">
+                        <div class="text-center p-3">
+                            <button class="btn btn-success btn-lg px-4 py-3 rounded-pill">
+                                <i class="fas fa-check-circle me-2"></i>
                                 Sistem Çalışıyor
-                            </span>
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -6,12 +6,39 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2>Öğrenci Yönetimi</h2>
-                <a href="@Url.Action("CreateStudent", "Admin")" class="btn btn-primary">
-                    <i class="fas fa-plus me-1"></i>
+            <!-- PC Header - Modern Layout -->
+            <div class="d-none d-md-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <i class="fas fa-graduation-cap fa-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="mb-0 text-dark fw-bold">Öğrenci Yönetimi</h2>
+                        <p class="text-muted mb-0 small">Öğrenci kayıtlarını yönetin</p>
+                    </div>
+                </div>
+                <a href="@Url.Action("CreateStudent", "Admin")" class="btn btn-primary btn-lg px-4 py-2 shadow-sm">
+                    <i class="fas fa-plus me-2"></i>
                     Yeni Öğrenci
                 </a>
+            </div>
+            
+            <!-- Mobile Header - Compact Layout -->
+            <div class="d-md-none mb-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 text-dark fw-bold">Öğrenci Yönetimi</h4>
+                        </div>
+                    </div>
+                    <a href="@Url.Action("CreateStudent", "Admin")" class="btn btn-primary btn-sm px-3">
+                        <i class="fas fa-plus me-1"></i>
+                        Yeni
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -21,49 +48,104 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-4 col-lg-3">
-                            <label for="groupFilter" class="form-label fw-semibold">
-                                <i class="fas fa-filter me-2 text-primary"></i>Grup Filtresi
-                            </label>
-                            <form method="get" id="groupForm">
-                                <select name="groupId" id="groupFilter" class="form-select" onchange="this.form.submit()">
-                                    <option value="">Tüm Gruplar</option>
-                                    @foreach (var group in Model.Groups)
-                                    {
-                                        if (Model.SelectedGroupId == group.Id)
+                    <!-- Desktop Filters -->
+                    <div class="d-none d-md-block">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4 col-lg-3">
+                                <label for="groupFilter" class="form-label fw-semibold">
+                                    <i class="fas fa-filter me-2 text-primary"></i>Grup Filtresi
+                                </label>
+                                <form method="get" id="groupForm">
+                                    <select name="groupId" id="groupFilter" class="form-select" onchange="this.form.submit()">
+                                        <option value="">Tüm Gruplar</option>
+                                        @foreach (var group in Model.Groups)
                                         {
-                                            <option value="@group.Id" selected>@group.Name (@group.Code)</option>
+                                            if (Model.SelectedGroupId == group.Id)
+                                            {
+                                                <option value="@group.Id" selected>@group.Name (@group.Code)</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@group.Id">@group.Name (@group.Code)</option>
+                                            }
                                         }
-                                        else
-                                        {
-                                            <option value="@group.Id">@group.Name (@group.Code)</option>
-                                        }
-                                    }
-                                </select>
-                                <input type="hidden" name="search" value="@Model.Search" />
-                                <input type="hidden" name="page" value="1" />
-                            </form>
-                        </div>
-                        <div class="col-md-6 col-lg-5">
-                            <label class="form-label fw-semibold">
-                                <i class="fas fa-search me-2 text-primary"></i>Arama
-                            </label>
-                            <form method="get" class="d-flex" role="search" id="searchForm">
-                                <input type="hidden" name="groupId" value="@Model.SelectedGroupId" />
-                                <input type="search" name="search" value="@Model.Search" 
-                                       class="form-control me-2" 
-                                       placeholder="İsim veya numara ara..." 
-                                       id="searchInput" />
-                                <button class="btn btn-primary" type="submit" id="searchBtn">
-                                    <i class="fas fa-search"></i>
+                                    </select>
+                                    <input type="hidden" name="search" value="@Model.Search" />
+                                    <input type="hidden" name="page" value="1" />
+                                </form>
+                            </div>
+                            <div class="col-md-6 col-lg-5">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-search me-2 text-primary"></i>Arama
+                                </label>
+                                <form method="get" class="d-flex" role="search" id="searchForm">
+                                    <input type="hidden" name="groupId" value="@Model.SelectedGroupId" />
+                                    <input type="search" name="search" value="@Model.Search" 
+                                           class="form-control me-2" 
+                                           placeholder="İsim veya numara ara..." 
+                                           id="searchInput" />
+                                    <button class="btn btn-primary" type="submit" id="searchBtn">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col-md-2 col-lg-4">
+                                <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                                    <i class="fas fa-times me-2"></i>Temizle
                                 </button>
-                            </form>
+                            </div>
                         </div>
-                        <div class="col-md-2 col-lg-4">
-                            <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
-                                <i class="fas fa-times me-2"></i>Temizle
-                            </button>
+                    </div>
+                    
+                    <!-- Mobile Filters -->
+                    <div class="d-md-none">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label for="groupFilterMobile" class="form-label fw-semibold fs-6">
+                                    <i class="fas fa-filter me-1 text-primary"></i>Grup
+                                </label>
+                                <form method="get" id="groupFormMobile">
+                                    <select name="groupId" id="groupFilterMobile" class="form-select fs-6" onchange="this.form.submit()">
+                                        <option value="">Tüm Gruplar</option>
+                                        @foreach (var group in Model.Groups)
+                                        {
+                                            if (Model.SelectedGroupId == group.Id)
+                                            {
+                                                <option value="@group.Id" selected>@group.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@group.Id">@group.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                    <input type="hidden" name="search" value="@Model.Search" />
+                                    <input type="hidden" name="page" value="1" />
+                                </form>
+                            </div>
+                            <div class="col-8">
+                                <label class="form-label fw-semibold fs-6">
+                                    <i class="fas fa-search me-1 text-primary"></i>Arama
+                                </label>
+                                <form method="get" role="search" id="searchFormMobile">
+                                    <input type="hidden" name="groupId" value="@Model.SelectedGroupId" />
+                                    <input type="search" name="search" value="@Model.Search" 
+                                           class="form-control fs-6" 
+                                           placeholder="İsim veya numara..." 
+                                           id="searchInputMobile" />
+                                </form>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label fw-semibold fs-6 text-white">.</label>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-primary flex-fill fs-6" type="submit" form="searchFormMobile">
+                                        <i class="fas fa-search me-1"></i>Ara
+                                    </button>
+                                    <button class="btn btn-outline-secondary fs-6" onclick="clearFilters()">
+                                        <i class="fas fa-times me-1"></i>Temizle
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -73,29 +155,29 @@
 
     <!-- Stats Cards -->
     <div class="row mb-4 g-3">
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
             <div class="card bg-primary text-white shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body text-center py-3">
                     <i class="fas fa-graduation-cap fa-2x mb-2"></i>
-                    <h3 class="mb-1">@Model.TotalStudentsCount</h3>
+                    <h3 class="mb-1 fw-bold">@Model.TotalStudentsCount</h3>
                     <small>Toplam Öğrenci</small>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
             <div class="card bg-success text-white shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body text-center py-3">
                     <i class="fas fa-check-circle fa-2x mb-2"></i>
-                    <h3 class="mb-1">@Model.ActiveStudentsCount</h3>
+                    <h3 class="mb-1 fw-bold">@Model.ActiveStudentsCount</h3>
                     <small>Aktif Öğrenci</small>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
             <div class="card bg-warning text-white shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body text-center py-3">
                     <i class="fas fa-pause-circle fa-2x mb-2"></i>
-                    <h3 class="mb-1">@Model.InactiveStudentsCount</h3>
+                    <h3 class="mb-1 fw-bold">@Model.InactiveStudentsCount</h3>
                     <small>Pasif Öğrenci</small>
                 </div>
             </div>
@@ -109,7 +191,8 @@
                     @{ var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize); }
                     @if (Model.Students.Any())
                     {
-                        <div class="table-responsive">
+                        <!-- Desktop Table View -->
+                        <div class="table-responsive d-none d-lg-block">
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
                                     <tr>
@@ -180,6 +263,54 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Mobile Card View -->
+                        <div class="d-lg-none">
+                            @foreach (var student in Model.Students)
+                            {
+                                <div class="card mb-4 student-card-mobile">
+                                    <div class="card-body p-4">
+                                        <div class="mb-4">
+                                            <h5 class="card-title mb-2 fw-bold text-dark">@student.FullName</h5>
+                                            <p class="card-text text-muted mb-3">@student.StudentNumber</p>
+                                            <div class="d-flex gap-2 flex-wrap">
+                                                @{
+                                                    var group = Model.Groups.FirstOrDefault(g => g.Id == student.GroupId);
+                                                    if (group != null)
+                                                    {
+                                                        <span class="badge bg-light text-dark border">@group.Name</span>
+                                                    }
+                                                }
+                                                @if (student.IsActive)
+                                                {
+                                                    <span class="badge bg-success">Aktif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Pasif</span>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-column gap-3">
+                                            <a href="@Url.Action("EditStudent", "Admin", new { id = student.StudentId })"
+                                               class="btn btn-outline-primary btn-lg" title="Öğrenci Bilgilerini Düzenle">
+                                                <i class="fas fa-edit me-2"></i>Düzenle
+                                            </a>
+                                            <a href="@Url.Action("Student", "Reports", new { studentId = student.StudentId })"
+                                               class="btn btn-outline-info btn-lg" title="Öğrenci Raporlarını Görüntüle">
+                                                <i class="fas fa-chart-line me-2"></i>Rapor
+                                            </a>
+                                            <button type="button" class="btn btn-outline-danger btn-lg"
+                                                    onclick="confirmDelete('@student.StudentId', '@student.FullName')"
+                                                    title="Öğrenciyi Sistemden Sil">
+                                                <i class="fas fa-trash me-2"></i>Sil
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
                         @if (totalPages > 1)
                         {
                             <nav aria-label="Sayfalama">

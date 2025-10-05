@@ -36,7 +36,7 @@
                             </p>
                         </div>
                         <div class="col-md-6">
-                            <div class="row text-center">
+                            <div class="row text-center my-4 my-lg-0" style="flex-direction: row !important;">
                                 <div class="col-4">
                                     <h4 class="text-primary">@Model.StudentSummaries.Count</h4>
                                     <small class="text-muted">Toplam Öğrenci</small>
@@ -140,7 +140,7 @@
                                                 <span class="badge @badgeClass">%@rate.ToString("F1")</span>
                                             </td>
                                             <td class="text-center">
-                                                <a href="@Url.Action("Student", "Reports", new { id = studentSummary.Student.Id, from = Model.FromDate, to = Model.ToDate })" 
+                                                <a href="@Url.Action("Student", "Reports", new { studentId = studentSummary.Student.Id, from = Model.FromDate, to = Model.ToDate })" 
                                                    class="btn btn-sm btn-outline-primary" title="Detaylı Rapor">
                                                     <i class="fas fa-chart-line"></i>
                                                 </a>

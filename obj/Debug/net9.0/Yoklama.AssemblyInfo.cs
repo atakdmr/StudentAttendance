@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Yoklama")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0c3ee776ef300b5878ebebc0566e0b89bc95ad7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+276f65e14fa6f25760b7c076a1f149ecd85abed8")]
 [assembly: System.Reflection.AssemblyProductAttribute("Yoklama")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Yoklama")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

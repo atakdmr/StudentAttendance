@@ -71,7 +71,7 @@ namespace Yoklama.Controllers
                 await _db.SaveChangesAsync();
 
                 TempData["Success"] = "Duyuru başarıyla oluşturuldu.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Announcements");
             }
             catch (Exception ex)
             {
@@ -123,7 +123,7 @@ namespace Yoklama.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Announcements");
             }
 
             return View(announcement);
@@ -158,7 +158,7 @@ namespace Yoklama.Controllers
                 TempData["Success"] = "Duyuru başarıyla silindi.";
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Announcements");
         }
 
         // GET: Announcements/Details/5

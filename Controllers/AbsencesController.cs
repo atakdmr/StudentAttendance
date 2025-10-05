@@ -10,7 +10,7 @@ using Yoklama.Services.Sms;
 
 namespace Yoklama.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AbsencesController : Controller
     {
         private readonly AppDbContext _context;
@@ -54,7 +54,8 @@ namespace Yoklama.Controllers
             // Search filter (client-side)
             if (!string.IsNullOrEmpty(search))
             {
-                absents = absents.Where(r => r.Student.FullName.Contains(search, StringComparison.OrdinalIgnoreCase) || 
+                absents = absents.Where(r => r.Student.FullName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                                            r.Student.StudentNumber.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                                            r.Session.Lesson.Title.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                                            r.Session.Lesson.Group.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
                                  .ToList();
@@ -104,7 +105,7 @@ namespace Yoklama.Controllers
                 .GroupBy(a => a.Student.Phone!)
                 .Select(g => (
                     phone: g.Key!,
-                    message: $"Sayın veli, öğrenciniz bazı ders(ler)e katılamamıştır. Son yoklama: {g.Max(x => x.Session.ScheduledAt):dd.MM.yyyy HH:mm}."
+                    message: $"Sayın veli, öğrenciniz bazı ders(ler)e katılmamıştır. Son yoklama: {g.Max(x => x.Session.ScheduledAt):dd.MM.yyyy HH:mm}."
                 ));
 
             await _smsService.SendBulkAsync(messages);
