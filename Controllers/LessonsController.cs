@@ -126,16 +126,31 @@ namespace Yoklama.Controllers
                 
                 Console.WriteLine($"Lesson {lesson.Title}: TeacherId={lesson.TeacherId}, Teacher={teacher?.FullName ?? "NULL"} (Teacher object: {teacher != null})");
 
-                // Bu ders için en son oturumu kontrol et
-                var session = allSessions
-                    .Where(s => s.LessonId == lesson.Id)
-                    .OrderByDescending(s => s.ScheduledAt)
+                // Bu ders için bugünün oturumunu kontrol et
+                var todaySession = allSessions
+                    .Where(s => s.LessonId == lesson.Id && 
+                               s.ScheduledAt.Date == today)
                     .FirstOrDefault();
 
-                if (session != null)
+                // Bugün oturum yoksa, haftalık oturumu ara
+                if (todaySession == null)
                 {
-                    lessonVm.SessionId = session.Id;
-                    lessonVm.SessionStatus = session.Status;
+                    var weekStart = today.AddDays(-(int)today.DayOfWeek + 1);
+                    var weekEnd = weekStart.AddDays(7);
+                    
+                    todaySession = allSessions
+                        .Where(s => s.LessonId == lesson.Id && 
+                                   s.ScheduledAt.Date >= weekStart && 
+                                   s.ScheduledAt.Date < weekEnd &&
+                                   s.Status != SessionStatus.Finalized)
+                        .OrderByDescending(s => s.ScheduledAt)
+                        .FirstOrDefault();
+                }
+
+                if (todaySession != null)
+                {
+                    lessonVm.SessionId = todaySession.Id;
+                    lessonVm.SessionStatus = todaySession.Status;
                 }
 
                 lessonsWithSessions.Add(lessonVm);
@@ -533,10 +548,24 @@ namespace Yoklama.Controllers
 
             // Zaten açık oturum var mı kontrol et - DateTimeOffset için SQLite uyumlu sorgu
             var allSessions = await _db.AttendanceSessions.ToListAsync();
+            
+            // Önce bugünün tam oturumunu ara
             var existingOpenSession = allSessions
                 .FirstOrDefault(s => s.LessonId == lesson.Id && 
                     s.Status == SessionStatus.Open &&
-                    s.ScheduledAt >= today && s.ScheduledAt < today.AddDays(1));
+                    s.ScheduledAt.Date == today);
+
+            // Bugün oturum yoksa, haftalık oturumu ara
+            if (existingOpenSession == null)
+            {
+                var weekStart = today.AddDays(-(int)today.DayOfWeek + 1);
+                var weekEnd = weekStart.AddDays(7);
+                
+                existingOpenSession = allSessions
+                    .FirstOrDefault(s => s.LessonId == lesson.Id && 
+                        s.Status == SessionStatus.Open &&
+                        s.ScheduledAt.Date >= weekStart && s.ScheduledAt.Date < weekEnd);
+            }
 
             if (existingOpenSession != null)
             {
@@ -566,11 +595,20 @@ namespace Yoklama.Controllers
             // ISO day: Monday=1 .. Sunday=7
             var today = DateTimeOffset.Now;
             int todayIso = today.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)today.DayOfWeek;
+            
+            // If today is the lesson day, check if we already have a session for today
+            if (todayIso == lessonDayOfWeek)
+            {
+                var targetDate = today.Date.Add(startTime);
+                return new DateTimeOffset(targetDate, today.Offset);
+            }
+            
+            // Otherwise, find the next occurrence of this day
             int deltaDays = (lessonDayOfWeek - todayIso + 7) % 7;
+            if (deltaDays == 0) deltaDays = 7; // Next week
 
-            var targetDate = today.Date.AddDays(deltaDays).Add(startTime);
-            // If lesson is today and time has already passed, keep today at the specified start time (we still allow opening)
-            return new DateTimeOffset(targetDate, today.Offset);
+            var targetDateNext = today.Date.AddDays(deltaDays).Add(startTime);
+            return new DateTimeOffset(targetDateNext, today.Offset);
         }
     }
 }

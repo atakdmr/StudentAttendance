@@ -42,16 +42,43 @@ public class HomeController : Controller
                     ViewBag.Stats = stats;
                     ViewBag.IsAdmin = true;
 
+                    // Bugünün derslerini al (session açılmamış olsa bile)
+                    var todayDayOfWeek = (int)today.DayOfWeek;
+                    if (todayDayOfWeek == 0) todayDayOfWeek = 7; // Pazar = 7
+
+                    var todayLessons = await _db.Lessons
+                        .Where(l => l.IsActive && l.DayOfWeek == todayDayOfWeek)
+                        .Include(l => l.Group)
+                        .Include(l => l.Teacher)
+                        .OrderBy(l => l.StartTime)
+                        .ToListAsync();
+
+                    // Mevcut session'ları al
                     var sessions = await _db.AttendanceSessions
                         .Include(s => s.Lesson)
                         .Include(s => s.Group)
                         .Include(s => s.Teacher)
                         .ToListAsync();
-                    var sessionsToday = sessions
-                        .Where(s => s.ScheduledAt >= today && s.ScheduledAt < today.AddDays(1))
-                        .OrderBy(s => s.ScheduledAt)
-                        .ToList();
-                    ViewBag.SessionsToday = sessionsToday;
+
+                    // Bugünün derslerini session durumuyla birleştir
+                    var lessonsWithSessions = new List<dynamic>();
+                    foreach (var lesson in todayLessons)
+                    {
+                        var session = sessions.FirstOrDefault(s => s.LessonId == lesson.Id && 
+                                                                   s.ScheduledAt.Date == today);
+                        
+                        lessonsWithSessions.Add(new
+                        {
+                            Lesson = lesson,
+                            Group = lesson.Group,
+                            Teacher = lesson.Teacher,
+                            Session = session,
+                            Status = session?.Status,
+                            ScheduledAt = session?.ScheduledAt ?? today.Add(lesson.StartTime)
+                        });
+                    }
+
+                    ViewBag.SessionsToday = lessonsWithSessions;
 
                     // Aktif duyuruları getir
                     var activeAnnouncements = await _db.Announcements
@@ -72,16 +99,43 @@ public class HomeController : Controller
                     ViewBag.SessionCount = sessionCount;
                     ViewBag.IsTeacher = true;
 
+                    // Bugünün derslerini al (session açılmamış olsa bile)
+                    var todayDayOfWeek = (int)today.DayOfWeek;
+                    if (todayDayOfWeek == 0) todayDayOfWeek = 7; // Pazar = 7
+
+                    var todayLessons = await _db.Lessons
+                        .Where(l => l.TeacherId == currentUserId.Value && 
+                                   l.IsActive && 
+                                   l.DayOfWeek == todayDayOfWeek)
+                        .Include(l => l.Group)
+                        .OrderBy(l => l.StartTime)
+                        .ToListAsync();
+
+                    // Mevcut session'ları al
                     var sessions = await _db.AttendanceSessions
                         .Where(s => s.TeacherId == currentUserId.Value)
                         .Include(s => s.Lesson)
                         .Include(s => s.Group)
                         .ToListAsync();
-                    var sessionsToday = sessions
-                        .Where(s => s.ScheduledAt >= today && s.ScheduledAt < today.AddDays(1))
-                        .OrderBy(s => s.ScheduledAt)
-                        .ToList();
-                    ViewBag.SessionsToday = sessionsToday;
+
+                    // Bugünün derslerini session durumuyla birleştir
+                    var lessonsWithSessions = new List<dynamic>();
+                    foreach (var lesson in todayLessons)
+                    {
+                        var session = sessions.FirstOrDefault(s => s.LessonId == lesson.Id && 
+                                                                   s.ScheduledAt.Date == today);
+                        
+                        lessonsWithSessions.Add(new
+                        {
+                            Lesson = lesson,
+                            Group = lesson.Group,
+                            Session = session,
+                            Status = session?.Status,
+                            ScheduledAt = session?.ScheduledAt ?? today.Add(lesson.StartTime)
+                        });
+                    }
+
+                    ViewBag.SessionsToday = lessonsWithSessions;
 
                     // Aktif duyuruları getir
                     var activeAnnouncements = await _db.Announcements

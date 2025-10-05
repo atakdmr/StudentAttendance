@@ -369,6 +369,9 @@ namespace Yoklama.Models.ViewModels
         public string GroupName { get; set; } = string.Empty;
         public string TeacherName { get; set; } = string.Empty;
         public Guid TeacherId { get; set; }
+        public SessionStatus? SessionStatus { get; set; }
+        public Guid? SessionId { get; set; }
+        public bool IsActive { get; set; }
     }
 
     public class LessonsVm

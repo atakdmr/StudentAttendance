@@ -92,27 +92,10 @@ namespace Yoklama.Controllers
             var lessons = await lessonsQuery.ToListAsync();
             
 
-            // Her ders için bugünkü oturum durumunu bul
-            var today = DateTime.Today;
-            var sessionIds = new Dictionary<Guid, Guid?>();
-            var sessionStatuses = new Dictionary<Guid, SessionStatus?>();
-            
             // Önce tüm oturumları çek, sonra client-side filtrele
+            var today = DateTime.Today;
             var allSessions = await _context.AttendanceSessions
                 .ToListAsync();
-            
-            foreach (var lesson in lessons)
-            {
-                var session = allSessions
-                    .Where(s => s.LessonId == lesson.Id)
-                    .FirstOrDefault();
-                
-                sessionIds[lesson.Id] = session?.Id;
-                sessionStatuses[lesson.Id] = session?.Status;
-            }
-
-            ViewBag.SessionIds = sessionIds;
-            ViewBag.SessionStatuses = sessionStatuses;
 
             // Grup listesi
             var groups = currentUser.Role == UserRole.Admin 
@@ -146,15 +129,41 @@ namespace Yoklama.Controllers
             for (int i = 1; i <= 7; i++)
             {
                 var dayLessons = lessons.Where(l => l.DayOfWeek == i).ToList();
-                var scheduleLessons = dayLessons.Select(l => new ScheduleLessonVm
-                {
-                    LessonId = l.Id,
-                    Title = l.Title,
-                    StartTime = l.StartTime,
-                    EndTime = l.EndTime,
-                    GroupName = l.Group?.Name ?? "Grup Yok",
-                    TeacherName = l.Teacher?.FullName ?? "Öğretmen Yok",
-                    TeacherId = l.TeacherId
+                var scheduleLessons = dayLessons.Select(l => {
+                    // Bugünün session'ını bul
+                    var todaySession = allSessions
+                        .Where(s => s.LessonId == l.Id && 
+                                   s.ScheduledAt.Date == today)
+                        .FirstOrDefault();
+
+                    // Bugün oturum yoksa, haftalık oturumu ara
+                    if (todaySession == null)
+                    {
+                        var weekStart = today.AddDays(-(int)today.DayOfWeek + 1);
+                        var weekEnd = weekStart.AddDays(7);
+                        
+                        todaySession = allSessions
+                            .Where(s => s.LessonId == l.Id && 
+                                       s.ScheduledAt.Date >= weekStart && 
+                                       s.ScheduledAt.Date < weekEnd &&
+                                       s.Status != SessionStatus.Finalized)
+                            .OrderByDescending(s => s.ScheduledAt)
+                            .FirstOrDefault();
+                    }
+
+                    return new ScheduleLessonVm
+                    {
+                        LessonId = l.Id,
+                        Title = l.Title,
+                        StartTime = l.StartTime,
+                        EndTime = l.EndTime,
+                        GroupName = l.Group?.Name ?? "Grup Yok",
+                        TeacherName = l.Teacher?.FullName ?? "Öğretmen Yok",
+                        TeacherId = l.TeacherId,
+                        SessionStatus = todaySession?.Status,
+                        SessionId = todaySession?.Id,
+                        IsActive = l.IsActive
+                    };
                 }).ToList();
 
                 days.Add(new ScheduleDayVm
