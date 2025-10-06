@@ -27,7 +27,6 @@ namespace Yoklama.Data
         public DbSet<Student> Students => Set<Student>();
         public DbSet<AttendanceSession> AttendanceSessions => Set<AttendanceSession>();
         public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
-        public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
         public DbSet<Announcement> Announcements => Set<Announcement>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -123,104 +122,8 @@ namespace Yoklama.Data
                     .HasForeignKey(r => r.StudentId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
-
-            // AuditLog
-            modelBuilder.Entity<AuditLog>(b =>
-            {
-                b.Property(a => a.Action).IsRequired();
-                b.Property(a => a.Entity).IsRequired();
-                b.Property(a => a.EntityId).IsRequired();
-                b.Property(a => a.Timestamp).IsRequired();
-
-                b.HasOne(a => a.User)
-                    .WithMany()
-                    .HasForeignKey(a => a.UserId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
+            
         }
-
-        private Guid? TryGetCurrentUserId()
-        {
-            var idStr = _httpContextAccessor?.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Guid.TryParse(idStr, out var id) ? id : (Guid?)null;
-        }
-
-        private void CaptureAuditLogs()
-        {
-            var userId = TryGetCurrentUserId();
-
-            var entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is not AuditLog &&
-                            (e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted))
-                .ToList();
-
-            foreach (var entry in entries)
-            {
-                var action = entry.State == EntityState.Added ? "Create"
-                    : entry.State == EntityState.Modified ? "Update"
-                    : "Delete";
-
-                var entityName = entry.Entity.GetType().Name;
-                string entityId = "";
-
-                var idProp = entry.Properties.FirstOrDefault(p => string.Equals(p.Metadata.Name, "Id", StringComparison.OrdinalIgnoreCase));
-                if (idProp != null && idProp.CurrentValue != null)
-                {
-                    entityId = idProp.CurrentValue.ToString() ?? string.Empty;
-                }
-
-                string? details = null;
-                if (entry.State == EntityState.Modified)
-                {
-                    var changed = new List<object>();
-                    
-                    foreach (var property in entry.Properties)
-                    {
-                        if (property.IsModified)
-                        {
-                            var originalValue = property.OriginalValue?.ToString() ?? "";
-                            var currentValue = property.CurrentValue?.ToString() ?? "";
-                            
-                            // Sadece gerçekten farklı olan değerleri kaydet
-                            if (originalValue != currentValue)
-                            {
-                                changed.Add(new { 
-                                    Property = property.Metadata.Name, 
-                                    Old = originalValue, 
-                                    New = currentValue 
-                                });
-                            }
-                        }
-                    }
-                    
-                    if (changed.Count > 0)
-                    {
-                        details = JsonSerializer.Serialize(changed);
-                    }
-                }
-
-                AuditLogs.Add(new AuditLog
-                {
-                    UserId = userId,
-                    Action = action,
-                    Entity = entityName,
-                    EntityId = entityId,
-                    Timestamp = DateTime.UtcNow,
-                    DetailsJson = details
-                });
-            }
-        }
-
-        public override int SaveChanges()
-        {
-            CaptureAuditLogs();
-            return base.SaveChanges();
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            CaptureAuditLogs();
-            return base.SaveChangesAsync(cancellationToken);
-        }
+        
     }
 }

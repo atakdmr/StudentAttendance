@@ -105,18 +105,4 @@ namespace Yoklama.Models.Entities
         public AttendanceSession Session { get; set; } = default!;
         public Student Student { get; set; } = default!;
     }
-
-    public class AuditLog
-    {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid? UserId { get; set; }
-        public string Action { get; set; } = default!;
-        public string Entity { get; set; } = default!;
-        public string EntityId { get; set; } = default!;
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-        public string? DetailsJson { get; set; }
-
-        // Navigation
-        public User? User { get; set; }
-    }
 }

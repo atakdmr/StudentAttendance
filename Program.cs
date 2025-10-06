@@ -11,7 +11,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    // Use an explicit server version to avoid design-time connection attempts during migrations
+    var serverVersion = new MySqlServerVersion(new Version(8, 0, 36));
+    options.UseMySql(connectionString, serverVersion);
 });
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
