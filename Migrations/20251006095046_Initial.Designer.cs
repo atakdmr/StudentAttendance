@@ -12,8 +12,8 @@ using Yoklama.Data;
 namespace Yoklama.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251006080508_ReduceIndexedStringLengths")]
-    partial class ReduceIndexedStringLengths
+    [Migration("20251006095046_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -142,40 +142,6 @@ namespace Yoklama.Migrations
                     b.ToTable("AttendanceSessions");
                 });
 
-            modelBuilder.Entity("Yoklama.Models.Entities.AuditLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("DetailsJson")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Entity")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("EntityId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AuditLogs");
-                });
-
             modelBuilder.Entity("Yoklama.Models.Entities.Group", b =>
                 {
                     b.Property<Guid>("Id")
@@ -266,7 +232,8 @@ namespace Yoklama.Migrations
 
                     b.Property<string>("StudentNumber")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(191)
+                        .HasColumnType("varchar(191)");
 
                     b.HasKey("Id");
 
@@ -305,7 +272,8 @@ namespace Yoklama.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(191)
+                        .HasColumnType("varchar(191)");
 
                     b.HasKey("Id");
 
@@ -370,16 +338,6 @@ namespace Yoklama.Migrations
                     b.Navigation("Lesson");
 
                     b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("Yoklama.Models.Entities.AuditLog", b =>
-                {
-                    b.HasOne("Yoklama.Models.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Yoklama.Models.Entities.Lesson", b =>
