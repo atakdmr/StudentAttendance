@@ -34,24 +34,16 @@ namespace Yoklama.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // SQLite TimeSpan conversion to ticks (long)
-            var timeSpanToTicksConverter = new ValueConverter<TimeSpan, long>(
-                v => v.Ticks,
-                v => TimeSpan.FromTicks(v));
-
-            modelBuilder.Entity<Lesson>()
-                .Property(x => x.StartTime)
-                .HasConversion(timeSpanToTicksConverter);
-
-            modelBuilder.Entity<Lesson>()
-                .Property(x => x.EndTime)
-                .HasConversion(timeSpanToTicksConverter);
+            // MySQL supports TimeSpan natively; no conversion required
 
             // User
             modelBuilder.Entity<User>(b =>
             {
+                // MySQL InnoDB + utf8mb4 has 191 char safe index length (191*4 < 767 bytes)
+                b.Property(u => u.UserName)
+                    .HasMaxLength(191);
                 b.HasIndex(u => u.UserName).IsUnique();
-                b.Property(u => u.RowVersion).IsRowVersion().HasDefaultValueSql("randomblob(8)");
+                b.Property(u => u.RowVersion).IsRowVersion();
             });
 
             // Group
@@ -75,6 +67,8 @@ namespace Yoklama.Data
             modelBuilder.Entity<Student>(b =>
             {
                 b.HasIndex(s => s.StudentNumber).IsUnique();
+                b.Property(s => s.StudentNumber)
+                    .HasMaxLength(191);
                 b.Property(s => s.FirstName).IsRequired();
                 b.Property(s => s.LastName).IsRequired();
                 b.Property(s => s.StudentNumber).IsRequired();
@@ -122,7 +116,7 @@ namespace Yoklama.Data
             modelBuilder.Entity<AttendanceRecord>(b =>
             {
                 b.HasIndex(r => new { r.SessionId, r.StudentId }).IsUnique();
-                b.Property(r => r.RowVersion).IsRowVersion().HasDefaultValueSql("randomblob(8)");
+                b.Property(r => r.RowVersion).IsRowVersion();
 
                 b.HasOne(r => r.Student)
                     .WithMany(s => s.AttendanceRecords)
