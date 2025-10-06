@@ -45,20 +45,23 @@ builder.Services.AddScoped<Yoklama.Services.Sms.ISmsService, Yoklama.Services.Sm
 
 var app = builder.Build();
 
-// Apply migrations and seed initial data
-using (var scope = app.Services.CreateScope())
+// Apply migrations and seed initial data (skippable for design-time tooling)
+if (!string.Equals(Environment.GetEnvironmentVariable("DISABLE_EF_STARTUP"), "true", StringComparison.OrdinalIgnoreCase))
 {
-    var services = scope.ServiceProvider;
-    var db = services.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        Yoklama.Data.SeedData.EnsureSeedAsync(services).GetAwaiter().GetResult();
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
+        var services = scope.ServiceProvider;
+        var db = services.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();
+        try
+        {
+            Yoklama.Data.SeedData.EnsureSeedAsync(services).GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while seeding the database.");
+        }
     }
 }
 

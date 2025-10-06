@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Yoklama")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7876d349da02d10082892b36f05ec7033dc2353b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5672e63cdfd01f69d7a16f57c1e3004f1057d317")]
 [assembly: System.Reflection.AssemblyProductAttribute("Yoklama")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Yoklama")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

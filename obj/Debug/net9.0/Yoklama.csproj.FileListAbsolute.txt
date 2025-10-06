@@ -774,7 +774,6 @@ C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\422jtn1wr3-pm0lr4p786.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\h3g6yovx24-s50m85rg8t.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\7d3urad8pk-sjf4ffnwze.gz
-C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\pb58w0715v-tcirab5g7p.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\8dy3yc4u6h-61n19gt1b8.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\dqw8skvnlu-d2f1dzwra9.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\ryh1p3zjbm-xtxxf3hu2r.gz
@@ -851,3 +850,4 @@ C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\ref\Yoklama.dll
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\bin\Debug\net9.0\MySqlConnector.dll
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\bin\Debug\net9.0\Pomelo.EntityFrameworkCore.MySql.dll
+C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\pb58w0715v-s8fhm0t14g.gz
