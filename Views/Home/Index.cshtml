@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Ana Sayfa";
 }
+
 @if (User.Identity!.IsAuthenticated)
 {
     <div class="container-fluid">
@@ -183,7 +184,7 @@
                 @foreach (dynamic session in ViewBag.SessionsToday)
                 {
                     <div class="col-md-6 col-lg-4">
-    <div class="card border-0 shadow-sm h-100 position-relative @(session.Status == null ? "gradient-border-primary" : session.Status == Yoklama.Models.Entities.SessionStatus.Open ? "gradient-border-warning" : session.Status == Yoklama.Models.Entities.SessionStatus.Closed ? "gradient-border-success" : "gradient-border-info")">
+    <div class="card border-0 shadow-sm h-100 position-relative @(session.Status == null ? "gradient-border-success" : session.Status == Yoklama.Models.Entities.SessionStatus.Open ? "gradient-border-warning" : session.Status == Yoklama.Models.Entities.SessionStatus.Closed ? "gradient-border-success" : "gradient-border-info")">
         <div class="card-body d-flex flex-column p-4">
             
             <!-- Header -->
@@ -248,6 +249,7 @@
 
             <!-- Action Button -->
             <div class="mt-auto" style="position: relative; z-index: 10;">
+            @if(User.IsInRole(role: "Teacher"))
                 @if (session.Status == null)
                 {
                     @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))

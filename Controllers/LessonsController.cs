@@ -33,18 +33,18 @@ namespace Yoklama.Controllers
 
             var isAdmin = User.IsInRole(UserRole.Admin.ToString());
             var query = _db.Lessons.Where(l => l.IsActive);
-            
+
             // Admin olmayan kullanıcılar sadece kendi derslerini görür
-            if (!isAdmin) 
+            if (!isAdmin)
             {
                 query = query.Where(l => l.TeacherId == currentUserId.Value);
-                
+
                 // Öğretmen için filtreleme
                 if (groupId.HasValue)
                 {
                     query = query.Where(l => l.GroupId == groupId.Value);
                 }
-                
+
                 if (dayOfWeek.HasValue)
                 {
                     query = query.Where(l => l.DayOfWeek == dayOfWeek.Value);
@@ -57,12 +57,12 @@ namespace Yoklama.Controllers
                 {
                     query = query.Where(l => l.GroupId == groupId.Value);
                 }
-                
+
                 if (teacherId.HasValue)
                 {
                     query = query.Where(l => l.TeacherId == teacherId.Value);
                 }
-                
+
                 if (dayOfWeek.HasValue)
                 {
                     query = query.Where(l => l.DayOfWeek == dayOfWeek.Value);
@@ -87,7 +87,7 @@ namespace Yoklama.Controllers
             // Teacher bilgilerini manuel olarak yükle (Include çalışmıyor)
             var teacherIds = lessons.Select(l => l.TeacherId).Distinct().ToList();
             var teachers = await _db.Users.Where(u => teacherIds.Contains(u.Id)).ToListAsync();
-            
+
             // Debug: Teacher verilerini kontrol et
             Console.WriteLine($"Found {teachers.Count} teachers for {teacherIds.Count} teacher IDs");
             foreach (var teacher in teachers)
@@ -99,19 +99,19 @@ namespace Yoklama.Controllers
             var today = DateTimeOffset.Now.Date;
             var todayDayOfWeek = (int)today.DayOfWeek;
             if (todayDayOfWeek == 0) todayDayOfWeek = 7; // Pazar = 7
-            
+
             // Tüm oturumları çek (SQLite DateTimeOffset sorunu için tarih filtrelemesi yapmıyoruz)
             var allSessions = await _db.AttendanceSessions
                 .ToListAsync();
-            
+
             // Her ders için oturum durumunu kontrol et
             var lessonsWithSessions = new List<LessonWithSessionVm>();
-            
+
             foreach (var lesson in lessons)
             {
                 // Teacher bilgisini manuel olarak bul ve ata
                 var teacher = teachers.FirstOrDefault(t => t.Id == lesson.TeacherId);
-                
+
                 var lessonVm = new LessonWithSessionVm
                 {
                     Id = lesson.Id,
@@ -123,12 +123,12 @@ namespace Yoklama.Controllers
                     Group = lesson.Group,
                     Teacher = teacher // Doğrudan teachers listesinden al
                 };
-                
+
                 Console.WriteLine($"Lesson {lesson.Title}: TeacherId={lesson.TeacherId}, Teacher={teacher?.FullName ?? "NULL"} (Teacher object: {teacher != null})");
 
                 // Bu ders için bugünün oturumunu kontrol et
                 var todaySession = allSessions
-                    .Where(s => s.LessonId == lesson.Id && 
+                    .Where(s => s.LessonId == lesson.Id &&
                                s.ScheduledAt.Date == today)
                     .FirstOrDefault();
 
@@ -137,10 +137,10 @@ namespace Yoklama.Controllers
                 {
                     var weekStart = today.AddDays(-(int)today.DayOfWeek + 1);
                     var weekEnd = weekStart.AddDays(7);
-                    
+
                     todaySession = allSessions
-                        .Where(s => s.LessonId == lesson.Id && 
-                                   s.ScheduledAt.Date >= weekStart && 
+                        .Where(s => s.LessonId == lesson.Id &&
+                                   s.ScheduledAt.Date >= weekStart &&
                                    s.ScheduledAt.Date < weekEnd &&
                                    s.Status != SessionStatus.Finalized)
                         .OrderByDescending(s => s.ScheduledAt)
@@ -159,7 +159,7 @@ namespace Yoklama.Controllers
             // Filtreleme verilerini yükle
             var groups = new List<Group>();
             var teachersList = new List<User>();
-            
+
             if (isAdmin)
             {
                 // Admin için tüm gruplar ve öğretmenler
@@ -178,14 +178,14 @@ namespace Yoklama.Controllers
                     .OrderBy(g => g.Name)
                     .ToListAsync();
             }
-            
+
             ViewBag.Groups = groups;
             ViewBag.Teachers = teachersList;
             ViewBag.SelectedGroupId = groupId;
             ViewBag.SelectedTeacherId = teacherId;
             ViewBag.SelectedLessonTitle = lessonTitle;
             ViewBag.SelectedDayOfWeek = dayOfWeek;
-            
+
             // Admin için tüm dersleri göster (edit yok, sadece görüntüleme)
             if (isAdmin)
             {
@@ -194,7 +194,7 @@ namespace Yoklama.Controllers
                     Lessons = lessonsWithSessions,
                     IsAdmin = isAdmin
                 };
-                
+
                 return View(vm);
             }
 
@@ -336,7 +336,9 @@ namespace Yoklama.Controllers
             if (!ModelState.IsValid)
             {
                 var groups = await _db.Groups.OrderBy(g => g.Name).ToListAsync();
+                var teachers = await _db.Users.Where(u => u.Role == UserRole.Teacher).OrderBy(u => u.FullName).ToListAsync();
                 ViewBag.Groups = groups;
+                ViewBag.Teachers = teachers;
                 return View("Create", vm);
             }
 
@@ -548,10 +550,10 @@ namespace Yoklama.Controllers
 
             // Zaten açık oturum var mı kontrol et - DateTimeOffset için SQLite uyumlu sorgu
             var allSessions = await _db.AttendanceSessions.ToListAsync();
-            
+
             // Önce bugünün tam oturumunu ara
             var existingOpenSession = allSessions
-                .FirstOrDefault(s => s.LessonId == lesson.Id && 
+                .FirstOrDefault(s => s.LessonId == lesson.Id &&
                     s.Status == SessionStatus.Open &&
                     s.ScheduledAt.Date == today);
 
@@ -560,9 +562,9 @@ namespace Yoklama.Controllers
             {
                 var weekStart = today.AddDays(-(int)today.DayOfWeek + 1);
                 var weekEnd = weekStart.AddDays(7);
-                
+
                 existingOpenSession = allSessions
-                    .FirstOrDefault(s => s.LessonId == lesson.Id && 
+                    .FirstOrDefault(s => s.LessonId == lesson.Id &&
                         s.Status == SessionStatus.Open &&
                         s.ScheduledAt.Date >= weekStart && s.ScheduledAt.Date < weekEnd);
             }
@@ -595,14 +597,14 @@ namespace Yoklama.Controllers
             // ISO day: Monday=1 .. Sunday=7
             var today = DateTimeOffset.Now;
             int todayIso = today.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)today.DayOfWeek;
-            
+
             // If today is the lesson day, check if we already have a session for today
             if (todayIso == lessonDayOfWeek)
             {
                 var targetDate = today.Date.Add(startTime);
                 return new DateTimeOffset(targetDate, today.Offset);
             }
-            
+
             // Otherwise, find the next occurrence of this day
             int deltaDays = (lessonDayOfWeek - todayIso + 7) % 7;
             if (deltaDays == 0) deltaDays = 7; // Next week

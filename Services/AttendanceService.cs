@@ -208,7 +208,7 @@ namespace Yoklama.Services
                 .AsNoTracking()
                 .Include(s => s.Lesson)
                 .Include(s => s.Group)
-                .Where(s => s.TeacherId == teacherId)
+                .Where(s => s.TeacherId == teacherId && s.Status != SessionStatus.Finalized)
                 .OrderByDescending(s => s.Id)
                 .ToListAsync();
         }

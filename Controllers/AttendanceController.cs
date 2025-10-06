@@ -38,7 +38,8 @@ namespace Yoklama.Controllers
                     .AsNoTracking()
                     .Include(s => s.Lesson)
                     .Include(s => s.Group)
-                    .AsQueryable();
+                    .AsQueryable()
+                    .Where(s => s.Status != SessionStatus.Finalized);
 
                 if (groupId.HasValue)
                 {
@@ -52,6 +53,34 @@ namespace Yoklama.Controllers
             else
             {
                 sessions = await _attendanceService.GetSessionsForTeacherAsync(currentUserId.Value);
+
+                // Öğretmenin bu hafta için oturumu olmayan derslerini getir (Yoklama Başlat için)
+                var today = DateTimeOffset.Now.Date;
+                var weekStart = today.AddDays(-(int)today.DayOfWeek + 1);
+                var weekEnd = weekStart.AddDays(7);
+
+                var teacherLessons = await _db.Lessons
+                    .AsNoTracking()
+                    .Include(l => l.Group)
+                    .Where(l => l.IsActive && l.TeacherId == currentUserId.Value)
+                    .ToListAsync();
+
+                // SQLite DateTimeOffset kısıtları nedeniyle client-side filtreleme
+                var allSessions = await _db.AttendanceSessions
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var lessonsToStart = teacherLessons
+                    .Where(l => !allSessions.Any(s =>
+                        s.LessonId == l.Id &&
+                        s.ScheduledAt.Date >= weekStart &&
+                        s.ScheduledAt.Date < weekEnd &&
+                        s.Status != SessionStatus.Finalized))
+                    .OrderBy(l => l.DayOfWeek)
+                    .ThenBy(l => l.StartTime)
+                    .ToList();
+
+                ViewBag.LessonsToStart = lessonsToStart;
             }
 
             // Admin için grup listesi

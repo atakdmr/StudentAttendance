@@ -151,14 +151,14 @@
                                             <td class="py-3 px-4">
                                                 @if (s.Status == SessionStatus.Open)
                                                 {
-                                                    <span class="badge bg-warning bg-opacity-20 text-white border border-warning">
-                                                        <i class="fas fa-clock me-1"></i>Beklemede
+                                                    <span class="badge bg-primary bg-opacity-20 text-white border border-primary">
+                                                        <i class="fas fa-clock me-1"></i>Açık
                                                     </span>
                                                 }
                                                 else if (s.Status == SessionStatus.Closed)
                                                 {
-                                                    <span class="badge bg-primary bg-opacity-20 text-white border border-primary">
-                                                        <i class="fas fa-play me-1"></i>Açık
+                                                    <span class="badge bg-warning bg-opacity-20 text-white border border-warning">
+                                                        <i class="fas fa-play me-1"></i>Beklemede
                                                     </span>
                                                 }
                                                 else if (s.Status == SessionStatus.Finalized)
@@ -180,12 +180,12 @@
                                                     @if (s.Status == SessionStatus.Open)
                                                     {
                                                         <a class="btn btn-warning btn-sm" asp-action="Session" asp-route-sessionId="@s.Id">
-                                                            <i class="fas fa-play me-1"></i>Başlat
+                                                            <i class="fas fa-clipboard-check me-1"></i>Devam Et
                                                         </a>
                                                     }
                                                     else if (s.Status == SessionStatus.Closed)
                                                     {
-                                                        <a class="btn btn-primary btn-sm" asp-action="Session" asp-route-sessionId="@s.Id">
+                                                        <a class="btn btn-success btn-sm" asp-action="Session" asp-route-sessionId="@s.Id">
                                                             <i class="fas fa-clipboard-check me-1"></i>Yoklama Al
                                                         </a>
                                                     }
@@ -198,6 +198,58 @@
                                                 }
                                             </td>
                                         </tr>
+                                    }
+
+                                    @{
+                                        var lessonsToStart = !isAdmin ? (ViewBag.LessonsToStart as IEnumerable<Yoklama.Models.Entities.Lesson>) : null;
+                                    }
+                                    @if (!isAdmin && lessonsToStart != null)
+                                    {
+                                        foreach (var l in lessonsToStart)
+                                        {
+                                            <tr class="border-bottom">
+                                                <td class="py-3 px-4">
+                                                    <div class="d-flex flex-column">
+                                                        <span class="fw-semibold">@GetDayName(l.DayOfWeek)</span>
+                                                        <span class="text-muted small">@l.StartTime.ToString(@"hh\:mm")</span>
+                                                    </div>
+                                                </td>
+                                                <td class="py-3 px-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-book text-primary"></i>
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <div class="fw-semibold text-truncate" style="max-width: 200px;" title="@l.Title">@l.Title</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="py-3 px-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-users text-success"></i>
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <div class="fw-semibold text-truncate" style="max-width: 150px;" title="@(l.Group?.Name ?? "N/A")">@(l.Group?.Name ?? "N/A")</div>
+                                                            @if (l.Group != null)
+                                                            {
+                                                                <small class="text-muted">@l.Group.Code</small>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="py-3 px-4">
+                                                    <span class="badge bg-secondary bg-opacity-20 text-white border border-secondary">
+                                                        <i class="fas fa-circle me-1"></i>Başlatılmamış
+                                                    </span>
+                                                </td>
+                                                <td class="py-3 px-4 text-end">
+                                                    <a class="btn btn-primary btn-sm" href="@Url.Action("OpenSession", "Lessons", new { lessonId = l.Id })">
+                                                        <i class="fas fa-play me-1"></i>Yoklama Başlat
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
                                     }
                                 </tbody>
                             </table>
@@ -243,14 +295,14 @@
                             @if (session.Status == SessionStatus.Open)
                             {
                                 <a href="@Url.Action("Session", "Attendance", new { sessionId = session.Id })" 
-                                   class="mobile-btn mobile-btn-primary">
-                                    <i class="fas fa-play me-1"></i>Başlat
+                                   class="mobile-btn mobile-btn-warning">
+                                    <i class="fas fa-clipboard-check me-1"></i>Devam Et
                                 </a>
                             }
                             else if (session.Status == SessionStatus.Closed)
                             {
                                 <a href="@Url.Action("Session", "Attendance", new { sessionId = session.Id })" 
-                                   class="mobile-btn mobile-btn-prima">
+                                   class="mobile-btn mobile-btn-success">
                                     <i class="fas fa-clipboard-check me-1"></i>Yoklama Al
                                 </a>
                             }
@@ -264,6 +316,36 @@
                         }
                     </div>
                 </div>
+            }
+            @{
+                var lessonsToStartMobile = !isAdmin ? (ViewBag.LessonsToStart as IEnumerable<Yoklama.Models.Entities.Lesson>) : null;
+            }
+            @if (!isAdmin && lessonsToStartMobile != null)
+            {
+                foreach (var l in lessonsToStartMobile)
+                {
+                    <div class="mobile-session-card">
+                        <div class="mobile-session-header">
+                            <h5 class="mobile-session-title">@l.Title</h5>
+                            <span class="mobile-session-status mobile-session-closed">Başlatılmamış</span>
+                        </div>
+                        <div class="mobile-session-info">
+                            <div class="mobile-session-info-item">
+                                <i class="fas fa-calendar-day"></i>
+                                <span>@GetDayName(l.DayOfWeek) @l.StartTime.ToString(@"hh\:mm")</span>
+                            </div>
+                            <div class="mobile-session-info-item">
+                                <i class="fas fa-layer-group"></i>
+                                <span>@(l.Group?.Name ?? "Grup Yok")</span>
+                            </div>
+                        </div>
+                        <div class="mobile-session-actions">
+                            <a href="@Url.Action("OpenSession", "Lessons", new { lessonId = l.Id })" class="mobile-btn mobile-btn-primary">
+                                <i class="fas fa-play me-1"></i>Yoklama Başlat
+                            </a>
+                        </div>
+                    </div>
+                }
             }
         </div>
     }
@@ -289,6 +371,21 @@
             SessionStatus.Closed => "mobile-session-closed",
             SessionStatus.Finalized => "mobile-session-closed",
             _ => "mobile-session-closed"
+        };
+    }
+
+    string GetDayName(int dayOfWeek)
+    {
+        return dayOfWeek switch
+        {
+            1 => "Pazartesi",
+            2 => "Salı",
+            3 => "Çarşamba",
+            4 => "Perşembe",
+            5 => "Cuma",
+            6 => "Cumartesi",
+            7 => "Pazar",
+            _ => "?"
         };
     }
 }
