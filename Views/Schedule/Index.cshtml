@@ -1,9 +1,11 @@
 @model Yoklama.Models.ViewModels.ScheduleVm
 @using System.Security.Claims
+@using System.Globalization
 
 @{
     ViewData["Title"] = "Ders Programı";
     Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid currentUserId);
+    var todayName = DateTime.Today.ToString("dddd", new CultureInfo("tr-TR"));
 }
 
 <!-- Filtreleme Bölümü -->
@@ -137,7 +139,7 @@
                                                         @lesson.TeacherName
                                                     </div>
                                                 }
-                                                @if (lesson.IsActive && lesson.TeacherId == currentUserId)
+                                                @if (string.Equals(day.DayName, todayName, StringComparison.OrdinalIgnoreCase) && lesson.IsActive && lesson.TeacherId == currentUserId)
                                                 {
                                                     @if (lesson.SessionStatus == null)
                                                     {

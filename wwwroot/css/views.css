@@ -765,6 +765,85 @@
     }
 }
 
+/* ===== LESSONS DESKTOP MODERNIZATION ===== */
+/* Scope to lessons page only */
+.lessons-page .desktop-table .card {
+    border-radius: 14px;
+    border: 1px solid #e5e7eb; /* subtle border */
+}
+
+.lessons-page .desktop-table .card-body {
+    padding: 0;
+}
+
+/* Constrain width to align with header block */
+@media (min-width: 992px) {
+    .lessons-page .desktop-table .table-responsive,
+    .lessons-page .d-none.d-md-flex {
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* Keep table header background as is (table-light) but modernize cells */
+.lessons-page table.table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.lessons-page thead.table-light th {
+    border-top-left-radius: 0;
+}
+
+.lessons-page thead.table-light th:last-child {
+    border-top-right-radius: 0;
+}
+
+.lessons-page tbody tr {
+    transition: background 120ms ease, transform 120ms ease;
+}
+
+.lessons-page tbody tr:hover {
+    background: #f9fafb;
+}
+
+.lessons-page td, .lessons-page th {
+    border-color: #eef2f7 !important;
+}
+
+.lessons-page .fw-semibold {
+    color: #111827;
+}
+
+.lessons-page .text-muted {
+    color: #6b7280 !important;
+}
+
+/* Action buttons - minimal, Next.js-ish */
+.lessons-page .btn.btn-sm {
+    border-radius: 8px;
+    padding: 0.4rem 0.65rem;
+}
+
+.lessons-page .btn.btn-sm[style*="#3b82f6"] {
+    background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+.lessons-page .btn.btn-sm[style*="#ef4444"] {
+    background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
+}
+
+/* Mobile header alignment tweaks */
+@media (max-width: 767.98px) {
+    .lessons-page .d-md-none .btn {
+        border-radius: 10px;
+    }
+    .lessons-page .mobile-lesson-header {
+        align-items: center;
+    }
+}
+
 /* ===== ANNOUNCEMENT BORDER STYLES ===== */
 /* Duyuru kartları için özel border kalınlığı - TÜM CİHAZLAR İÇİN */
 .card.border-danger,

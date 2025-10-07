@@ -11,12 +11,10 @@
     <!-- PC Header - Modern Layout -->
     <div class="d-none d-md-flex justify-content-between align-items-center mb-4">
         <div class="d-flex align-items-center gap-3">
-            <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                <i class="fas fa-chart-bar fa-lg"></i>
-            </div>
             <div>
                 <h2 class="mb-0 text-dark fw-bold">Yoklama Raporları</h2>
-                <p class="text-muted mb-0 small">Tamamlanmış yoklama oturumlarını görüntüleyin ve raporları inceleyin</p>
+                <p class="text-muted mb-0 small">Tamamlanmış yoklama oturumlarını görüntüleyin ve raporları inceleyin
+                </p>
             </div>
         </div>
         <div>
@@ -25,20 +23,17 @@
             </a>
         </div>
     </div>
-    
+
     <!-- Mobile Header - Compact Layout -->
     <div class="d-md-none mb-3">
         <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
-                <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                    <i class="fas fa-chart-bar"></i>
-                </div>
                 <div>
                     <h4 class="mb-0 text-dark fw-bold">Yoklama Raporları</h4>
                 </div>
             </div>
-            <a asp-controller="Attendance" asp-action="Index" class="btn btn-outline-primary btn-md fs-5">
-                <i class="fas fa-clipboard-check"></i>
+            <a asp-controller="Attendance" asp-action="Index" class="btn btn-outline-primary btn-md">
+                <i class="fas fa-clipboard-check"></i>Yoklama Oturumları
             </a>
         </div>
     </div>
@@ -184,8 +179,8 @@
                                                 </div>
                                             </td>
                                             <td class="py-3 px-4 text-end">
-                                                <a class="btn btn-outline-secondary btn-sm" asp-controller="Attendance" asp-action="Session"
-                                                    asp-route-sessionId="@session.Id">
+                                                <a class="btn btn-outline-secondary btn-sm" asp-controller="Attendance"
+                                                    asp-action="Session" asp-route-sessionId="@session.Id">
                                                     <i class="fas fa-eye me-1"></i>Gözlemle
                                                 </a>
                                             </td>
@@ -194,7 +189,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <!-- Mobile Card View -->
                         <div class="mobile-cards" style="display: none;">
                             @foreach (var session in Model)
@@ -206,7 +201,7 @@
                                             @session.ScheduledAt.ToString("dd.MM.yyyy") @session.ScheduledAt.ToString("HH:mm")
                                         </div>
                                     </div>
-                                    
+
                                     <div class="mobile-report-info">
                                         <div class="mobile-report-info-item">
                                             <i class="fas fa-users"></i>
@@ -221,10 +216,10 @@
                                             <span>@GetDayName(session.Lesson.DayOfWeek)</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="mobile-report-actions">
-                                        <a href="@Url.Action("Session", "Attendance", new { sessionId = session.Id })" 
-                                           class="mobile-btn mobile-btn-outline-secondary">
+                                        <a href="@Url.Action("Session", "Attendance", new { sessionId = session.Id })"
+                                            class="mobile-btn mobile-btn-outline-secondary">
                                             <i class="fas fa-eye me-1"></i>Raporu Görüntüle
                                         </a>
                                     </div>

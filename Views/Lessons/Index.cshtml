@@ -3,13 +3,10 @@
     ViewData["Title"] = "Dersler";
 }
 
-<div class="container-fluid">
+<div class="container-fluid lessons-page">
     <!-- PC Header - Modern Layout -->
     <div class="d-none d-md-flex justify-content-between align-items-center mb-4">
         <div class="d-flex align-items-center gap-3">
-            <div class="icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                <i class="fas fa-chalkboard-teacher fa-lg"></i>
-            </div>
             <div>
                 @if (Model.IsAdmin)
                 {
@@ -19,7 +16,7 @@
                 else
                 {
                     <h2 class="mb-0 text-dark fw-bold">Derslerim</h2>
-                    <p class="text-muted mb-0 small">Size atanmış dersleri görüntüleyin ve yoklama oturumu açın</p>
+                    <p class="text-muted mb-0 small">Size atanmış dersleri görüntüleyin</p>
                 }
             </div>
         </div>
@@ -55,7 +52,7 @@
                 </div>
             </div>
             <div class="d-flex gap-1">
-                <a asp-controller="Schedule" asp-action="Index" class="btn btn-outline-primary btn-sm">
+                <a asp-controller="Schedule" asp-action="Index" class="btn btn-outline-primary btn-md fs-5">
                     <i class="fas fa-calendar-alt"></i>
                 </a>
                 @if (Model.IsAdmin)
@@ -68,85 +65,10 @@
         </div>
     </div>
 
-    <!-- Filtreleme Bölümü -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <form method="get" class="row g-3">
-                        <div class="col-lg-3 col-md-6">
-                            <label for="groupId" class="form-label fw-semibold">
-                                <i class="fas fa-layer-group me-2 text-primary"></i>Grup Seçimi
-                            </label>
-                            <select name="groupId" id="groupId" class="form-select">
-                                <option value="">Tüm Gruplar</option>
-                                @foreach (var group in ViewBag.Groups ?? new List<Yoklama.Models.Entities.Group>())
-                                {
-                                    <option value="@group.Id" selected="@(ViewBag.SelectedGroupId?.ToString() == group.Id.ToString())">
-                                        @group.Name (@group.Code)
-                                    </option>
-                                }
-                            </select>
-                        </div>
-                        @if (Model.IsAdmin)
-                        {
-                            <div class="col-lg-3 col-md-6">
-                                <label for="teacherId" class="form-label fw-semibold">
-                                    <i class="fas fa-chalkboard-teacher me-2 text-primary"></i>Öğretmen Seçimi
-                                </label>
-                                <select name="teacherId" id="teacherId" class="form-select">
-                                    <option value="">Tüm Öğretmenler</option>
-                                    @foreach (var teacher in ViewBag.Teachers ?? new List<Yoklama.Models.Entities.User>())
-                                    {
-                                        <option value="@teacher.Id" selected="@(ViewBag.SelectedTeacherId?.ToString() == teacher.Id.ToString())">
-                                            @teacher.FullName
-                                        </option>
-                                    }
-                                </select>
-                            </div>
-                        }
-                        <div class="col-lg-3 col-md-6">
-                            <label for="dayOfWeek" class="form-label fw-semibold">
-                                <i class="fas fa-calendar-day me-2 text-primary"></i>Gün Seçimi
-                            </label>
-                            <select name="dayOfWeek" id="dayOfWeek" class="form-select">
-                                <option value="">Tüm Günler</option>
-                                <option value="1" selected="@(ViewBag.SelectedDayOfWeek?.ToString() == "1")">Pazartesi</option>
-                                <option value="2" selected="@(ViewBag.SelectedDayOfWeek?.ToString() == "2")">Salı</option>
-                                <option value="3" selected="@(ViewBag.SelectedDayOfWeek?.ToString() == "3")">Çarşamba</option>
-                                <option value="4" selected="@(ViewBag.SelectedDayOfWeek?.ToString() == "4")">Perşembe</option>
-                                <option value="5" selected="@(ViewBag.SelectedDayOfWeek?.ToString() == "5")">Cuma</option>
-                                <option value="6" selected="@(ViewBag.SelectedDayOfWeek?.ToString() == "6")">Cumartesi</option>
-                                <option value="7" selected="@(ViewBag.SelectedDayOfWeek?.ToString() == "7")">Pazar</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <label for="lessonTitle" class="form-label fw-semibold">
-                                <i class="fas fa-book me-2 text-primary"></i>Ders Seçimi
-                            </label>
-                            <div class="input-group">
-                                <input type="text" name="lessonTitle" id="lessonTitle" class="form-control" 
-                                       value="@ViewBag.SelectedLessonTitle" placeholder="Ders adı ara...">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <label class="form-label fw-semibold">&nbsp;</label>
-                            <div class="d-flex gap-2">
-                                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
-                                    <i class="fas fa-times me-1"></i>Temizle
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Filtreleme kaldırıldı -->
 
-    @if (Model.Lessons.Any())
+    @{ var teacherDistinctLessons = Model.IsAdmin ? Model.Lessons : Model.Lessons.GroupBy(l => l.Title).Select(g => g.First()).ToList(); }
+    @if ((Model.IsAdmin ? Model.Lessons : teacherDistinctLessons).Any())
     {
         <div class="row">
             <div class="col-12">
@@ -157,30 +79,39 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th class="border-0 py-3 px-4">
-                                            <i class="fas fa-book me-2 text-primary"></i>Ders Bilgileri
+                                            <i class="fas fa-book me-2 text-primary"></i>Ders
                                         </th>
-                                        @if (!Model.IsAdmin)
+                                        @if (Model.IsAdmin)
                                         {
                                             <th class="border-0 py-3 px-4">
-                                                <i class="fas fa-calendar-day me-2 text-primary"></i>Gün & Saat
+                                                <i class="fas fa-calendar-day me-2 text-primary"></i>Gün/Saat
                                             </th>
                                             <th class="border-0 py-3 px-4">
-                                                <i class="fas fa-users me-2 text-primary"></i>Grup Bilgileri
+                                                <i class="fas fa-layer-group me-2 text-primary"></i>Grup
                                             </th>
                                         }
-                                        @if (!Model.IsAdmin)
+                                        @if (Model.IsAdmin)
                                         {
                                             <th class="border-0 py-3 px-4">
-                                                <i class="fas fa-info-circle me-2 text-primary"></i>Durum
+                                                <i class="fas fa-chalkboard-teacher me-2 text-primary"></i>Öğretmen
+                                            </th>
+                                            <th class="border-0 py-3 px-4 text-end">
+                                                <i class="fas fa-cogs me-2 text-primary"></i>İşlemler
                                             </th>
                                         }
-                                        <th class="border-0 py-3 px-4 text-end">
-                                            <i class="fas fa-cogs me-2 text-primary"></i>İşlemler
-                                        </th>
+                                        else
+                                        {
+                                            <th class="border-0 py-3 px-4">
+                                                <i class="fas fa-layer-group me-2 text-primary"></i>Grup
+                                            </th>
+                                            <th class="border-0 py-3 px-4">
+                                                <i class="fas fa-hourglass-half me-2 text-primary"></i>Süre
+                                            </th>
+                                        }
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var lesson in Model.Lessons)
+                                    @foreach (var lesson in (Model.IsAdmin ? Model.Lessons : teacherDistinctLessons))
                                     {
                                         <tr class="border-bottom">
                                             <td class="py-3 px-4">
@@ -189,91 +120,26 @@
                                                         <i class="fas fa-book text-primary"></i>
                                                     </div>
                                                     <div class="flex-grow-1">
-                                                        <div class="fw-semibold text-truncate" style="max-width: 200px;" title="@lesson.Title">@lesson.Title</div>
-                                                        @if (Model.IsAdmin)
-                                                        {
-                                                            <small class="text-muted d-block">
-                                                                <i class="fas fa-user me-1"></i>@(lesson.Teacher?.FullName ?? "Öğretmen Yok")
-                                                            </small>
-                                                            <small class="text-muted d-block">
-                                                                <i class="fas fa-layer-group me-1"></i>@(lesson.Group?.Name ?? "Grup Yok")
-                                                            </small>
-                                                            <small class="text-muted">
-                                                                @GetDayName(lesson.DayOfWeek) @($"{lesson.StartTime.Hours:D2}:{lesson.StartTime.Minutes:D2}")
-                                                            </small>
-                                                        }
-                                                        else
-                                                        {
-                                                            <small class="text-muted">@GetDayName(lesson.DayOfWeek) @($"{lesson.StartTime.Hours:D2}:{lesson.StartTime.Minutes:D2}")</small>
-                                                        }
+                                                        <div class="fw-semibold text-truncate" style="max-width: 260px;" title="@lesson.Title">@lesson.Title</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            @if (!Model.IsAdmin)
+                                            @if (Model.IsAdmin)
                                             {
                                                 <td class="py-3 px-4">
-                                                    <div class="d-flex flex-column">
-                                                        <div class="d-flex align-items-center">
-                                                            <i class="fas fa-clock text-muted me-1 small"></i>
-                                                            <span class="small fw-medium">@($"{lesson.StartTime.Hours:D2}:{lesson.StartTime.Minutes:D2}") - @($"{lesson.EndTime.Hours:D2}:{lesson.EndTime.Minutes:D2}")</span>
-                                                        </div>
-                                                        <small class="text-muted">@((int)(lesson.EndTime - lesson.StartTime).TotalMinutes) dakika</small>
-                                                    </div>
+                                                    <small class="text-muted">@GetDayName(lesson.DayOfWeek) @($"{lesson.StartTime.Hours:D2}:{lesson.StartTime.Minutes:D2}")</small>
                                                 </td>
                                                 <td class="py-3 px-4">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                            <i class="fas fa-users text-success"></i>
-                                                        </div>
-                                                        <div>
-                                                            <div class="fw-semibold">@lesson.Group?.Name</div>
-                                                            <small class="text-muted">@lesson.Group?.Code</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="py-3 px-4">
-                                                    @if (lesson.SessionStatus.HasValue)
-                                                    {
-                                                        @if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Open)
-                                                        {
-                                                            <span class="badge bg-warning bg-opacity-20 text-white border border-warning">
-                                                                <i class="fas fa-clock me-1"></i>Beklemede
-                                                            </span>
-                                                        }
-                                                        else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Closed)
-                                                        {
-                                                            <span class="badge bg-success text-white">
-                                                                <i class="fas fa-check me-1"></i>Kapatıldı
-                                                            </span>
-                                                        }
-                                                        else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Finalized)
-                                                        {
-                                                            <span class="badge bg-success text-white">
-                                                                <i class="fas fa-eye me-1"></i>Tamamlandı
-                                                            </span>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        @if (lesson.IsActive)
-                                                        {
-                                                            <span class="badge bg-primary bg-opacity-20 text-white border border-primary">
-                                                                <i class="fas fa-book me-1"></i>Açık
-                                                            </span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="badge bg-secondary bg-opacity-20 text-white border border-secondary">
-                                                                <i class="fas fa-times me-1"></i>Pasif
-                                                            </span>
-                                                        }
-                                                    }
+                                                    <small class="text-muted">@(lesson.Group?.Name ?? "Grup Yok")</small>
                                                 </td>
                                             }
-                                            <td class="py-3 px-4 text-end">
-                                                <div class="d-flex gap-2 justify-content-end align-items-center">
-                                                    @if (Model.IsAdmin)
-                                                    {
+                                            @if (Model.IsAdmin)
+                                            {
+                                                <td class="py-3 px-4">
+                                                    <small class="text-muted">@(lesson.Teacher?.FullName ?? "Öğretmen Yok")</small>
+                                                </td>
+                                                <td class="py-3 px-4 text-end">
+                                                    <div class="d-flex gap-2 justify-content-end align-items-center">
                                                         <button type="button" class="btn btn-sm" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; border-radius: 6px; font-weight: 500;" 
                                                                 onclick="showLessonDetails('@lesson.Id', '@lesson.Title', '@(lesson.Teacher?.FullName ?? "Öğretmen Yok")', '@(lesson.Group?.Name ?? "Grup Yok")', '@GetDayName(lesson.DayOfWeek)', '@lesson.StartTime.ToString(@"hh\:mm")', '@lesson.EndTime.ToString(@"hh\:mm")', '@(lesson.SessionId?.ToString() ?? "")')">
                                                             <i class="fas fa-info-circle"></i> Detaylar
@@ -287,39 +153,18 @@
                                                                 data-lesson-title="@lesson.Title">
                                                             <i class="fas fa-trash"></i> Sil
                                                         </button>
-                                                    }
-                                                    else
-                                                    {
-                                                        @if (lesson.SessionStatus.HasValue)
-                                                        {
-                                                        @if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Open)
-                                                        {
-                                                            <a class="btn btn-sm" style="background: #10b981; border: 1px solid #10b981; color: white; border-radius: 6px; font-weight: 500;" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Yoklama Al">
-                                                                <i class="fas fa-clipboard-check me-1"></i>Yoklama Al
-                                                            </a>
-                                                        }
-                                                        else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Closed)
-                                                        {
-                                                            <a class="btn btn-sm" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; border-radius: 6px; font-weight: 500;" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Detayları Gör">
-                                                                <i class="fas fa-info-circle me-1"></i>Detaylar
-                                                            </a>
-                                                        }
-                                                        else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Finalized)
-                                                        {
-                                                            <a class="btn btn-sm" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; border-radius: 6px; font-weight: 500;" asp-controller="Attendance" asp-action="Session" asp-route-sessionId="@lesson.SessionId" title="Sonuçları Gör">
-                                                                <i class="fas fa-eye me-1"></i>Sonuçları Gör
-                                                            </a>
-                                                        }
-                                                        }
-                                                        else
-                                                        {
-                                                            <a class="btn btn-sm" style="background: #3b82f6; border: 1px solid #3b82f6; color: white; border-radius: 6px; font-weight: 500;" asp-action="OpenSession" asp-route-lessonId="@lesson.Id" title="Oturum Aç">
-                                                                <i class="fas fa-play me-1"></i>Oturum Aç
-                                                            </a>
-                                                        }
-                                                    }
-                                                </div>
-                                            </td>
+                                                    </div>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="py-3 px-4">
+                                                    <small class="text-muted">@(lesson.Group?.Name ?? "Grup Yok")</small>
+                                                </td>
+                                                <td class="py-3 px-4">
+                                                    <small class="text-muted">@((lesson.EndTime - lesson.StartTime).TotalMinutes) dk</small>
+                                                </td>
+                                            }
                                         </tr>
                                     }
                                 </tbody>
@@ -332,7 +177,7 @@
         
         <!-- Mobil Görünüm - Kartlar -->
         <div class="mobile-cards" style="display: none;">
-            @foreach (var lesson in Model.Lessons)
+            @foreach (var lesson in (Model.IsAdmin ? Model.Lessons : teacherDistinctLessons))
             {
                 <div class="mobile-lesson-card">
                     <div class="mobile-lesson-header">
@@ -345,9 +190,7 @@
                         }
                         else
                         {
-                            <div class="mobile-lesson-time">
-                                @lesson.StartTime.ToString(@"hh\:mm") - @lesson.EndTime.ToString(@"hh\:mm")
-                            </div>
+                            <div class="mobile-lesson-time">@GetDayName(lesson.DayOfWeek)</div>
                         }
                     </div>
                     
@@ -373,66 +216,19 @@
                     else
                     {
                         <div class="mobile-lesson-info">
-                            <div class="mobile-lesson-info-item">
-                                <i class="fas fa-layer-group"></i>
-                                <span>@(lesson.Group?.Name ?? "Grup Yok")</span>
-                            </div>
-                            <div class="mobile-lesson-info-item">
-                                <i class="fas fa-calendar-day"></i>
-                                <span>@GetDayName(lesson.DayOfWeek)</span>
-                            </div>
-                            <div class="mobile-lesson-info-item">
-                                <i class="fas fa-info-circle"></i>
-                                <span class="mobile-session-status @GetSessionStatusClass(lesson.SessionStatus)">
-                                    @GetSessionStatusText(lesson.SessionStatus)
-                                </span>
-                            </div>
+                            <div class="mobile-lesson-info-item"><i class="fas fa-layer-group"></i><span>@(lesson.Group?.Name ?? "Grup Yok")</span></div>
                         </div>
                     }
                     
-                    <div class="mobile-lesson-actions">
-                        @if (Model.IsAdmin)
-                        {
+                    @if (Model.IsAdmin)
+                    {
+                        <div class="mobile-lesson-actions">
                             <button type="button" class="mobile-btn mobile-btn-outline-info" 
                                     onclick="showLessonDetailsWithActions('@lesson.Id', '@lesson.Title', '@(lesson.Teacher?.FullName ?? "Öğretmen Yok")', '@(lesson.Group?.Name ?? "Grup Yok")', '@GetDayName(lesson.DayOfWeek)', '@lesson.StartTime.ToString(@"hh\:mm")', '@lesson.EndTime.ToString(@"hh\:mm")', '@(lesson.SessionId?.ToString() ?? "")')">
                                 <i class="fas fa-info-circle me-1"></i>Detaylar
                             </button>
-                        }
-                        else
-                        {
-                            @if (lesson.SessionStatus.HasValue)
-                            {
-                                @if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Open)
-                                {
-                                    <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
-                                       class="mobile-btn mobile-btn-success">
-                                        <i class="fas fa-play me-1"></i>Yoklamaya Devam Et
-                                    </a>
-                                }
-                                else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Closed)
-                                {
-                                    <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
-                                       class="mobile-btn mobile-btn-outline-secondary">
-                                        <i class="fas fa-info-circle me-1"></i>Detayları Gör
-                                    </a>
-                                }
-                                else if (lesson.SessionStatus == Yoklama.Models.Entities.SessionStatus.Finalized)
-                                {
-                                    <a href="@Url.Action("Session", "Attendance", new { sessionId = lesson.SessionId })" 
-                                       class="mobile-btn mobile-btn-outline-secondary">
-                                        <i class="fas fa-eye me-1"></i>Sonuçları Gör
-                                    </a>
-                                }
-                            }
-                            else
-                            {
-                                <a href="@Url.Action("OpenSession", "Lessons", new { lessonId = lesson.Id })" 
-                                   class="mobile-btn mobile-btn-primary">
-                                    <i class="fas fa-play me-1"></i>Yoklama Başlat
-                                </a>
-                            }
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
             }
         </div>
@@ -474,6 +270,12 @@
 </div>
 
 @functions {
+    bool IsToday(int dayOfWeek)
+    {
+        var today = DateTime.Today.DayOfWeek; // Sunday=0
+        var todayIndex = today == DayOfWeek.Sunday ? 7 : (int)today; // Monday=1..Sunday=7
+        return dayOfWeek == todayIndex;
+    }
     string GetDayName(int dayOfWeek)
     {
         return dayOfWeek switch
@@ -654,12 +456,6 @@
                         </div>
                         <div class="modal-footer bg-light border-0 p-3">
                             <div class="row g-2 w-100">
-                                ${sessionId ? `
-                                <div class="col-6">
-                                    <a href="/Attendance/Session?sessionId=${sessionId}" class="btn btn-sm w-100" style="background: #10b981; border: 1px solid #10b981; color: white; border-radius: 6px; font-weight: 500;">
-                                        <i class="fas fa-external-link-alt me-1"></i>İlgili Derse Git
-                                    </a>
-                                </div>` : ''}
                                 <div class="col-6">
                                     <a href="/Lessons/EditLesson?id=${id}" class="btn btn-sm w-100" style="background: #3b82f6; border: 1px solid #3b82f6; color: white; border-radius: 6px; font-weight: 500;">
                                         <i class="fas fa-edit me-1"></i>Güncelle
@@ -764,12 +560,6 @@
                         </div>
                         <div class="modal-footer bg-light border-0 p-3">
                             <div class="row g-2 w-100">
-                                ${sessionId ? `
-                                <div class="col-6">
-                                    <a href="/Attendance/Session?sessionId=${sessionId}" class="btn btn-sm w-100" style="background: #10b981; border: 1px solid #10b981; color: white; border-radius: 6px; font-weight: 500;">
-                                        <i class="fas fa-external-link-alt me-1"></i>İlgili Derse Git
-                                    </a>
-                                </div>` : ''}
                                 <div class="col-6">
                                     <a href="/Lessons/EditLesson?id=${id}" class="btn btn-sm w-100" style="background: #3b82f6; border: 1px solid #3b82f6; color: white; border-radius: 6px; font-weight: 500;">
                                         <i class="fas fa-edit me-1"></i>Güncelle
@@ -799,31 +589,7 @@
             });
         }
         
-        // Otomatik filtreleme (dropdown'lar için)
-        document.getElementById('groupId').addEventListener('change', function() {
-            document.querySelector('form').submit();
-        });
-        
-        document.getElementById('dayOfWeek').addEventListener('change', function() {
-            document.querySelector('form').submit();
-        });
-        
-        @if (Model.IsAdmin)
-        {
-            <text>
-            document.getElementById('teacherId').addEventListener('change', function() {
-                document.querySelector('form').submit();
-            });
-            </text>
-        }
-        
-        // Enter tuşu ile arama
-        document.getElementById('lessonTitle').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.querySelector('form').submit();
-            }
-        });
+        // Filtreler kaldırıldı
 
     </script>
 }

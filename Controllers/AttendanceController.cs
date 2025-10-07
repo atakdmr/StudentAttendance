@@ -25,7 +25,7 @@ namespace Yoklama.Controllers
             _userService = userService;
         }
 
-        public async Task<IActionResult> Index(Guid? groupId = null)
+        public async Task<IActionResult> Index(Guid? groupId = null, Guid? teacherId = null, int? dayOfWeek = null, string? lessonTitle = null)
         {
             var currentUserId = _userService.GetCurrentUserId(User);
             if (currentUserId == null) return Unauthorized();
@@ -38,12 +38,26 @@ namespace Yoklama.Controllers
                     .AsNoTracking()
                     .Include(s => s.Lesson)
                     .Include(s => s.Group)
+                    .Include(s => s.Teacher)
                     .AsQueryable()
                     .Where(s => s.Status != SessionStatus.Finalized);
 
                 if (groupId.HasValue)
                 {
                     sessionsQuery = sessionsQuery.Where(s => s.GroupId == groupId.Value);
+                }
+                if (teacherId.HasValue)
+                {
+                    sessionsQuery = sessionsQuery.Where(s => s.TeacherId == teacherId.Value);
+                }
+                if (dayOfWeek.HasValue)
+                {
+                    sessionsQuery = sessionsQuery.Where(s => s.Lesson != null && s.Lesson.DayOfWeek == dayOfWeek.Value);
+                }
+                if (!string.IsNullOrWhiteSpace(lessonTitle))
+                {
+                    var title = lessonTitle.Trim();
+                    sessionsQuery = sessionsQuery.Where(s => s.Lesson != null && EF.Functions.Like(s.Lesson.Title, "%" + title + "%"));
                 }
 
                 sessions = await sessionsQuery
@@ -54,8 +68,8 @@ namespace Yoklama.Controllers
             {
                 sessions = await _attendanceService.GetSessionsForTeacherAsync(currentUserId.Value);
 
-                // Öğretmenin bu hafta için oturumu olmayan derslerini getir (Yoklama Başlat için)
                 var today = DateTimeOffset.Now.Date;
+                var todayIso = (int)today.DayOfWeek == 0 ? 7 : (int)today.DayOfWeek;
                 var weekStart = today.AddDays(-(int)today.DayOfWeek + 1);
                 var weekEnd = weekStart.AddDays(7);
 
@@ -63,31 +77,98 @@ namespace Yoklama.Controllers
                     .AsNoTracking()
                     .Include(l => l.Group)
                     .Where(l => l.IsActive && l.TeacherId == currentUserId.Value)
+                    .OrderBy(l => l.DayOfWeek).ThenBy(l => l.StartTime)
                     .ToListAsync();
+
+                // Apply filters for teacher view (group/day/title) on lessons
+                if (groupId.HasValue)
+                {
+                    teacherLessons = teacherLessons.Where(l => l.GroupId == groupId.Value).ToList();
+                }
+                if (dayOfWeek.HasValue)
+                {
+                    teacherLessons = teacherLessons.Where(l => l.DayOfWeek == dayOfWeek.Value).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(lessonTitle))
+                {
+                    var title = lessonTitle.Trim();
+                    teacherLessons = teacherLessons.Where(l => l.Title != null && EF.Functions.Like(l.Title, "%" + title + "%")).ToList();
+                }
 
                 // SQLite DateTimeOffset kısıtları nedeniyle client-side filtreleme
                 var allSessions = await _db.AttendanceSessions
                     .AsNoTracking()
                     .ToListAsync();
 
-                var lessonsToStart = teacherLessons
-                    .Where(l => !allSessions.Any(s =>
-                        s.LessonId == l.Id &&
-                        s.ScheduledAt.Date >= weekStart &&
-                        s.ScheduledAt.Date < weekEnd &&
-                        s.Status != SessionStatus.Finalized))
-                    .OrderBy(l => l.DayOfWeek)
-                    .ThenBy(l => l.StartTime)
+                // Bugünün dersleri
+                var todayLessons = teacherLessons
+                    .Where(l => l.DayOfWeek == todayIso)
+                    .Select(l =>
+                    {
+                        var todaySession = allSessions
+                            .FirstOrDefault(s => s.LessonId == l.Id && s.ScheduledAt.Date == today);
+
+                        if (todaySession == null)
+                        {
+                            todaySession = allSessions
+                                .Where(s => s.LessonId == l.Id && s.ScheduledAt.Date >= weekStart && s.ScheduledAt.Date < weekEnd && s.Status != SessionStatus.Finalized)
+                                .OrderByDescending(s => s.ScheduledAt)
+                                .FirstOrDefault();
+                        }
+
+                        return new LessonWithSessionVm
+                        {
+                            Id = l.Id,
+                            Title = l.Title,
+                            DayOfWeek = l.DayOfWeek,
+                            StartTime = l.StartTime,
+                            EndTime = l.EndTime,
+                            IsActive = l.IsActive,
+                            Group = l.Group,
+                            SessionId = todaySession?.Id,
+                            SessionStatus = todaySession?.Status
+                        };
+                    })
                     .ToList();
 
-                ViewBag.LessonsToStart = lessonsToStart;
+                // Tüm dersler (haftalık durum)
+                var allLessons = teacherLessons
+                    .Select(l =>
+                    {
+                        var weekSession = allSessions
+                            .Where(s => s.LessonId == l.Id && s.ScheduledAt.Date >= weekStart && s.ScheduledAt.Date < weekEnd)
+                            .OrderByDescending(s => s.ScheduledAt)
+                            .FirstOrDefault();
+
+                        return new LessonWithSessionVm
+                        {
+                            Id = l.Id,
+                            Title = l.Title,
+                            DayOfWeek = l.DayOfWeek,
+                            StartTime = l.StartTime,
+                            EndTime = l.EndTime,
+                            IsActive = l.IsActive,
+                            Group = l.Group,
+                            SessionId = weekSession?.Id,
+                            SessionStatus = weekSession?.Status
+                        };
+                    })
+                    .ToList();
+
+                ViewBag.TodayLessons = todayLessons;
+                ViewBag.AllLessons = allLessons;
             }
 
             // Admin için grup listesi
-            var groups = isAdmin ? await _db.Groups.OrderBy(g => g.Name).ToListAsync() : new List<Group>();
+            var groups = await _db.Groups.AsNoTracking().OrderBy(g => g.Name).ToListAsync();
+            var teachers = isAdmin ? await _db.Users.AsNoTracking().Where(u => u.Role == UserRole.Teacher).OrderBy(u => u.FullName).ToListAsync() : new List<User>();
 
             ViewBag.Groups = groups;
             ViewBag.SelectedGroupId = groupId;
+            ViewBag.Teachers = teachers;
+            ViewBag.SelectedTeacherId = teacherId;
+            ViewBag.SelectedDayOfWeek = dayOfWeek;
+            ViewBag.SelectedLessonTitle = lessonTitle;
             ViewBag.IsAdmin = isAdmin;
 
             return View(sessions);
