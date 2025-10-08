@@ -124,9 +124,12 @@
                                         <th class="border-0 py-3 px-4">
                                             <i class="fas fa-calendar-alt me-2 text-primary"></i>Tarih & Saat
                                         </th>
-                                        <th class="border-0 py-3 px-4">
-                                            <i class="fas fa-chalkboard-teacher me-2 text-primary"></i>Öğretmen
-                                        </th>
+                                        @if (isAdmin)
+                                        {
+                                            <th class="border-0 py-3 px-4">
+                                                <i class="fas fa-chalkboard-teacher me-2 text-primary"></i>Öğretmen
+                                            </th>
+                                        }
                                         <th class="border-0 py-3 px-4 text-end">
                                             <i class="fas fa-cogs me-2 text-primary"></i>İşlemler
                                         </th>
@@ -136,20 +139,20 @@
                                     @foreach (var session in Model)
                                     {
                                         <tr class="border-bottom">
-                                            <td class="py-3 px-4">
+                                            <td class="py-3 px-2">
                                                 <div class="d-flex align-items-center">
                                                     <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
                                                         style="width: 40px; height: 40px;">
                                                         <i class="fas fa-book text-primary"></i>
                                                     </div>
                                                     <div class="flex-grow-1">
-                                                        <div class="fw-semibold text-truncate" style="max-width: 200px;"
-                                                            title="@session.Lesson.Title">@session.Lesson.Title</div>
+                                                        <div class="fw-semibold text-truncate" style="max-width: 350px;">@session.Lesson.Title</div>
+                                                            <br />
                                                         <small class="text-muted">@GetDayName(session.Lesson.DayOfWeek)</small>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="py-3 px-4">
+                                            <td class="py-3 px-2">
                                                 <div class="d-flex align-items-center">
                                                     <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
                                                         style="width: 40px; height: 40px;">
@@ -161,24 +164,27 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="py-3 px-4">
+                                            <td class="py-3 px-2">
                                                 <div class="d-flex flex-column">
-                                                    <span class="fw-semibold">@session.ScheduledAt.ToString("dd.MM.yyyy")</span>
-                                                    <span class="text-muted small">@session.ScheduledAt.ToString("HH:mm")</span>
+                                                    <span class="fw-semibold">@session.ScheduledAt.ToString(format: "dd.MM.yyyy")</span>
+                                                    <span class="text-muted small">@session.ScheduledAt.ToString(format: "HH:mm")</span>
                                                 </div>
                                             </td>
-                                            <td class="py-3 px-4">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
-                                                        style="width: 40px; height: 40px;">
-                                                        <i class="fas fa-chalkboard-teacher text-info"></i>
+                                            @if (isAdmin)
+                                            {
+                                                <td class="py-3 px-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
+                                                            style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-chalkboard-teacher text-info"></i>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-semibold">@session.Teacher.FullName</div>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <div class="fw-semibold">@session.Teacher.FullName</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="py-3 px-4 text-end">
+                                                </td>
+                                            }
+                                            <td class="py-3 px-2 text-end">
                                                 <a class="btn btn-outline-secondary btn-sm" asp-controller="Attendance"
                                                     asp-action="Session" asp-route-sessionId="@session.Id">
                                                     <i class="fas fa-eye me-1"></i>Gözlemle

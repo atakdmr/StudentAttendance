@@ -165,7 +165,7 @@
                             </span>
                         </div>
                         <div class="d-block d-md-none w-100">
-                            <div class="d-flex flex-wrap gap-2">
+                        <div class="d-flex flex-wrap gap-2">
                                 <span class="text-warning fw-semibold small">
                                     <i class="fas fa-clock me-1"></i>Beklemede
                                 </span>
@@ -192,6 +192,10 @@
                 <div class="flex-grow-1">
                     <h6 class="card-title mb-1 fw-bold text-dark text-truncate" style="max-width: 200px;" title="@session.Lesson.Title">@session.Lesson.Title</h6>
                     <small class="text-muted text-truncate d-block" style="max-width: 150px;" title="@session.Group.Name">@session.Group.Name</small>
+                    @if (ViewBag.IsAdmin == true)
+                    {
+                        <small class="text-muted text-truncate d-block" style="max-width: 180px;" title="@session.Teacher.FullName"><i class="fas fa-user me-1"></i>@session.Teacher.FullName</small>
+                    }
                 </div>
                 @if (session.Status == null)
                 {

@@ -132,7 +132,6 @@ C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\7y9c1ga7yn-pu6akh9f7m.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\23n44tnzx3-spfza72ghr.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\422jtn1wr3-pm0lr4p786.gz
-C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\h3g6yovx24-s50m85rg8t.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\7d3urad8pk-sjf4ffnwze.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\8dy3yc4u6h-61n19gt1b8.gz
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\dqw8skvnlu-d2f1dzwra9.gz
@@ -209,3 +208,4 @@ C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\Yoklama.genruntimeconfig.cache
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\ref\Yoklama.dll
 C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\pb58w0715v-ff9i9wt1o1.gz
+C:\Users\akdem\OneDrive\Desktop\apps\OneDrive\Desktop\attendance\obj\Debug\net9.0\compressed\h3g6yovx24-uwvjld57iz.gz

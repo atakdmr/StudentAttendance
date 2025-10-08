@@ -122,7 +122,7 @@
     {
         @if (isAdmin)
         {
-            // Adminler eski listeyi görmeye devam eder
+            // Adminler: sadece geçerli/ilgili oturumları göster, durum etiketlerini düzelt
             <div class="row">
                 <div class="col-12">
                     <div class="card border-0 shadow-sm desktop-table section-card d-none d-md-block">
@@ -139,7 +139,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var s in Model)
+                                        @foreach (var s in Model.Where(x => x.Lesson != null && x.Group != null))
                                         {
                                             <tr class="border-bottom">
                                                 <td class="py-3 px-4">
@@ -167,15 +167,15 @@
                                                     </div>
                                                 </td>
                                                 <td class="py-3 px-4">
-                                                    @if (s.Status == SessionStatus.Open)
-                                                    { <span class="badge rounded-pill" style="background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;"><i class="fas fa-clock me-1"></i>Açık</span> }
-                                                    else if (s.Status == SessionStatus.Closed)
-                                                    { <span class="badge rounded-pill" style="background:#fef9c3;color:#854d0e;border:1px solid #fde68a;"><i class="fas fa-pause me-1"></i>Beklemede</span> }
-                                                    else if (s.Status == SessionStatus.Finalized)
+                                                    @if (s.Status == Yoklama.Models.Entities.SessionStatus.Open)
+                                                    { <span class="badge rounded-pill" style="background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;"><i class="fas fa-clock me-1"></i>Beklemede</span> }
+                                                    else if (s.Status == Yoklama.Models.Entities.SessionStatus.Closed)
+                                                    { <span class="badge rounded-pill" style="background:#fef9c3;color:#854d0e;border:1px solid #fde68a;"><i class="fas fa-pause me-1"></i>Kapatıldı</span> }
+                                                    else if (s.Status == Yoklama.Models.Entities.SessionStatus.Finalized)
                                                     { <span class="badge rounded-pill" style="background:#dcfce7;color:#065f46;border:1px solid #86efac;"><i class="fas fa-check me-1"></i>Tamamlandı</span> }
                                                 </td>
                                                 <td class="py-3 px-4 text-end">
-                                                    <a class="btn btn-outline-secondary btn-sm rounded-btn" asp-action="Session" asp-route-sessionId="@s.Id"><i class="fas fa-eye me-1"></i>Gözlemle</a>
+                                                    <a class="btn btn-outline-secondary btn-sm rounded-btn" asp-action="Session" asp-route-sessionId="@s.Id"><i class="fas fa-eye me-1"></i>Sonuçları Gör</a>
                                                 </td>
                                             </tr>
                                         }

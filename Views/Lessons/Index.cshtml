@@ -65,7 +65,50 @@
         </div>
     </div>
 
-    <!-- Filtreleme kaldırıldı -->
+    @if (Model.IsAdmin)
+    {
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-end">
+                            @{ 
+                                var adminGroups = Model.Lessons.Where(l => l.Group != null).Select(l => new { l.Group!.Id, l.Group!.Name }).Distinct().OrderBy(g => g.Name).ToList();
+                                var adminTeachers = Model.Lessons.Where(l => l.Teacher != null).Select(l => new { l.Teacher!.Id, l.Teacher!.FullName }).Distinct().OrderBy(t => t.FullName).ToList();
+                            }
+                            <div class="col-md-3 col-sm-6">
+                                <label for="adminGroupFilter" class="form-label fw-semibold"><i class="fas fa-layer-group me-2 text-primary"></i>Grup</label>
+                                <select id="adminGroupFilter" class="form-select">
+                                    <option value="">Tüm Gruplar</option>
+                                    @foreach (var g in adminGroups)
+                                    {
+                                        <option value="@g.Name">@g.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="adminTeacherFilter" class="form-label fw-semibold"><i class="fas fa-chalkboard-teacher me-2 text-primary"></i>Öğretmen</label>
+                                <select id="adminTeacherFilter" class="form-select">
+                                    <option value="">Tüm Öğretmenler</option>
+                                    @foreach (var t in adminTeachers)
+                                    {
+                                        <option value="@t.FullName">@t.FullName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="adminLessonSearch" class="form-label fw-semibold"><i class="fas fa-book me-2 text-primary"></i>Ders Ara</label>
+                                <div class="input-group">
+                                    <input id="adminLessonSearch" type="text" class="form-control" placeholder="Ders başlığı yazın...">
+                                    <button id="adminLessonSearchBtn" class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 
     @{ var teacherDistinctLessons = Model.IsAdmin ? Model.Lessons : Model.Lessons.GroupBy(l => l.Title).Select(g => g.First()).ToList(); }
     @if ((Model.IsAdmin ? Model.Lessons : teacherDistinctLessons).Any())
@@ -89,13 +132,10 @@
                                             <th class="border-0 py-3 px-4">
                                                 <i class="fas fa-layer-group me-2 text-primary"></i>Grup
                                             </th>
-                                        }
-                                        @if (Model.IsAdmin)
-                                        {
                                             <th class="border-0 py-3 px-4">
                                                 <i class="fas fa-chalkboard-teacher me-2 text-primary"></i>Öğretmen
                                             </th>
-                                            <th class="border-0 py-3 px-4 text-end">
+                                            <th class="border-0 py-3 px-4 text-center">
                                                 <i class="fas fa-cogs me-2 text-primary"></i>İşlemler
                                             </th>
                                         }
@@ -113,14 +153,14 @@
                                 <tbody>
                                     @foreach (var lesson in (Model.IsAdmin ? Model.Lessons : teacherDistinctLessons))
                                     {
-                                        <tr class="border-bottom">
+                                        <tr class="border-bottom" data-group="@(lesson.Group?.Name?.ToLower() ?? "")" data-teacher="@(lesson.Teacher?.FullName?.ToLower() ?? "")" data-title="@lesson.Title.ToLower()">
                                             <td class="py-3 px-4">
                                                 <div class="d-flex align-items-center">
                                                     <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                                         <i class="fas fa-book text-primary"></i>
                                                     </div>
                                                     <div class="flex-grow-1">
-                                                        <div class="fw-semibold text-truncate" style="max-width: 260px;" title="@lesson.Title">@lesson.Title</div>
+                                                        <div class="fw-semibold text-truncate" style="max-width: 370px;" title="@lesson.Title">@lesson.Title</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -132,9 +172,6 @@
                                                 <td class="py-3 px-4">
                                                     <small class="text-muted">@(lesson.Group?.Name ?? "Grup Yok")</small>
                                                 </td>
-                                            }
-                                            @if (Model.IsAdmin)
-                                            {
                                                 <td class="py-3 px-4">
                                                     <small class="text-muted">@(lesson.Teacher?.FullName ?? "Öğretmen Yok")</small>
                                                 </td>
@@ -309,7 +346,7 @@
             Yoklama.Models.Entities.SessionStatus.Open => "Bekliyor",
             Yoklama.Models.Entities.SessionStatus.Closed => "Kapatıldı",
             Yoklama.Models.Entities.SessionStatus.Finalized => "Tamamlandı",
-            _ => "Açık"
+            _ => "Durum Yok"
         };
     }
 }
@@ -589,7 +626,36 @@
             });
         }
         
-        // Filtreler kaldırıldı
+        (function () {
+            var groupEl = document.getElementById('adminGroupFilter');
+            var teacherEl = document.getElementById('adminTeacherFilter');
+            var searchEl = document.getElementById('adminLessonSearch');
+            var searchBtn = document.getElementById('adminLessonSearchBtn');
+
+            function applyFilters() {
+                var g = (groupEl && groupEl.value || '').toLowerCase();
+                var t = (teacherEl && teacherEl.value || '').toLowerCase();
+                var q = (searchEl && searchEl.value || '').toLowerCase().trim();
+
+                var rows = document.querySelectorAll('table tbody tr');
+                rows.forEach(function (row) {
+                    var rg = (row.getAttribute('data-group') || '').toLowerCase();
+                    var rt = (row.getAttribute('data-teacher') || '').toLowerCase();
+                    var rv = (row.getAttribute('data-title') || '').toLowerCase();
+
+                    var ok = true;
+                    if (g && rg !== g) ok = false;
+                    if (t && rt !== t) ok = false;
+                    if (q && rv.indexOf(q) === -1) ok = false;
+                    row.style.display = ok ? '' : 'none';
+                });
+            }
+
+            if (groupEl) groupEl.addEventListener('change', applyFilters);
+            if (teacherEl) teacherEl.addEventListener('change', applyFilters);
+            if (searchBtn) searchBtn.addEventListener('click', applyFilters);
+            if (searchEl) searchEl.addEventListener('keypress', function (e) { if (e.key === 'Enter') { e.preventDefault(); applyFilters(); } });
+        })();
 
     </script>
 }

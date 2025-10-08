@@ -128,7 +128,7 @@
                     <div class="mb-3">
                         <i class="fas fa-clock"></i>
                     </div>
-                    <h4 class="mb-1 fw-bold">@Model.AttendanceRecords.Count(r => r.LateMinutes.HasValue && r.LateMinutes > 0)</h4>
+                    <h4 class="mb-1 fw-bold">@Model.Summary.LateCount</h4>
                     <small class="opacity-75">Geç Kalma</small>
                 </div>
             </div>
