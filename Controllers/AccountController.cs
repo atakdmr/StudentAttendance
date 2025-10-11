@@ -94,16 +94,6 @@ namespace Yoklama.Controllers
                 DisplayName = user.FullName
             };
 
-            // Empty activities since notifications are removed
-            vm.RecentActivities = new List<ActivityItemVm>();
-            vm.ActivitySummary = new ActivitySummaryVm
-            {
-                Created = 0,
-                Updated = 0,
-                Deleted = 0,
-                LastActivityAt = null
-            };
-
             return View(vm);
         }
 
